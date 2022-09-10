@@ -14,7 +14,7 @@ class GraphInfo(NamedTuple):
     """ Labels of each edge in the graph. """
 
 
-def load_graph(name: str) -> nx.Graph:
+def load_graph(name: str) -> nx.MultiDiGraph:
     """Loads a graph from cfpq_data dataset."""
     graph_path = cfpq_data.download(name)
     graph = cfpq_data.graph_from_csv(graph_path)
@@ -27,7 +27,9 @@ def get_graph_info(graph: nx.Graph) -> GraphInfo:
     return GraphInfo(graph.number_of_nodes(), graph.number_of_edges(), labels)
 
 
-def build_two_cycles_graph(ns: tuple[int, int], labels: tuple[str, str]) -> nx.Graph:
+def build_two_cycles_graph(
+    ns: tuple[int, int], labels: tuple[str, str]
+) -> nx.MultiDiGraph:
     """
     Creates a graph with two cycles and labeled edges.
 

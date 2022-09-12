@@ -28,6 +28,9 @@ def build_labeled_two_cycles_graph(
     second_cycle_num: int,
     second_cycle_label: str,
 ) -> nx.MultiDiGraph:
+    if first_cycle_num <= 0 or second_cycle_num <= 0:
+        raise ValueError("Graph cycle must have at least one node")
+
     graph = cfpq_data.labeled_two_cycles_graph(
         first_cycle_num,
         second_cycle_num,

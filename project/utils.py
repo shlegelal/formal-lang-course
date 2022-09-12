@@ -41,3 +41,20 @@ def save_graph_as_dot(graph: nx.Graph, path: str | IO):
     with open(path, "w") as f:
         # Remove newlines as pydot treats some of them as nodes on import
         f.write(pydot_graph.to_string().replace("\n", ""))
+
+
+def build_and_save_labeled_two_cycles_graph_as_dot(
+    first_cycle_num: int,
+    first_cycle_label: str,
+    second_cycle_num: int,
+    second_cycle_label: str,
+    path: str | IO,
+) -> nx.MultiDiGraph:
+    graph = build_labeled_two_cycles_graph(
+        first_cycle_num,
+        first_cycle_label,
+        second_cycle_num,
+        second_cycle_label,
+    )
+    save_graph_as_dot(graph, path)
+    return graph

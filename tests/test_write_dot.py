@@ -6,9 +6,9 @@ from project import utils
 
 def test_write_dot_then_read_is_isomorphic(tmp_path: Path):
     path = (tmp_path / "test_graph.dot").as_posix()
-    expected_graph = utils.build_two_cycles_graph((1, 1), ("a", "b"))
+    expected_graph = utils.build_labeled_two_cycles_graph(1, "a", 1, "b")
 
-    utils.write_graph_to_dot(expected_graph, path)
+    utils.save_graph_as_dot(expected_graph, path)
 
     actual_graph = nx.drawing.nx_pydot.read_dot(path)
     # Have to convert string node labels back to ints

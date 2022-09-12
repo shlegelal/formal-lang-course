@@ -1,6 +1,6 @@
 from project import utils
 
-GRAPH_INFO = utils.get_graph_info(utils.load_graph("skos"))
+GRAPH_INFO = utils.get_graph_info(utils.load_graph_from_cfpg_data("skos"))
 
 
 def test_nodes_num():

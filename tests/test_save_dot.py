@@ -1,9 +1,9 @@
+import pytest
 import networkx as nx
 from pathlib import Path
 
-import pytest
-
 from project import utils
+from load_test_data import load_test_data
 
 
 def _check_build_and_save_dot_then_load_is_isomorphic(
@@ -23,49 +23,62 @@ def _check_build_and_save_dot_then_load_is_isomorphic(
     actual_graph = nx.relabel_nodes(actual_graph, int_mapping)
 
     assert nx.is_isomorphic(
-        expected_graph,
         actual_graph,
+        expected_graph,
         node_match=dict.__eq__,
         edge_match=nx.isomorphism.categorical_edge_match("label", None),
     )
 
 
 class TestSaveDotThenLoadIsIsomorphic:
-    def test_zero_to_zero(self, tmp_path: Path):
+    @pytest.mark.parametrize(
+        "first_cycle_num, second_cycle_num",
+        load_test_data(
+            "TestSaveDotThenLoadIsIsomorphic.test_zero_nodes_produces_value_error"
+        ),
+    )
+    def test_zero_nodes_produces_value_error(
+        self, first_cycle_num: int, second_cycle_num: int, tmp_path: Path
+    ):
         with pytest.raises(ValueError):
-            _check_build_and_save_dot_then_load_is_isomorphic(0, 0, tmp_path)
+            _check_build_and_save_dot_then_load_is_isomorphic(
+                first_cycle_num, second_cycle_num, tmp_path
+            )
 
-    def test_zero_to_many(self, tmp_path: Path):
-        with pytest.raises(ValueError):
-            _check_build_and_save_dot_then_load_is_isomorphic(0, 3, tmp_path)
-
-    def test_many_to_zero(self, tmp_path: Path):
-        with pytest.raises(ValueError):
-            _check_build_and_save_dot_then_load_is_isomorphic(3, 0, tmp_path)
-
-    def test_one_to_one(self, tmp_path: Path):
-        _check_build_and_save_dot_then_load_is_isomorphic(1, 1, tmp_path)
-
-    def test_many_to_many(self, tmp_path: Path):
-        _check_build_and_save_dot_then_load_is_isomorphic(10, 10, tmp_path)
+    @pytest.mark.parametrize(
+        "first_cycle_num, second_cycle_num",
+        load_test_data(
+            "TestSaveDotThenLoadIsIsomorphic.test_saved_and_loaded_is_isomorphic"
+        ),
+    )
+    def test_saved_and_loaded_is_isomorphic(
+        self, first_cycle_num: int, second_cycle_num: int, tmp_path: Path
+    ):
+        _check_build_and_save_dot_then_load_is_isomorphic(
+            first_cycle_num,
+            second_cycle_num,
+            tmp_path,
+        )
 
 
 class TestDotContents:
-    def test_saved_contents_are_correct(self, tmp_path: Path):
+    @pytest.mark.parametrize(
+        "first_cycle_num, second_cycle_num, expected_contents",
+        load_test_data("TestDotContents.test_saved_contents_are_correct"),
+    )
+    def test_saved_contents_are_correct(
+        self,
+        first_cycle_num: int,
+        second_cycle_num: int,
+        expected_contents: str,
+        tmp_path: Path,
+    ):
         path = (tmp_path / "test_graph.dot").as_posix()
 
-        utils.build_and_save_labeled_two_cycles_graph_as_dot(2, "a", 2, "b", path)
+        utils.build_and_save_labeled_two_cycles_graph_as_dot(
+            first_cycle_num, "a", second_cycle_num, "b", path
+        )
 
         with open(path, "r") as f:
             contents = f.read()
-            assert (
-                contents == "digraph  {"
-                "1;2;0;3;4;"
-                "1 -> 2  [key=0, label=a];"
-                "2 -> 0  [key=0, label=a];"
-                "0 -> 1  [key=0, label=a];"
-                "0 -> 3  [key=0, label=b];"
-                "3 -> 4  [key=0, label=b];"
-                "4 -> 0  [key=0, label=b];"
-                "}"
-            )
+            assert contents == expected_contents

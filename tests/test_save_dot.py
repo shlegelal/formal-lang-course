@@ -18,11 +18,16 @@ def _check_build_and_save_dot_then_load_is_isomorphic(
     )
 
     actual_graph = nx.drawing.nx_pydot.read_dot(path)
-    # Have to convert string node labels back to ints
-    int_mapping = dict(map(lambda n: (n[0], int(n[0])), actual_graph.nodes))
+    # Convert string node labels back to ints
+    int_mapping = dict(map(lambda n: (n, int(n)), actual_graph.nodes))
     actual_graph = nx.relabel_nodes(actual_graph, int_mapping)
 
-    assert nx.is_isomorphic(expected_graph, actual_graph)
+    assert nx.is_isomorphic(
+        expected_graph,
+        actual_graph,
+        node_match=dict.__eq__,
+        edge_match=nx.isomorphism.categorical_edge_match("label", None),
+    )
 
 
 class TestSaveDotThenLoadIsIsomorphic:

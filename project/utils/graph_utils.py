@@ -27,7 +27,7 @@ def get_graph(name: str) -> MultiDiGraph:
 
 def get_graph_info(name: str) -> GraphInfo:
     """
-    Show basic info of a graph with a given name from CFPQ_Data Dataset.
+    Shows basic info of a graph with a given name from CFPQ_Data Dataset.
 
     :param name: Name of graph to find.
     :return: Namedtuple of number of nodes, number of edges, set of edges' labels.

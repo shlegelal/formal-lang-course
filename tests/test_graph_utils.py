@@ -1,14 +1,10 @@
-import cfpq_data
 import filecmp
 
 from networkx import (
     algorithms,
     is_isomorphic,
 )
-from project.utils.graph_utils import (
-    export_graph_to_dot,
-    generate_labeled_two_cycles_graph,
-)
+from project.utils.graph_utils import *
 
 
 def test_generate_labeled_two_cycles_graph():
@@ -38,3 +34,48 @@ def test_generate_and_export_graph():
         "tests/res/expected_graph.dot",
         shallow=False,
     )
+
+
+graph_info = get_graph_info("skos")
+
+
+def test_nodes_number():
+    assert graph_info.nodes_num == 144
+
+
+def test_edges_number():
+    assert graph_info.edges_num == 252
+
+
+def test_labels():
+    assert graph_info.labels == {
+        "seeAlso",
+        "comment",
+        "subPropertyOf",
+        "rest",
+        "type",
+        "creator",
+        "inverseOf",
+        "label",
+        "description",
+        "unionOf",
+        "domain",
+        "range",
+        "example",
+        "scopeNote",
+        "contributor",
+        "title",
+        "subClassOf",
+        "definition",
+        "first",
+        "disjointWith",
+        "isDefinedBy",
+    }
+
+
+def test_raise_file_not_found_error():
+    try:
+        broken = get_graph_info("aaa")
+        assert broken.nodes_num == "forty two"
+    except FileNotFoundError:
+        assert True

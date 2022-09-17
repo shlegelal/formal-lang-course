@@ -31,9 +31,7 @@ def build_dfa_by_redex(redex: Regex) -> DeterministicFiniteAutomaton:
 
 
 def build_nfa_by_graph(
-        graph: MultiDiGraph,
-        start_states: set = None,
-        final_states: set = None
+    graph: MultiDiGraph, start_states: set = None, final_states: set = None
 ) -> NondeterministicFiniteAutomaton:
     """
     Builds NFA by a graph.
@@ -56,9 +54,13 @@ def build_nfa_by_graph(
         final_states = all_nodes
 
     if not start_states.issubset(all_nodes):
-        raise AutomataUtilsError(f"Invalid start states: {start_states.difference(all_nodes)}")
+        raise AutomataUtilsError(
+            f"Invalid start states: {start_states.difference(all_nodes)}"
+        )
     if not final_states.issubset(all_nodes):
-        raise AutomataUtilsError(f"Invalid final states: {final_states.difference(all_nodes)}")
+        raise AutomataUtilsError(
+            f"Invalid final states: {final_states.difference(all_nodes)}"
+        )
 
     for state in start_states:
         nfa.add_start_state(State(state))

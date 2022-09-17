@@ -80,7 +80,11 @@ def get_edges_by_label(graph: MultiDiGraph) -> set[tuple[any, any, any]]:
     :param graph: Graph with labeled edges.
     :return: A set of triplets (node_from, label, node_to) describing all the unique edges of the graph.
     """
-    return set(map(lambda edge: (edge[0], edge[2]["label"], edge[1]) if "label" in edge[2].keys() else None,
-                   graph.edges.data(default=True)
-                   )
-               )
+    return set(
+        map(
+            lambda edge: (edge[0], edge[2]["label"], edge[1])
+            if "label" in edge[2].keys()
+            else None,
+            graph.edges.data(default=True),
+        )
+    )

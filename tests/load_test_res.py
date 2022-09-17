@@ -11,7 +11,9 @@ def load_test_res(test_name: str) -> list[tuple[dict, dict]]:
         raw_res = json.load(f)
     res = list(
         map(
-            lambda case: tuple(case.values()) if len(case) > 1 else next(iter(case.values())),
+            lambda case: tuple(case.values())
+            if len(case) > 1
+            else next(iter(case.values())),
             raw_res[test_name],
         )
     )

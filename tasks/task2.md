@@ -6,6 +6,6 @@
 
 ## Задача
 
-- [ ] Используя возможности [pyformlang](https://pyformlang.readthedocs.io/en/latest/) реализовать **функцию** построения минимального ДКА по заданному регулярному выражению. [Формат регулярного выражения.](https://pyformlang.readthedocs.io/en/latest/usage.html#regular-expression).
-- [ ] Используя возможности [pyformlang](https://pyformlang.readthedocs.io/en/latest/) реализовать **функцию** построения недетерминированного конечного автомата по [графу](https://networkx.org/documentation/stable/reference/classes/multidigraph.html), в том числе по любому из графов, которые можно получить, пользуясь функциональностью, реализованной в [Задаче 1](https://github.com/JetBrains-Research/formal-lang-course/blob/main/tasks/task1.md) (загруженный из датасета по имени граф, сгенерированный синтетический граф). Предусмотреть возможность указывать стартовые и финальные вершины. Если они не указаны, то считать все вершины стартовыми и финальными.
-- [ ] Добавить необходимые тесты.
+- [X] Используя возможности [pyformlang](https://pyformlang.readthedocs.io/en/latest/) реализовать **функцию** построения минимального ДКА по заданному регулярному выражению. [Формат регулярного выражения.](https://pyformlang.readthedocs.io/en/latest/usage.html#regular-expression).
+- [X] Используя возможности [pyformlang](https://pyformlang.readthedocs.io/en/latest/) реализовать **функцию** построения недетерминированного конечного автомата по [графу](https://networkx.org/documentation/stable/reference/classes/multidigraph.html), в том числе по любому из графов, которые можно получить, пользуясь функциональностью, реализованной в [Задаче 1](https://github.com/JetBrains-Research/formal-lang-course/blob/main/tasks/task1.md) (загруженный из датасета по имени граф, сгенерированный синтетический граф). Предусмотреть возможность указывать стартовые и финальные вершины. Если они не указаны, то считать все вершины стартовыми и финальными.
+- [X] Добавить необходимые тесты.

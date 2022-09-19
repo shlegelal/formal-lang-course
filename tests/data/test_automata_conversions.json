@@ -1,0 +1,146 @@
+{
+  "TestRegexToMinDfa.test_regex_converts_to_correct_dfa": [
+    {
+      "raw_regex": "",
+      "expected_dfa_dot": "digraph {}"
+    },
+    {
+      "raw_regex": "a",
+      "expected_dfa_dot": "digraph {0 [is_final=False, is_start=True];1 [is_final=True, is_start=False];0 -> 1 [key=0, label=a];}"
+    },
+    {
+      "raw_regex": "a b",
+      "expected_dfa_dot": "digraph {1 [is_final=True, is_start=False];0 [is_final=False, is_start=True];\"2;3\" [is_final=False, is_start=False];0 -> \"2;3\" [key=0, label=a];\"2;3\" -> 1 [key=0, label=b];}"
+    },
+    {
+      "raw_regex": "a|b",
+      "expected_dfa_dot": "digraph {\"1;3;1;5\" [is_final=True, is_start=False];\"0;2;4\" [is_final=False, is_start=True];\"0;2;4\" -> \"1;3;1;5\" [key=0, label=b];\"0;2;4\" -> \"1;3;1;5\" [key=1, label=a];}"
+    },
+    {
+      "raw_regex": "a*",
+      "expected_dfa_dot": "digraph {\"0;1;2;1;2;3\" [is_final=True, is_start=True];\"0;1;2;1;2;3\" -> \"0;1;2;1;2;3\" [key=0, label=a];}"
+    },
+    {
+      "raw_regex": "$",
+      "expected_dfa_dot": "digraph {\"0;1\" [is_final=True, is_start=True];}"
+    },
+    {
+      "raw_regex": "$ | ((start1* | start2*) ending)",
+      "expected_dfa_dot": "digraph {\"13;14;15;6;7\" [is_final=False, is_start=False];\"10;11;6;7;9\" [is_final=False, is_start=False];\"1;5\" [is_final=True, is_start=False];\"0;1;10;12;13;14;2;3;4;6;7;8;9\" [is_final=True, is_start=True];\"13;14;15;6;7\" -> \"13;14;15;6;7\" [key=0, label=start2];\"13;14;15;6;7\" -> \"1;5\" [key=0, label=ending];\"10;11;6;7;9\" -> \"10;11;6;7;9\" [key=0, label=start1];\"10;11;6;7;9\" -> \"1;5\" [key=0, label=ending];\"0;1;10;12;13;14;2;3;4;6;7;8;9\" -> \"10;11;6;7;9\" [key=0, label=start1];\"0;1;10;12;13;14;2;3;4;6;7;8;9\" -> \"13;14;15;6;7\" [key=0, label=start2];\"0;1;10;12;13;14;2;3;4;6;7;8;9\" -> \"1;5\" [key=0, label=ending];}"
+    }
+  ],
+  "TestGraphToNfa.test_on_predefined_graph": [
+    {
+      "graph": "digraph {}",
+      "start_states": [],
+      "final_states": [],
+      "expected_nfa_graph": "digraph {}"
+    },
+    {
+      "graph": "digraph {1;2;3;}",
+      "start_states": [],
+      "final_states": [],
+      "expected_nfa_graph": "digraph {}"
+    },
+    {
+      "graph": "digraph {1;2;3;}",
+      "start_states": [
+        1
+      ],
+      "final_states": [],
+      "expected_nfa_graph": "digraph {1 [is_final=False, is_start=True];}"
+    },
+    {
+      "graph": "digraph {1;2;3;}",
+      "start_states": [],
+      "final_states": [
+        3
+      ],
+      "expected_nfa_graph": "digraph {3 [is_final=True, is_start=False];}"
+    },
+    {
+      "graph": "digraph {1;2;3;}",
+      "start_states": [
+        1
+      ],
+      "final_states": [
+        3
+      ],
+      "expected_nfa_graph": "digraph {1 [is_final=False, is_start=True];3 [is_final=True, is_start=False];}"
+    },
+    {
+      "graph": "digraph {1;2;3;}",
+      "start_states": [
+        1,
+        3
+      ],
+      "final_states": [
+        3,
+        1
+      ],
+      "expected_nfa_graph": "digraph {1 [is_final=True, is_start=True];3 [is_final=True, is_start=True];}"
+    },
+    {
+      "graph": "digraph {1;2;3;}",
+      "start_states": null,
+      "final_states": [],
+      "expected_nfa_graph": "digraph {1 [is_final=False, is_start=True];2 [is_final=False, is_start=True];3 [is_final=False, is_start=True];}"
+    },
+    {
+      "graph": "digraph {1;2;3;}",
+      "start_states": [],
+      "final_states": null,
+      "expected_nfa_graph": "digraph {1 [is_final=True, is_start=False];2 [is_final=True, is_start=False];3 [is_final=True, is_start=False];}"
+    },
+    {
+      "graph": "digraph {1;2;3;}",
+      "start_states": null,
+      "final_states": null,
+      "expected_nfa_graph": "digraph {1 [is_final=True, is_start=True];2 [is_final=True, is_start=True];3 [is_final=True, is_start=True];}"
+    },
+    {
+      "graph": "digraph {1;2;1 -> 2 [label=abc]}",
+      "start_states": [
+        "1"
+      ],
+      "final_states": [],
+      "expected_nfa_graph": "digraph {1 [is_final=False, is_start=True];2 [is_final=False, is_start=False];1 -> 2 [label=abc]}"
+    },
+    {
+      "graph": "digraph {1;2;1 -> 2}",
+      "start_states": [],
+      "final_states": [],
+      "expected_nfa_graph": "digraph {1 [is_final=False, is_start=False];2 [is_final=False, is_start=False];1 -> 2 [label=ε]}"
+    },
+    {
+      "graph": "digraph {1;2;1 -> 2 [label=way1];1 -> 2 [label=way2]}",
+      "start_states": [],
+      "final_states": [],
+      "expected_nfa_graph": "digraph {1 [is_final=False, is_start=False];2 [is_final=False, is_start=False];1 -> 2 [label=way1];1 -> 2 [label=way2]}"
+    },
+    {
+      "graph": "digraph {1;1 -> 1 [label=self_loop]}",
+      "start_states": [],
+      "final_states": [],
+      "expected_nfa_graph": "digraph {1 [is_final=False, is_start=False];1 -> 1 [label=self_loop]}"
+    }
+  ],
+  "TestGraphToNfa.test_on_synthetic_graph": [
+    {
+      "first_cycle_num": 1,
+      "second_cycle_num": 1
+    },
+    {
+      "first_cycle_num": 5,
+      "second_cycle_num": 5
+    }
+  ],
+  "TestGraphToNfa.test_on_dataset_graph": [
+    {
+      "dataset_graph_name": "skos"
+    },
+    {
+      "dataset_graph_name": "travel"
+    }
+  ]
+}

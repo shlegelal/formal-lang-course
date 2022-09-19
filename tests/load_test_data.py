@@ -9,5 +9,12 @@ def load_test_data(test_name: str) -> list[tuple[dict, dict]]:
         filename = f.stem
     with open(parent / "data" / f"{filename}.json") as f:
         raw_data = json.load(f)
-    data = list(map(lambda case: tuple(case.values()), raw_data[test_name]))
+    data = list(
+        map(
+            lambda case: tuple(case.values())
+            if len(case) > 1
+            else next(iter(case.values())),
+            raw_data[test_name],
+        )
+    )
     return data

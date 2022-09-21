@@ -27,7 +27,7 @@ def get_graph(name: str) -> MultiDiGraph:
 
 def get_graph_info(name: str) -> GraphInfo:
     """
-    Show basic info of a graph with a given name from CFPQ_Data Dataset.
+    Shows basic info of a graph with a given name from CFPQ_Data Dataset.
 
     :param name: Name of graph to find.
     :return: Namedtuple of number of nodes, number of edges, set of edges' labels.
@@ -71,3 +71,20 @@ def export_graph_to_dot(graph: MultiDiGraph, path: str | IO) -> Path:
     dot.write_raw(path)
 
     return Path(path)
+
+
+def get_edges_by_label(graph: MultiDiGraph) -> set[tuple[any, any, any]]:
+    """
+    Returns a set of labeled edges.
+
+    :param graph: Graph with labeled edges.
+    :return: A set of triplets (node_from, label, node_to) describing all the unique edges of the graph.
+    """
+    return set(
+        map(
+            lambda edge: (edge[0], edge[2]["label"], edge[1])
+            if "label" in edge[2].keys()
+            else None,
+            graph.edges.data(default=True),
+        )
+    )

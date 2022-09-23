@@ -3,8 +3,8 @@ import pydot
 import networkx as nx
 from pyformlang import finite_automaton as fa
 
-from project import automata
-from project import utils
+from project import automata_utils
+from project import graph_utils
 from load_test_data import load_test_data
 
 
@@ -52,7 +52,7 @@ class TestRegexToMinDfa:
     def test_regex_converts_to_correct_dfa(
         self, raw_regex: str, expected_dfa_graph: nx.Graph
     ):
-        min_dfa = automata.regex_to_min_dfa(raw_regex)
+        min_dfa = automata_utils.regex_to_min_dfa(raw_regex)
 
         _check_is_isomorphic(min_dfa, expected_dfa_graph)
 
@@ -77,7 +77,7 @@ class TestGraphToNfa:
         final_states: set | None,
         expected_nfa_graph: nx.Graph,
     ):
-        nfa = automata.graph_to_nfa(graph, start_states, final_states)
+        nfa = automata_utils.graph_to_nfa(graph, start_states, final_states)
 
         _check_is_isomorphic(nfa, expected_nfa_graph)
 
@@ -86,11 +86,11 @@ class TestGraphToNfa:
         load_test_data("TestGraphToNfa.test_on_synthetic_graph"),
     )
     def test_on_synthetic_graph(self, first_cycle_num: int, second_cycle_num: int):
-        expected_graph = utils.build_labeled_two_cycles_graph(
+        expected_graph = graph_utils.build_labeled_two_cycles_graph(
             first_cycle_num, "a", second_cycle_num, "b"
         )
 
-        nfa = automata.graph_to_nfa(expected_graph, set(), set())
+        nfa = automata_utils.graph_to_nfa(expected_graph, set(), set())
 
         # Not testing start and final as already tested on predefined graphs
         assert nx.is_isomorphic(
@@ -104,9 +104,9 @@ class TestGraphToNfa:
         load_test_data("TestGraphToNfa.test_on_dataset_graph"),
     )
     def test_on_dataset_graph(self, dataset_graph_name: str):
-        expected_graph = utils.load_graph_from_cfpg_data(dataset_graph_name)
+        expected_graph = graph_utils.load_graph_from_cfpg_data(dataset_graph_name)
 
-        nfa = automata.graph_to_nfa(expected_graph, set(), set())
+        nfa = automata_utils.graph_to_nfa(expected_graph, set(), set())
 
         # Not testing start and final as already tested on predefined graphs
         assert nx.is_isomorphic(

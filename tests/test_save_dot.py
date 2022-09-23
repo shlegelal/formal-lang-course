@@ -2,7 +2,7 @@ import pytest
 import networkx as nx
 from pathlib import Path
 
-from project import utils
+from project import graph_utils
 from load_test_data import load_test_data
 
 
@@ -13,7 +13,7 @@ def _check_build_and_save_dot_then_load_is_isomorphic(
 ):
     path = (tmp_path / "test_graph.dot").as_posix()
 
-    expected_graph = utils.build_and_save_labeled_two_cycles_graph_as_dot(
+    expected_graph = graph_utils.build_and_save_labeled_two_cycles_graph_as_dot(
         first_cycle_num, "a", second_cycle_num, "b", path
     )
 
@@ -75,7 +75,7 @@ class TestDotContents:
     ):
         path = (tmp_path / "test_graph.dot").as_posix()
 
-        utils.build_and_save_labeled_two_cycles_graph_as_dot(
+        graph_utils.build_and_save_labeled_two_cycles_graph_as_dot(
             first_cycle_num, "a", second_cycle_num, "b", path
         )
 

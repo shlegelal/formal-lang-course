@@ -1,1 +1,1 @@
-__all__ = ["utils", "automata"]
+__all__ = ["graph_utils", "automata_utils"]

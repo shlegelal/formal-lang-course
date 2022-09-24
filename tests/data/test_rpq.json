@@ -1,0 +1,199 @@
+{
+  "test_rpq": [
+    {
+      "graph": "digraph {}",
+      "query": "",
+      "starts": [],
+      "finals": [],
+      "expected": []
+    },
+    {
+      "graph": "digraph {}",
+      "query": "a*",
+      "starts": [],
+      "finals": [],
+      "expected": []
+    },
+    {
+      "graph": "digraph {}",
+      "query": "a*",
+      "starts": null,
+      "finals": null,
+      "expected": []
+    },
+    {
+      "graph": "digraph {1;}",
+      "query": "a*",
+      "starts": [
+        "1"
+      ],
+      "finals": [],
+      "expected": []
+    },
+    {
+      "graph": "digraph {1; 1 -> 1 [label=a]}",
+      "query": "a*",
+      "starts": [
+        "1"
+      ],
+      "finals": [
+        "1"
+      ],
+      "expected": [
+        [
+          "1",
+          "1"
+        ]
+      ]
+    },
+    {
+      "graph": "digraph {1; 1 -> 1 [label=b]}",
+      "query": "a*",
+      "starts": [
+        "1"
+      ],
+      "finals": [
+        "1"
+      ],
+      "expected": []
+    },
+    {
+      "graph": "digraph {1; 2; 1 -> 2 [label=a]}",
+      "query": "a",
+      "starts": [
+        "1"
+      ],
+      "finals": [
+        "2"
+      ],
+      "expected": [
+        [
+          "1",
+          "2"
+        ]
+      ]
+    },
+    {
+      "graph": "digraph {1; 2; 1 -> 2 [label=a]}",
+      "query": "a",
+      "starts": [],
+      "finals": [
+        "2"
+      ],
+      "expected": []
+    },
+    {
+      "graph": "digraph {1; 2; 1 -> 2 [label=a]; 1 -> 3 [label=a]}",
+      "query": "a",
+      "starts": [
+        "1"
+      ],
+      "finals": [
+        "2",
+        "3"
+      ],
+      "expected": [
+        [
+          "1",
+          "2"
+        ],
+        [
+          "1",
+          "3"
+        ]
+      ]
+    },
+    {
+      "graph": "digraph {1; 2; 1 -> 2 [label=a]; 2 -> 3 [label=a]}",
+      "query": "a a",
+      "starts": [
+        "1"
+      ],
+      "finals": [
+        "2",
+        "3"
+      ],
+      "expected": [
+        [
+          "1",
+          "3"
+        ]
+      ]
+    },
+    {
+      "graph": "digraph {1; 2; 1 -> 2 [label=a]; 2 -> 3 [label=a]}",
+      "query": "(a|b) a",
+      "starts": [
+        "1"
+      ],
+      "finals": [
+        "3"
+      ],
+      "expected": [
+        [
+          "1",
+          "3"
+        ]
+      ]
+    },
+    {
+      "graph": "digraph {1; 2; 1 -> 2 [label=a]; 2 -> 3 [label=a]}",
+      "query": "a*",
+      "starts": [
+        "1"
+      ],
+      "finals": [
+        "2",
+        "3"
+      ],
+      "expected": [
+        [
+          "1",
+          "2"
+        ],
+        [
+          "1",
+          "3"
+        ]
+      ]
+    },
+    {
+      "graph": "digraph {1;2;3;4; 1 -> 2 [label=a]; 1 -> 2 [label=b]; 2 -> 3 [label=c]; 1 -> 4 [label=c]}",
+      "query": "a* c",
+      "starts": [
+        "1"
+      ],
+      "finals": null,
+      "expected": [
+        [
+          "1",
+          "3"
+        ],
+        [
+          "1",
+          "4"
+        ]
+      ]
+    },
+    {
+      "graph": "digraph {1;2;3;4; 1 -> 2 [label=a]; 1 -> 2 [label=b]; 2 -> 3 [label=c]; 1 -> 4 [label=c]}",
+      "query": "a* c",
+      "starts": null,
+      "finals": null,
+      "expected": [
+        [
+          "1",
+          "3"
+        ],
+        [
+          "1",
+          "4"
+        ],
+        [
+          "2",
+          "3"
+        ]
+      ]
+    }
+  ]
+}

@@ -1,15 +1,11 @@
 import pytest
-import pydot
 import networkx as nx
 from pyformlang import finite_automaton as fa
 
 from project import automata_utils
 from project import graph_utils
-from load_test_data import load_test_data
-
-
-def _dot_str_to_graph(dot: str) -> nx.Graph:
-    return nx.drawing.nx_pydot.from_pydot(pydot.graph_from_dot_data(dot)[0])
+from testing_utils import load_test_data
+from testing_utils import dot_str_to_graph
 
 
 def _check_is_isomorphic(actual_fa: fa.FiniteAutomaton, expected_fa_graph: nx.Graph):
@@ -45,7 +41,7 @@ class TestRegexToMinDfa:
     @pytest.mark.parametrize(
         "raw_regex, expected_dfa_graph",
         map(
-            lambda data: (data[0], _dot_str_to_graph(data[1])),
+            lambda data: (data[0], dot_str_to_graph(data[1])),
             load_test_data("TestRegexToMinDfa.test_regex_converts_to_correct_dfa"),
         ),
     )
@@ -62,10 +58,10 @@ class TestGraphToNfa:
         "graph, start_states, final_states, expected_nfa_graph",
         map(
             lambda data: (
-                _dot_str_to_graph(data[0]),
+                dot_str_to_graph(data[0]),
                 data[1],
                 data[2],
-                _dot_str_to_graph(data[3]),
+                dot_str_to_graph(data[3]),
             ),
             load_test_data("TestGraphToNfa.test_on_predefined_graph"),
         ),

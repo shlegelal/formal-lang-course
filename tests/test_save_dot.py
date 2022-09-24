@@ -3,7 +3,7 @@ import networkx as nx
 from pathlib import Path
 
 from project import graph_utils
-from load_test_data import load_test_data
+from testing_utils import load_test_data
 
 
 def _check_build_and_save_dot_then_load_is_isomorphic(

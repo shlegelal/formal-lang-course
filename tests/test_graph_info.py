@@ -2,7 +2,7 @@ import networkx as nx
 import pytest
 
 from project import graph_utils
-from load_test_data import load_test_data
+from testing_utils import load_test_data
 
 GRAPH_INFOS = {
     "null": graph_utils.get_graph_info(nx.null_graph()),

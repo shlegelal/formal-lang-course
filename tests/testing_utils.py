@@ -1,9 +1,11 @@
 import json
 import pathlib
 import inspect
+import pydot
+import networkx as nx
 
 
-def load_test_data(test_name: str) -> list[tuple[dict, dict]]:
+def load_test_data(test_name: str) -> list[tuple]:
     with pathlib.Path(inspect.stack()[1].filename) as f:
         parent = f.parent
         filename = f.stem
@@ -18,3 +20,7 @@ def load_test_data(test_name: str) -> list[tuple[dict, dict]]:
         )
     )
     return data
+
+
+def dot_str_to_graph(dot: str) -> nx.Graph:
+    return nx.drawing.nx_pydot.from_pydot(pydot.graph_from_dot_data(dot)[0])

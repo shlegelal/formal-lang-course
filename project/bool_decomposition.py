@@ -7,7 +7,6 @@ from typing import Any
 from typing import TypeVar
 from typing import NamedTuple
 
-_SymbolType = TypeVar("_SymbolType")
 _Self = TypeVar("_Self")
 
 
@@ -18,12 +17,12 @@ class BoolDecomposition:
         is_final: bool
 
     states: list[StateInfo]
-    adjs: dict[_SymbolType, csr_array]
+    adjs: dict[Any, csr_array]
 
     def __init__(
         self,
         states: list[StateInfo] | None = None,
-        adjs: dict[_SymbolType, csr_array] | None = None,
+        adjs: dict[Any, csr_array] | None = None,
     ):
         if states is not None and len(states) != len(set(states)):
             raise ValueError("States cannot contain duplicates")
@@ -32,7 +31,7 @@ class BoolDecomposition:
         self.adjs = adjs if adjs is not None else {}
 
     @classmethod
-    def from_nfa(cls, nfa: fa.EpsilonNFA, sort_states: bool = False):
+    def from_nfa(cls, nfa: fa.EpsilonNFA, sort_states: bool = False) -> _Self:
         # Construct states, removing duplicates
         states = list(
             dict.fromkeys(

@@ -42,8 +42,7 @@ def test_build_empty():
     ),
 )
 def test_build_bm(nfa_1: NondeterministicFiniteAutomaton):
-    nfa_2 = build_nfa_by_bm(build_bm_by_nfa(nfa_1))
-    assert nfa_1.is_equivalent_to(nfa_2)
+    assert nfa_1.is_equivalent_to(build_nfa_by_bm(build_bm_by_nfa(nfa_1)))
 
 
 @pytest.mark.parametrize(

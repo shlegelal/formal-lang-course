@@ -2,7 +2,9 @@ from collections import namedtuple
 from pyformlang.finite_automaton import NondeterministicFiniteAutomaton, State
 from scipy.sparse import dok_matrix, kron
 
-BinaryMatrix = namedtuple("BinaryMatrix", "indexed_states start_states final_states matrix")
+BinaryMatrix = namedtuple(
+    "BinaryMatrix", "indexed_states start_states final_states matrix"
+)
 """
 Namedtuple specifying a binary matrix for some automaton.
 """
@@ -24,7 +26,11 @@ def build_bm_by_nfa(nfa: NondeterministicFiniteAutomaton) -> BinaryMatrix:
         for state_from, transitions in nfa_dict.items():
             states_to = set()
             if label in transitions:
-                states_to = transitions[label] if isinstance(transitions[label], set) else {transitions[label]}
+                states_to = (
+                    transitions[label]
+                    if isinstance(transitions[label], set)
+                    else {transitions[label]}
+                )
             for state_to in states_to:
                 tmp_matrix[
                     indexed_states[state_from],
@@ -105,14 +111,12 @@ def intersect(bm_l: BinaryMatrix, bm_r: BinaryMatrix) -> BinaryMatrix:
     matrix = dict()
 
     for label in common_labels:
-        matrix[label] = kron(
-            bm_l.matrix[label], bm_r.matrix[label], format="dok"
-        )
+        matrix[label] = kron(bm_l.matrix[label], bm_r.matrix[label], format="dok")
 
     for state_lhs, s_lhs_index in bm_l.indexed_states.items():
         for state_rhs, s_rhs_index in bm_r.indexed_states.items():
             new_state = new_state_idx = (
-                    s_lhs_index * len(bm_r.indexed_states) + s_rhs_index
+                s_lhs_index * len(bm_r.indexed_states) + s_rhs_index
             )
             indexed_states[new_state] = new_state_idx
 
@@ -122,9 +126,4 @@ def intersect(bm_l: BinaryMatrix, bm_r: BinaryMatrix) -> BinaryMatrix:
             if state_lhs in bm_l.final_states and state_rhs in bm_r.final_states:
                 final_states.add(new_state)
 
-    return BinaryMatrix(
-        indexed_states,
-        start_states,
-        final_states,
-        matrix
-    )
+    return BinaryMatrix(indexed_states, start_states, final_states, matrix)

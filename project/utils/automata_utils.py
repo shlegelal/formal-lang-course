@@ -31,7 +31,7 @@ def build_dfa_by_redex(redex: Regex) -> DeterministicFiniteAutomaton:
 
 
 def build_nfa_by_graph(
-        graph: MultiDiGraph, start_states: set = None, final_states: set = None
+    graph: MultiDiGraph, start_states: set = None, final_states: set = None
 ) -> NondeterministicFiniteAutomaton:
     """
     Builds NFA by a graph.
@@ -71,7 +71,10 @@ def build_nfa_by_graph(
 
 
 def rpq(
-        graph: MultiDiGraph, query: Regex, start_states: set = None, final_states: set = None
+    graph: MultiDiGraph,
+    query: Regex,
+    start_states: set = None,
+    final_states: set = None,
 ) -> set:
     """
     Computes Regular Path Querying from given graph and regular expression
@@ -89,8 +92,8 @@ def rpq(
 
     for state_from, state_to in zip(*tc.nonzero()):
         if (
-                state_from in intersection.start_states
-                and state_to in intersection.final_states
+            state_from in intersection.start_states
+            and state_to in intersection.final_states
         ):
             res.add(
                 (

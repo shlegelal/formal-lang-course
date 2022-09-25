@@ -123,21 +123,22 @@ def test_build_nfa_by_graph_with_automata_utils_error(
             set(map(tuple, res[3])),
         ),
         load_test_res("test_rpq_labeled_two_cycles_graph_query"),
-    )
+    ),
 )
 @pytest.mark.parametrize(
     "graph",
     map(
         lambda res: generate_labeled_two_cycles_graph(res[0], res[1]),
         load_test_res("test_rpq_labeled_two_cycles_graph"),
-    )
+    ),
 )
 def test_rpq_labeled_two_cycles_graph(
     graph: MultiDiGraph,
     query: str,
     start_states: set | None,
     final_states: set | None,
-    expected: set):
+    expected: set,
+):
     assert rpq(graph, Regex(query), start_states, final_states) == expected
 
 

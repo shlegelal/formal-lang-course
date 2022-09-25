@@ -2,7 +2,12 @@ import pytest
 from pyformlang.finite_automaton import NondeterministicFiniteAutomaton, State
 from scipy.sparse import dok_matrix
 
-from project.utils.binary_matrix_utils import build_bm_by_nfa, build_nfa_by_bm, intersect, transitive_closure
+from project.utils.binary_matrix_utils import (
+    build_bm_by_nfa,
+    build_nfa_by_bm,
+    intersect,
+    transitive_closure,
+)
 from load_test_res import load_test_res
 
 
@@ -25,6 +30,7 @@ def nfa(
 
 def test_build_empty():
     nfa_1 = build_nfa_by_bm(build_bm_by_nfa(nfa([])))
+
     assert nfa_1.is_empty()
 
 
@@ -33,7 +39,7 @@ def test_build_empty():
     map(
         lambda res: (nfa(res[0], res[1], res[2])),
         load_test_res("test_intersect"),
-    )
+    ),
 )
 def test_build_bm(nfa_1: NondeterministicFiniteAutomaton):
     nfa_2 = build_nfa_by_bm(build_bm_by_nfa(nfa_1))
@@ -45,7 +51,7 @@ def test_build_bm(nfa_1: NondeterministicFiniteAutomaton):
     map(
         lambda res: (nfa(res[0], res[1], res[2])),
         load_test_res("test_intersect"),
-    )
+    ),
 )
 def test_intersect_with_empty(nfa_1: NondeterministicFiniteAutomaton):
     bm = build_bm_by_nfa(nfa_1)
@@ -61,16 +67,18 @@ def test_intersect_with_empty(nfa_1: NondeterministicFiniteAutomaton):
     map(
         lambda res: nfa(res[0], res[1], res[2]),
         load_test_res("test_intersect"),
-    )
+    ),
 )
 @pytest.mark.parametrize(
     "r_nfa",
     map(
         lambda res: nfa(res[0], res[1], res[2]),
         load_test_res("test_intersect"),
-    )
+    ),
 )
-def test_intersect(l_nfa: NondeterministicFiniteAutomaton, r_nfa: NondeterministicFiniteAutomaton):
+def test_intersect(
+    l_nfa: NondeterministicFiniteAutomaton, r_nfa: NondeterministicFiniteAutomaton
+):
     expected = l_nfa.get_intersection(r_nfa)
 
     l_bm = build_bm_by_nfa(l_nfa)
@@ -86,9 +94,11 @@ def test_intersect(l_nfa: NondeterministicFiniteAutomaton, r_nfa: Nondeterminist
     map(
         lambda res: ((nfa(res[0], res[1], res[2])), res[3]),
         load_test_res("test_transitive_closure"),
-    )
+    ),
 )
-def test_transitive_closure(nfa_1: NondeterministicFiniteAutomaton, expected: list[list[bool]]):
+def test_transitive_closure(
+    nfa_1: NondeterministicFiniteAutomaton, expected: list[list[bool]]
+):
     bm = build_bm_by_nfa(nfa_1)
     tc = dok_matrix(expected)
 

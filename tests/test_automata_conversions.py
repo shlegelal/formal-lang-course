@@ -40,9 +40,9 @@ def _check_is_isomorphic(actual_fa: fa.FiniteAutomaton, expected_fa_graph: nx.Gr
 class TestRegexToMinDfa:
     @pytest.mark.parametrize(
         "raw_regex, expected_dfa_graph",
-        map(
-            lambda data: (data[0], dot_str_to_graph(data[1])),
-            load_test_data("TestRegexToMinDfa.test_regex_converts_to_correct_dfa"),
+        load_test_data(
+            "TestRegexToMinDfa.test_regex_converts_to_correct_dfa",
+            lambda d: (d["raw_regex"], dot_str_to_graph(d["expected_dfa_dot"])),
         ),
     )
     def test_regex_converts_to_correct_dfa(
@@ -56,14 +56,14 @@ class TestRegexToMinDfa:
 class TestGraphToNfa:
     @pytest.mark.parametrize(
         "graph, start_states, final_states, expected_nfa_graph",
-        map(
-            lambda data: (
-                dot_str_to_graph(data[0]),
-                data[1],
-                data[2],
-                dot_str_to_graph(data[3]),
+        load_test_data(
+            "TestGraphToNfa.test_on_predefined_graph",
+            lambda d: (
+                dot_str_to_graph(d["graph"]),
+                d["start_states"],
+                d["final_states"],
+                dot_str_to_graph(d["expected_nfa_graph"]),
             ),
-            load_test_data("TestGraphToNfa.test_on_predefined_graph"),
         ),
     )
     def test_on_predefined_graph(
@@ -79,7 +79,10 @@ class TestGraphToNfa:
 
     @pytest.mark.parametrize(
         "first_cycle_num, second_cycle_num",
-        load_test_data("TestGraphToNfa.test_on_synthetic_graph"),
+        load_test_data(
+            "TestGraphToNfa.test_on_synthetic_graph",
+            lambda d: (d["first_cycle_num"], d["second_cycle_num"]),
+        ),
     )
     def test_on_synthetic_graph(self, first_cycle_num: int, second_cycle_num: int):
         expected_graph = graph_utils.build_labeled_two_cycles_graph(
@@ -97,7 +100,9 @@ class TestGraphToNfa:
 
     @pytest.mark.parametrize(
         "dataset_graph_name",
-        load_test_data("TestGraphToNfa.test_on_dataset_graph"),
+        load_test_data(
+            "TestGraphToNfa.test_on_dataset_graph", lambda d: d["dataset_graph_name"]
+        ),
     )
     def test_on_dataset_graph(self, dataset_graph_name: str):
         expected_graph = graph_utils.load_graph_from_cfpg_data(dataset_graph_name)

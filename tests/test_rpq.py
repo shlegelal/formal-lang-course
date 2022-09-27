@@ -8,15 +8,15 @@ from testing_utils import dot_str_to_graph
 
 @pytest.mark.parametrize(
     "graph, query, starts, finals, expected",
-    map(
-        lambda data: (
-            dot_str_to_graph(data[0]),
-            data[1],
-            data[2],
-            data[3],
-            {tuple(pair) for pair in data[4]},
+    load_test_data(
+        "test_rpq",
+        lambda d: (
+            dot_str_to_graph(d["graph"]),
+            d["query"],
+            d["starts"],
+            d["finals"],
+            {tuple(pair) for pair in d["expected"]},
         ),
-        load_test_data("test_rpq"),
     ),
 )
 def test_rpq(

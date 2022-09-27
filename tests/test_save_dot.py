@@ -34,7 +34,8 @@ class TestSaveDotThenLoadIsIsomorphic:
     @pytest.mark.parametrize(
         "first_cycle_num, second_cycle_num",
         load_test_data(
-            "TestSaveDotThenLoadIsIsomorphic.test_zero_nodes_produces_value_error"
+            "TestSaveDotThenLoadIsIsomorphic.test_zero_nodes_produces_value_error",
+            lambda d: (d["first_cycle_num"], d["second_cycle_num"]),
         ),
     )
     def test_zero_nodes_produces_value_error(
@@ -48,7 +49,8 @@ class TestSaveDotThenLoadIsIsomorphic:
     @pytest.mark.parametrize(
         "first_cycle_num, second_cycle_num",
         load_test_data(
-            "TestSaveDotThenLoadIsIsomorphic.test_saved_and_loaded_is_isomorphic"
+            "TestSaveDotThenLoadIsIsomorphic.test_saved_and_loaded_is_isomorphic",
+            lambda d: (d["first_cycle_num"], d["second_cycle_num"]),
         ),
     )
     def test_saved_and_loaded_is_isomorphic(
@@ -64,7 +66,14 @@ class TestSaveDotThenLoadIsIsomorphic:
 class TestDotContents:
     @pytest.mark.parametrize(
         "first_cycle_num, second_cycle_num, expected_contents",
-        load_test_data("TestDotContents.test_saved_contents_are_correct"),
+        load_test_data(
+            "TestDotContents.test_saved_contents_are_correct",
+            lambda d: (
+                d["first_cycle_num"],
+                d["second_cycle_num"],
+                d["expected_contents"],
+            ),
+        ),
     )
     def test_saved_contents_are_correct(
         self,

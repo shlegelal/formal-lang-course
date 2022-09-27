@@ -43,12 +43,13 @@ def _check_adjs_are_equal(adjs1: dict[str, csr_array], adjs2: dict[str, csr_arra
 class TestFromNfa:
     @pytest.mark.parametrize(
         "nfa, expected_states",
-        map(
-            lambda data: (
-                _dot_str_to_nfa(data[0]),
-                [_dict_to_state_info(st) for st in data[1]],
+        load_test_data(
+            "TestFromNfa",
+            lambda d: (
+                _dot_str_to_nfa(d["graph"]),
+                [_dict_to_state_info(st) for st in d["expected_states"]],
             ),
-            load_test_data("TestFromNfa"),
+            add_filename_suffix=True,
         ),
     )
     def test_states_are_correct(
@@ -60,9 +61,10 @@ class TestFromNfa:
 
     @pytest.mark.parametrize(
         "nfa, expected_adjs",
-        map(
-            lambda data: (_dot_str_to_nfa(data[0]), _dict_to_adjs(data[2])),
-            load_test_data("TestFromNfa"),
+        load_test_data(
+            "TestFromNfa",
+            lambda d: (_dot_str_to_nfa(d["graph"]), _dict_to_adjs(d["expected_adjs"])),
+            add_filename_suffix=True,
         ),
     )
     def test_adjs_are_correct(
@@ -76,20 +78,21 @@ class TestFromNfa:
 class TestIntersect:
     @pytest.mark.parametrize(
         "states1, adjs1, states2, adjs2, expected_states",
-        map(
-            lambda data: (
-                [_dict_to_state_info(st) for st in data[0]],
-                _dict_to_adjs(data[1]),
-                [_dict_to_state_info(st) for st in data[2]],
-                _dict_to_adjs(data[3]),
+        load_test_data(
+            "TestIntersect",
+            lambda d: (
+                [_dict_to_state_info(st) for st in d["states1"]],
+                _dict_to_adjs(d["adjs1"]),
+                [_dict_to_state_info(st) for st in d["states2"]],
+                _dict_to_adjs(d["adjs2"]),
                 [
                     BoolDecomposition.StateInfo(
                         tuple(st["data"]), st["is_start"], st["is_final"]
                     )
-                    for st in data[4]
+                    for st in d["expected_states"]
                 ],
             ),
-            load_test_data("TestIntersect"),
+            add_filename_suffix=True,
         ),
     )
     def test_states_are_correct(
@@ -109,15 +112,16 @@ class TestIntersect:
 
     @pytest.mark.parametrize(
         "states1, adjs1, states2, adjs2, expected_adjs",
-        map(
-            lambda data: (
-                [_dict_to_state_info(st) for st in data[0]],
-                _dict_to_adjs(data[1]),
-                [_dict_to_state_info(st) for st in data[2]],
-                _dict_to_adjs(data[3]),
-                _dict_to_adjs(data[5]),
+        load_test_data(
+            "TestIntersect",
+            lambda d: (
+                [_dict_to_state_info(st) for st in d["states1"]],
+                _dict_to_adjs(d["adjs1"]),
+                [_dict_to_state_info(st) for st in d["states2"]],
+                _dict_to_adjs(d["adjs2"]),
+                _dict_to_adjs(d["expected_adjs"]),
             ),
-            load_test_data("TestIntersect"),
+            add_filename_suffix=True,
         ),
     )
     def test_adjs_are_correct(
@@ -139,12 +143,13 @@ class TestIntersect:
 class TestTransitiveClosureAnySymbol:
     @pytest.mark.parametrize(
         "adjs, expected_indices",
-        map(
-            lambda data: (
-                _dict_to_adjs(data[0]),
-                {tuple(pair) for pair in data[1]},
+        load_test_data(
+            "TestTransitiveClosureAnySymbol",
+            lambda d: (
+                _dict_to_adjs(d["adjs"]),
+                {tuple(pair) for pair in d["expected_indices"]},
             ),
-            load_test_data("TestTransitiveClosureAnySymbol"),
+            add_filename_suffix=True,
         ),
     )
     def test_closure_is_correct(

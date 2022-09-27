@@ -1,13 +1,10 @@
-import pyformlang.finite_automaton as fa
+from pyformlang.finite_automaton import EpsilonNFA
 from scipy.sparse import csr_array
 from scipy.sparse import dok_array
 from scipy.sparse import kron
 from itertools import product
 from typing import Any
-from typing import TypeVar
 from typing import NamedTuple
-
-_Self = TypeVar("_Self")
 
 
 class BoolDecomposition:
@@ -15,9 +12,6 @@ class BoolDecomposition:
         data: Any
         is_start: bool
         is_final: bool
-
-    states: list[StateInfo]
-    adjs: dict[Any, csr_array]
 
     def __init__(
         self,
@@ -27,14 +21,18 @@ class BoolDecomposition:
         if states is not None and len(states) != len(set(states)):
             raise ValueError("States cannot contain duplicates")
 
-        self.states = states if states is not None else []
-        self.adjs = adjs if adjs is not None else {}
+        self.states: list[BoolDecomposition.StateInfo] = (
+            states if states is not None else []
+        )
+        self.adjs: dict[Any, csr_array] = adjs if adjs is not None else {}
 
     @classmethod
-    def from_nfa(cls, nfa: fa.EpsilonNFA, sort_states: bool = False) -> _Self:
+    def from_nfa(
+        cls, nfa: EpsilonNFA, sort_states: bool = False
+    ) -> "BoolDecomposition":
         # Construct states, removing duplicates
         states = list(
-            dict.fromkeys(
+            set(
                 cls.StateInfo(
                     data=st.value,
                     is_start=st in nfa.start_states,
@@ -43,7 +41,7 @@ class BoolDecomposition:
                 for st in nfa.states
             )
         )
-        if sort_states is not None:
+        if sort_states:
             states = sorted(states, key=lambda st: st.data)
 
         # Construct adjacency matrices
@@ -63,7 +61,7 @@ class BoolDecomposition:
 
         return cls(states, adjs)
 
-    def intersect(self, other: _Self) -> _Self:
+    def intersect(self, other: "BoolDecomposition") -> "BoolDecomposition":
         # Set of states of the intersection is the product of the given sets of states
         # State is "start" if both of its element states are "start"
         # State is "final" if both of its element states are "final"

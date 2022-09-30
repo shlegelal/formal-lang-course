@@ -26,11 +26,11 @@ def rpq(
     # Two nodes satisfy the query if one is the beginning of a path (i.e. a word) and
     # the other is its end
     results = set()
-    for beg_i, end_i in zip(*transitive_closure_indices):
-        beg = intersection.states[beg_i]
-        end = intersection.states[end_i]
-        if beg.is_start and end.is_final:
-            beg_graph_node = beg.data[0]
-            end_graph_node = end.data[0]
+    for n_from_i, n_to_i in zip(*transitive_closure_indices):
+        n_from = intersection.states[n_from_i]
+        n_to = intersection.states[n_to_i]
+        if n_from.is_start and n_to.is_final:
+            beg_graph_node = n_from.data[0]
+            end_graph_node = n_to.data[0]
             results.add((beg_graph_node, end_graph_node))
     return results

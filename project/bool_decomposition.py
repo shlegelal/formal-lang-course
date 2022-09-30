@@ -48,12 +48,12 @@ class BoolDecomposition:
         adjs = {}
         transitions = nfa.to_dict()
         n = len(states)
-        for beg in transitions:
-            for symbol, ends in transitions[beg].items():
+        for n_from in transitions:
+            for symbol, ns_to in transitions[n_from].items():
                 adj = adjs.setdefault(symbol.value, dok_array((n, n)))
-                beg_index = next(i for i, st in enumerate(states) if st.data == beg)
-                for end in ends if isinstance(ends, set) else {ends}:
-                    end_index = next(i for i, st in enumerate(states) if st.data == end)
+                beg_index = next(i for i, s in enumerate(states) if s.data == n_from)
+                for n_to in ns_to if isinstance(ns_to, set) else {ns_to}:
+                    end_index = next(i for i, s in enumerate(states) if s.data == n_to)
                     adj[beg_index, end_index] = 1
         # DOK is good for construction, CSR is good for calculations
         for key in adjs:

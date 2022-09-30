@@ -105,7 +105,7 @@ class TestGraphToNfa:
         ),
     )
     def test_on_dataset_graph(self, dataset_graph_name: str):
-        expected_graph = graph_utils.load_graph_from_cfpg_data(dataset_graph_name)
+        expected_graph = graph_utils.load_graph_from_cfpq_data(dataset_graph_name)
 
         nfa = automata_utils.graph_to_nfa(expected_graph, set(), set())
 

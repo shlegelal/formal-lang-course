@@ -8,7 +8,7 @@ GRAPH_INFOS = {
     "null": graph_utils.get_graph_info(nx.null_graph()),
     "trivial": graph_utils.get_graph_info(nx.trivial_graph()),
     "single_edge": graph_utils.get_graph_info(nx.Graph([(1, 2, {"label": "a"})])),
-    "skos": graph_utils.get_graph_info(graph_utils.load_graph_from_cfpg_data("skos")),
+    "skos": graph_utils.get_graph_info(graph_utils.load_graph_from_cfpq_data("skos")),
 }
 
 
@@ -37,7 +37,7 @@ def test_edges_num(graph_info: graph_utils.GraphInfo, expected_edges_num: int):
 @pytest.mark.parametrize(
     "graph_info, expected_labels",
     load_test_data(
-        "test_labels", lambda d: (GRAPH_INFOS[d["graph_name"]], d["expected_edges_num"])
+        "test_labels", lambda d: (GRAPH_INFOS[d["graph_name"]], d["expected_labels"])
     ),
 )
 def test_labels(graph_info: graph_utils.GraphInfo, expected_labels: list[str]):

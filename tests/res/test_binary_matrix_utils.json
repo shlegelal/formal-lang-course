@@ -1,0 +1,200 @@
+{
+  "test_intersect": [
+    {
+      "transitions_list": [
+        [
+          0,
+          "b",
+          0
+        ],
+        [
+          0,
+          "a",
+          1
+        ],
+        [
+          1,
+          "b",
+          1
+        ],
+        [
+          1,
+          "a",
+          0
+        ]
+      ],
+      "start_states": [
+        0
+      ],
+      "final_states": [
+        1
+      ]
+    },
+    {
+      "transitions_list": [
+        [
+          0,
+          "b",
+          0
+        ],
+        [
+          0,
+          "a",
+          1
+        ],
+        [
+          1,
+          "b",
+          1
+        ],
+        [
+          1,
+          "a",
+          0
+        ],
+        [
+          0,
+          "c",
+          1
+        ],
+        [
+          1,
+          "d",
+          0
+        ]
+      ],
+      "start_states": [
+        0
+      ],
+      "final_states": [
+        1
+      ]
+    },
+    {
+      "transitions_list": [
+        [
+          0,
+          "b",
+          0
+        ],
+        [
+          0,
+          "a",
+          1
+        ],
+        [
+          1,
+          "a",
+          1
+        ],
+        [
+          1,
+          "b",
+          0
+        ],
+        [
+          0,
+          "c",
+          1
+        ]
+      ],
+      "start_states": [
+        0
+      ],
+      "final_states": [
+        0,
+        1
+      ]
+    }
+  ],
+  "test_transitive_closure": [
+    {
+      "transitions_list": [
+        [
+          0,
+          "b",
+          0
+        ],
+        [
+          0,
+          "a",
+          1
+        ],
+        [
+          1,
+          "b",
+          1
+        ],
+        [
+          1,
+          "a",
+          0
+        ]
+      ],
+      "start_states": [
+        0
+      ],
+      "final_states": [
+        1
+      ],
+      "transitive_closure": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ]
+    },
+    {
+      "transitions_list": [
+        [
+          2,
+          "b",
+          0
+        ],
+        [
+          0,
+          "a",
+          1
+        ],
+        [
+          1,
+          "b",
+          2
+        ],
+        [
+          1,
+          "a",
+          0
+        ]
+      ],
+      "start_states": [
+        0
+      ],
+      "final_states": [
+        1,
+        2
+      ],
+      "transitive_closure": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ]
+    }
+  ]
+}

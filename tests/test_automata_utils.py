@@ -3,12 +3,8 @@ import pytest
 
 from load_test_res import load_test_res
 from networkx import drawing, is_isomorphic, isomorphism, MultiDiGraph
-from project.utils.automata_utils import (
-    AutomataUtilsError,
-    build_dfa_by_redex,
-    build_nfa_by_graph,
-)
-from project.utils.graph_utils import generate_labeled_two_cycles_graph, get_graph
+from project.utils.automata_utils import *
+from project.utils.graph_utils import *
 from pyformlang.regular_expression import Regex
 from pyformlang.finite_automaton import FiniteAutomaton
 
@@ -115,3 +111,37 @@ def test_build_nfa_by_graph_with_automata_utils_error(
         assert is_isomorphic_fa_and_graph(actual_nfa, MultiDiGraph())
     except AutomataUtilsError:
         assert True
+
+
+@pytest.mark.parametrize(
+    "query, start_states, final_states, expected",
+    map(
+        lambda res: (
+            res[0],
+            set(res[1]) if len(res[1]) else None,
+            set(res[2]) if len(res[2]) else None,
+            set(map(tuple, res[3])),
+        ),
+        load_test_res("test_rpq_labeled_two_cycles_graph_query"),
+    ),
+)
+@pytest.mark.parametrize(
+    "graph",
+    map(
+        lambda res: generate_labeled_two_cycles_graph(res[0], res[1]),
+        load_test_res("test_rpq_labeled_two_cycles_graph"),
+    ),
+)
+def test_rpq_labeled_two_cycles_graph(
+    graph: MultiDiGraph,
+    query: str,
+    start_states: set | None,
+    final_states: set | None,
+    expected: set,
+):
+    assert rpq(graph, Regex(query), start_states, final_states) == expected
+
+
+@pytest.mark.parametrize("query", load_test_res("test_rpq_empty_graph_query"))
+def test_rpq_empty_graph(query: str):
+    assert rpq(MultiDiGraph(), Regex(query), None, None) == set()

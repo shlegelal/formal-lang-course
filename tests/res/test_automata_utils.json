@@ -66,5 +66,277 @@
         6
       ]
     }
+  ],
+  "test_rpq_labeled_two_cycles_graph": [
+    {
+      "nodes": [
+        3,
+        2
+      ],
+      "labels": [
+        "x",
+        "y"
+      ]
+    }
+  ],
+  "test_rpq_labeled_two_cycles_graph_query": [
+    {
+      "query": "x*|y",
+      "start_states": [],
+      "final_states": [],
+      "expected": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          5,
+          0
+        ]
+      ]
+    },
+    {
+      "query": "a*|b",
+      "start_states": [],
+      "final_states": [],
+      "expected": []
+    },
+    {
+      "query": "x*|b",
+      "start_states": [],
+      "final_states": [],
+      "expected": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ]
+      ]
+    },
+    {
+      "query": "x*|y",
+      "start_states": [
+        0
+      ],
+      "final_states": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "expected": [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          0,
+          4
+        ]
+      ]
+    },
+    {
+      "query": "x*|y",
+      "start_states": [
+        4
+      ],
+      "final_states": [
+        4,
+        5
+      ],
+      "expected": [
+        [
+          4,
+          5
+        ]
+      ]
+    },
+    {
+      "query": "y",
+      "start_states": [
+        0
+      ],
+      "final_states": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "expected": []
+    },
+    {
+      "query": "y*",
+      "start_states": [
+        0
+      ],
+      "final_states": [
+        4,
+        5
+      ],
+      "expected": [
+        [
+          0,
+          5
+        ],
+        [
+          0,
+          4
+        ]
+      ]
+    },
+    {
+      "query": "",
+      "start_states": [
+        0
+      ],
+      "final_states": [
+        4,
+        5
+      ],
+      "expected": []
+    }
+  ],
+  "test_rpq_empty_graph_query": [
+    {
+      "query": "x*|y"
+    },
+    {
+      "query": ""
+    }
   ]
 }

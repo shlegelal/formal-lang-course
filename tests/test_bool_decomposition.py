@@ -162,3 +162,63 @@ class TestTransitiveClosureAnySymbol:
         actual_indices = decomp.transitive_closure_any_symbol()
 
         assert set(zip(*actual_indices)) == expected_indices
+
+
+class TestConstrainedBfs:
+    @pytest.mark.parametrize(
+        "main_states, main_adjs, constr_states, constr_adjs, expected",
+        load_test_data(
+            "TestConstrainedBfs",
+            lambda d: (
+                [_dict_to_state_info(st) for st in d["main_states"]],
+                _dict_to_adjs(d["main_adjs"]),
+                [_dict_to_state_info(st) for st in d["constr_states"]],
+                _dict_to_adjs(d["constr_adjs"]),
+                {end for _, end in d["expected"]},
+            ),
+            add_filename_suffix=True,
+        ),
+    )
+    def test_not_separated(
+        self,
+        main_states: list[BoolDecomposition.StateInfo],
+        main_adjs: dict[str, csr_array],
+        constr_states: list[BoolDecomposition.StateInfo],
+        constr_adjs: dict[str, csr_array],
+        expected: set[int],
+    ):
+        main_decomp = BoolDecomposition(main_states, main_adjs)
+        constraint_decomp = BoolDecomposition(constr_states, constr_adjs)
+
+        actual = main_decomp.constrained_bfs(constraint_decomp)
+
+        assert actual == expected
+
+    @pytest.mark.parametrize(
+        "main_states, main_adjs, constr_states, constr_adjs, expected",
+        load_test_data(
+            "TestConstrainedBfs",
+            lambda d: (
+                [_dict_to_state_info(st) for st in d["main_states"]],
+                _dict_to_adjs(d["main_adjs"]),
+                [_dict_to_state_info(st) for st in d["constr_states"]],
+                _dict_to_adjs(d["constr_adjs"]),
+                {(i, j) for i, j in d["expected"]},
+            ),
+            add_filename_suffix=True,
+        ),
+    )
+    def test_separated(
+        self,
+        main_states: list[BoolDecomposition.StateInfo],
+        main_adjs: dict[str, csr_array],
+        constr_states: list[BoolDecomposition.StateInfo],
+        constr_adjs: dict[str, csr_array],
+        expected: set[tuple[int, int]],
+    ):
+        main_decomp = BoolDecomposition(main_states, main_adjs)
+        constraint_decomp = BoolDecomposition(constr_states, constr_adjs)
+
+        actual = main_decomp.constrained_bfs(constraint_decomp, separated=True)
+
+        assert actual == expected

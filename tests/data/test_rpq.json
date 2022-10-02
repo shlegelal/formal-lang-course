@@ -1,5 +1,5 @@
 {
-  "test_rpq": [
+  "test_rpq_by_tensor": [
     {
       "graph": "digraph {}",
       "query": "",

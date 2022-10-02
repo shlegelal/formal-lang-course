@@ -123,13 +123,13 @@ class BoolDecomposition:
     def constrained_bfs(
         self, constraint: "BoolDecomposition", separated: bool = False
     ) -> set[int] | set[tuple[int, int]]:
-        # Save states number because using them heavily for metrix construction
+        # Save states number because will use them heavily for matrix construction
         n = len(constraint.states)
         m = len(self.states)
 
         direct_sum = constraint._direct_sum(self)
 
-        # Create initial front from starts in constraint (left) and self (right)
+        # Create initial front from starts of constraint (left) and self (right)
         start_states_indices = [i for i, st in enumerate(self.states) if st.is_start]
         init_front = (
             _init_bfs_front(self.states, constraint.states)
@@ -147,31 +147,31 @@ class BoolDecomposition:
         while True:
             old_visited = visited.copy()
 
-            # Perform a step for each decomposition matrix
-            for symbol, adj in direct_sum.adjs.items():
+            # Perform a BFS step for each matrix in direct sum
+            for _, adj in direct_sum.adjs.items():
                 # Compute new front for the symbol
                 front_part = visited @ adj if init_front is None else init_front @ adj
                 # Transform the resulting front so that:
-                # 1. It contains only rows with non-zero parts on both parts.
+                # 1. It only contains rows with non-zeros in both parts.
                 # 2. Its left part contains non-zeroes only on its main diagonal.
                 visited += _transform_front_part(front_part, m, n)
 
-            # Will use visited instead
+            # Can use visited instead now
             init_front = None
 
-            # If no new non-zero elements appeared, we've visited all nodes we can
+            # If no new non-zero elements have appeared, we've visited all we can
             if visited.nnz == old_visited.nnz:
                 break
 
-        # If BFS visited final self state in final constraint state, it is a result
+        # If visited a final self-state in final constraint-state, we found a result
         results = set()
         for i, j in zip(*visited.nonzero()):
             # Check that the element is from the self part (which is the main BFS part)
-            # and the requirements on final states are satisfied
+            # and the final state requirements are satisfied
             if j >= n and constraint.states[i % n].is_final:  # % is for separated BFS
                 self_st_index = j - n
                 if self.states[self_st_index].is_final:
-                    results.add(  # // is for separated BFS
+                    results.add(
                         self_st_index
                         if not separated
                         else (start_states_indices[i // n], self_st_index)
@@ -234,7 +234,7 @@ def _transform_front_part(
             if non_zero_row_right.nnz > 0:
                 # Account for separated front
                 row_shift = i // constr_states_num * constr_states_num
-                # Mark the row on the left part
+                # Mark the row in the left part
                 transformed_front_part[row_shift + j, j] = 1
                 # Move the right part of the row, saving what's already been moved
                 transformed_front_part[

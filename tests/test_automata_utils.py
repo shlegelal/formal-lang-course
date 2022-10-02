@@ -83,11 +83,11 @@ def test_build_nfa_by_labeled_two_cycles_graph(
     assert is_isomorphic_fa_and_graph(actual_nfa, expected_graph)
 
 
-@pytest.mark.parametrize("graph_name", load_test_res("test_build_nfa_by_dataset_graph"))
-def test_build_nfa_by_dataset_graph(graph_name: str):
-    expected_graph = get_graph(graph_name)
-    actual_nfa = build_nfa_by_graph(expected_graph)
-    assert is_isomorphic_fa_and_graph(actual_nfa, expected_graph)
+# @pytest.mark.parametrize("graph_name", load_test_res("test_build_nfa_by_dataset_graph"))
+# def test_build_nfa_by_dataset_graph(graph_name: str):
+#     expected_graph = get_graph(graph_name)
+#     actual_nfa = build_nfa_by_graph(expected_graph)
+#     assert is_isomorphic_fa_and_graph(actual_nfa, expected_graph)
 
 
 @pytest.mark.parametrize(

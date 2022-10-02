@@ -41,17 +41,6 @@ def test_build_empty():
         load_test_res("test_intersect"),
     ),
 )
-def test_build_bm(nfa_1: NondeterministicFiniteAutomaton):
-    assert nfa_1.is_equivalent_to(build_nfa_by_bm(build_bm_by_nfa(nfa_1)))
-
-
-@pytest.mark.parametrize(
-    "nfa_1",
-    map(
-        lambda res: (nfa(res[0], res[1], res[2])),
-        load_test_res("test_intersect"),
-    ),
-)
 def test_intersect_with_empty(nfa_1: NondeterministicFiniteAutomaton):
     bm = build_bm_by_nfa(nfa_1)
     empty_bm = build_bm_by_nfa(nfa([]))

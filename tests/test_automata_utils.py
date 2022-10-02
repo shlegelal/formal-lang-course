@@ -2,11 +2,11 @@ import pydot
 import pytest
 
 from load_test_res import load_test_res
-from networkx import drawing, is_isomorphic, isomorphism, MultiDiGraph
-from project.utils.automata_utils import *
-from project.utils.graph_utils import *
-from pyformlang.regular_expression import Regex
+from networkx import is_isomorphic, isomorphism
 from pyformlang.finite_automaton import FiniteAutomaton
+
+from project.utils.automata_utils import *
+from project.utils.regular_utils import rpq
 
 
 def build_graph_by_srt(s: str) -> MultiDiGraph:

@@ -38,21 +38,21 @@
   "test_labels": [
     {
       "graph_name": "null",
-      "expected_edges_num": []
+      "expected_labels": []
     },
     {
       "graph_name": "trivial",
-      "expected_edges_num": []
+      "expected_labels": []
     },
     {
       "graph_name": "single_edge",
-      "expected_edges_num": [
+      "expected_labels": [
         "a"
       ]
     },
     {
       "graph_name": "skos",
-      "expected_edges_num": [
+      "expected_labels": [
         "subPropertyOf",
         "label",
         "comment",

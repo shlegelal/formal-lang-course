@@ -2,8 +2,8 @@ import pytest
 import networkx as nx
 from pathlib import Path
 
-from project import utils
-from load_test_data import load_test_data
+from project import graph_utils
+from testing_utils import load_test_data
 
 
 def _check_build_and_save_dot_then_load_is_isomorphic(
@@ -13,7 +13,7 @@ def _check_build_and_save_dot_then_load_is_isomorphic(
 ):
     path = (tmp_path / "test_graph.dot").as_posix()
 
-    expected_graph = utils.build_and_save_labeled_two_cycles_graph_as_dot(
+    expected_graph = graph_utils.build_and_save_labeled_two_cycles_graph_as_dot(
         first_cycle_num, "a", second_cycle_num, "b", path
     )
 
@@ -34,7 +34,8 @@ class TestSaveDotThenLoadIsIsomorphic:
     @pytest.mark.parametrize(
         "first_cycle_num, second_cycle_num",
         load_test_data(
-            "TestSaveDotThenLoadIsIsomorphic.test_zero_nodes_produces_value_error"
+            "TestSaveDotThenLoadIsIsomorphic.test_zero_nodes_produces_value_error",
+            lambda d: (d["first_cycle_num"], d["second_cycle_num"]),
         ),
     )
     def test_zero_nodes_produces_value_error(
@@ -48,7 +49,8 @@ class TestSaveDotThenLoadIsIsomorphic:
     @pytest.mark.parametrize(
         "first_cycle_num, second_cycle_num",
         load_test_data(
-            "TestSaveDotThenLoadIsIsomorphic.test_saved_and_loaded_is_isomorphic"
+            "TestSaveDotThenLoadIsIsomorphic.test_saved_and_loaded_is_isomorphic",
+            lambda d: (d["first_cycle_num"], d["second_cycle_num"]),
         ),
     )
     def test_saved_and_loaded_is_isomorphic(
@@ -64,7 +66,14 @@ class TestSaveDotThenLoadIsIsomorphic:
 class TestDotContents:
     @pytest.mark.parametrize(
         "first_cycle_num, second_cycle_num, expected_contents",
-        load_test_data("TestDotContents.test_saved_contents_are_correct"),
+        load_test_data(
+            "TestDotContents.test_saved_contents_are_correct",
+            lambda d: (
+                d["first_cycle_num"],
+                d["second_cycle_num"],
+                d["expected_contents"],
+            ),
+        ),
     )
     def test_saved_contents_are_correct(
         self,
@@ -75,7 +84,7 @@ class TestDotContents:
     ):
         path = (tmp_path / "test_graph.dot").as_posix()
 
-        utils.build_and_save_labeled_two_cycles_graph_as_dot(
+        graph_utils.build_and_save_labeled_two_cycles_graph_as_dot(
             first_cycle_num, "a", second_cycle_num, "b", path
         )
 

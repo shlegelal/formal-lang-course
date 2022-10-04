@@ -11,7 +11,7 @@ class GraphInfo(NamedTuple):
     labels: Iterable[str]
 
 
-def load_graph_from_cfpg_data(name: str) -> nx.MultiDiGraph:
+def load_graph_from_cfpq_data(name: str) -> nx.MultiDiGraph:
     graph_path = cfpq_data.download(name)
     graph = cfpq_data.graph_from_csv(graph_path)
     return graph

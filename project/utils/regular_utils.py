@@ -3,7 +3,12 @@ from pyformlang.regular_expression import Regex
 from scipy.sparse import dok_matrix, block_diag, csr_array, lil_array, vstack
 
 from project.utils.automata_utils import build_dfa_by_redex, build_nfa_by_graph
-from project.utils.binary_matrix_utils import build_bm_by_nfa, intersect, transitive_closure, BinaryMatrix
+from project.utils.binary_matrix_utils import (
+    BinaryMatrix,
+    build_bm_by_nfa,
+    intersect,
+    transitive_closure,
+)
 
 
 def tensor_rpq(
@@ -49,12 +54,18 @@ def _direct_sum(
     matrix = dict()
     n = len(bm_right.indexed_states)
     for key in bm_left.matrix.keys():
-        matrix[key] = csr_array(block_diag(
-            (
-                bm_left.matrix[key],
-                (dok_matrix((n, n)) if key not in bm_right.matrix.keys() else bm_right.matrix[key])
+        matrix[key] = csr_array(
+            block_diag(
+                (
+                    bm_left.matrix[key],
+                    (
+                        dok_matrix((n, n))
+                        if key not in bm_right.matrix.keys()
+                        else bm_right.matrix[key]
+                    ),
+                )
             )
-        ))
+        )
 
     return matrix
 
@@ -98,7 +109,10 @@ def _init_front_separated(
             )
         )
 
-    return csr_array(vstack(fs)) if len(fs) > 0 else csr_array((x, y)), start_states_list
+    return (
+        csr_array(vstack(fs)) if len(fs) > 0 else csr_array((x, y)),
+        start_states_list,
+    )
 
 
 def _transport_front_part(
@@ -156,14 +170,19 @@ def bfs_rpq(
             graph_bm.start_states,
         )
     else:
-        front = (
-            _init_front(
-                k,
-                k + n,
-                query_bm.indexed_states,
-                query_bm.start_states,
-                lil_array([[int(st in graph_bm.start_states) for st in graph_bm.indexed_states.keys()]]),
-            )
+        front = _init_front(
+            k,
+            k + n,
+            query_bm.indexed_states,
+            query_bm.start_states,
+            lil_array(
+                [
+                    [
+                        int(st in graph_bm.start_states)
+                        for st in graph_bm.indexed_states.keys()
+                    ]
+                ]
+            ),
         )
 
     visited = csr_array(front.shape)
@@ -182,8 +201,12 @@ def bfs_rpq(
 
     result = set()
     graph_states = {i: st for st, i in graph_bm.indexed_states.items()}
-    query_final_states_index = {i for st, i in query_bm.indexed_states.items() if st in query_bm.final_states}
-    graph_final_states_index = {i for st, i in graph_bm.indexed_states.items() if st in graph_bm.final_states}
+    query_final_states_index = {
+        i for st, i in query_bm.indexed_states.items() if st in query_bm.final_states
+    }
+    graph_final_states_index = {
+        i for st, i in graph_bm.indexed_states.items() if st in graph_bm.final_states
+    }
 
     for i, j in zip(*visited.nonzero()):
         if j >= k and i % k in query_final_states_index:

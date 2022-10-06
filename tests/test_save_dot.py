@@ -1,9 +1,11 @@
-import pytest
-import networkx as nx
 from pathlib import Path
+
+import networkx as nx
+import pytest
 
 from project import graph_utils
 from testing_utils import load_test_data
+from testing_utils import load_test_ids
 
 
 def _check_build_and_save_dot_then_load_is_isomorphic(
@@ -37,6 +39,9 @@ class TestSaveDotThenLoadIsIsomorphic:
             "TestSaveDotThenLoadIsIsomorphic.test_zero_nodes_produces_value_error",
             lambda d: (d["first_cycle_num"], d["second_cycle_num"]),
         ),
+        ids=load_test_ids(
+            "TestSaveDotThenLoadIsIsomorphic.test_zero_nodes_produces_value_error"
+        ),
     )
     def test_zero_nodes_produces_value_error(
         self, first_cycle_num: int, second_cycle_num: int, tmp_path: Path
@@ -51,6 +56,9 @@ class TestSaveDotThenLoadIsIsomorphic:
         load_test_data(
             "TestSaveDotThenLoadIsIsomorphic.test_saved_and_loaded_is_isomorphic",
             lambda d: (d["first_cycle_num"], d["second_cycle_num"]),
+        ),
+        ids=load_test_ids(
+            "TestSaveDotThenLoadIsIsomorphic.test_saved_and_loaded_is_isomorphic"
         ),
     )
     def test_saved_and_loaded_is_isomorphic(
@@ -74,6 +82,7 @@ class TestDotContents:
                 d["expected_contents"],
             ),
         ),
+        ids=load_test_ids("TestDotContents.test_saved_contents_are_correct"),
     )
     def test_saved_contents_are_correct(
         self,

@@ -1,30 +1,36 @@
 {
   "TestSaveDotThenLoadIsIsomorphic.test_zero_nodes_produces_value_error": [
     {
+      "description": "zeros in both cycles",
       "first_cycle_num": 0,
       "second_cycle_num": 0
     },
     {
+      "description": "zero in first cycle",
       "first_cycle_num": 0,
       "second_cycle_num": 3
     },
     {
+      "description": "zero in second cycle",
       "first_cycle_num": 3,
       "second_cycle_num": 0
     }
   ],
   "TestSaveDotThenLoadIsIsomorphic.test_saved_and_loaded_is_isomorphic": [
     {
+      "description": "single node in both cycles",
       "first_cycle_num": 1,
       "second_cycle_num": 1
     },
     {
+      "description": "multiple nodes in both cycles",
       "first_cycle_num": 10,
       "second_cycle_num": 10
     }
   ],
   "TestDotContents.test_saved_contents_are_correct": [
     {
+      "description": "multiple nodes in both cycles",
       "first_cycle_num": 2,
       "second_cycle_num": 2,
       "expected_contents": "digraph  {1;2;0;3;4;1 -> 2  [key=0, label=a];2 -> 0  [key=0, label=a];0 -> 1  [key=0, label=a];0 -> 3  [key=0, label=b];3 -> 4  [key=0, label=b];4 -> 0  [key=0, label=b];}"

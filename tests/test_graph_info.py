@@ -3,6 +3,7 @@ import pytest
 
 from project import graph_utils
 from testing_utils import load_test_data
+from testing_utils import load_test_ids
 
 GRAPH_INFOS = {
     "null": graph_utils.get_graph_info(nx.null_graph()),
@@ -25,6 +26,7 @@ GRAPH_INFOS = {
             ),
         ),
     ),
+    ids=load_test_ids("test_nodes_num"),
 )
 def test_nodes_num(graph_info: graph_utils.GraphInfo, expected_nodes_num: int):
     assert graph_info.nodes_num == expected_nodes_num
@@ -42,6 +44,7 @@ def test_nodes_num(graph_info: graph_utils.GraphInfo, expected_nodes_num: int):
             ),
         ),
     ),
+    ids=load_test_ids("test_edges_num"),
 )
 def test_edges_num(graph_info: graph_utils.GraphInfo, expected_edges_num: int):
     assert graph_info.edges_num == expected_edges_num
@@ -59,6 +62,7 @@ def test_edges_num(graph_info: graph_utils.GraphInfo, expected_edges_num: int):
             ),
         ),
     ),
+    ids=load_test_ids("test_labels"),
 )
 def test_labels(graph_info: graph_utils.GraphInfo, expected_labels: list[str]):
     assert list(graph_info.labels) == expected_labels

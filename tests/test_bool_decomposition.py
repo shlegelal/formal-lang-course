@@ -2,10 +2,11 @@ import pytest
 from pyformlang import finite_automaton as fa
 from scipy.sparse import csr_array
 
-from project.bool_decomposition import BoolDecomposition
 from project.automata_utils import graph_to_nfa
-from testing_utils import load_test_data
+from project.bool_decomposition import BoolDecomposition
 from testing_utils import dot_str_to_graph
+from testing_utils import load_test_data
+from testing_utils import load_test_ids
 
 
 def _dot_str_to_nfa(dot: str) -> fa.EpsilonNFA:
@@ -51,6 +52,7 @@ class TestFromNfa:
             ),
             add_filename_suffix=True,
         ),
+        ids=load_test_ids("TestFromNfa", add_filename_suffix=True),
     )
     def test_states_are_correct(
         self, nfa: fa.EpsilonNFA, expected_states: list[BoolDecomposition.StateInfo]
@@ -66,6 +68,7 @@ class TestFromNfa:
             lambda d: (_dot_str_to_nfa(d["graph"]), _dict_to_adjs(d["expected_adjs"])),
             add_filename_suffix=True,
         ),
+        ids=load_test_ids("TestFromNfa", add_filename_suffix=True),
     )
     def test_adjs_are_correct(
         self, nfa: fa.EpsilonNFA, expected_adjs: dict[str, csr_array]
@@ -94,6 +97,7 @@ class TestIntersect:
             ),
             add_filename_suffix=True,
         ),
+        ids=load_test_ids("TestIntersect", add_filename_suffix=True),
     )
     def test_states_are_correct(
         self,
@@ -123,6 +127,7 @@ class TestIntersect:
             ),
             add_filename_suffix=True,
         ),
+        ids=load_test_ids("TestIntersect", add_filename_suffix=True),
     )
     def test_adjs_are_correct(
         self,
@@ -151,6 +156,7 @@ class TestTransitiveClosureAnySymbol:
             ),
             add_filename_suffix=True,
         ),
+        ids=load_test_ids("TestTransitiveClosureAnySymbol", add_filename_suffix=True),
     )
     def test_closure_is_correct(
         self, adjs: dict[str, csr_array], expected_indices: set[tuple]
@@ -178,6 +184,7 @@ class TestConstrainedBfs:
             ),
             add_filename_suffix=True,
         ),
+        ids=load_test_ids("TestConstrainedBfs", add_filename_suffix=True),
     )
     def test_not_separated(
         self,
@@ -207,6 +214,7 @@ class TestConstrainedBfs:
             ),
             add_filename_suffix=True,
         ),
+        ids=load_test_ids("TestConstrainedBfs", add_filename_suffix=True),
     )
     def test_separated(
         self,

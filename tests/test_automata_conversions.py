@@ -1,11 +1,12 @@
-import pytest
 import networkx as nx
+import pytest
 from pyformlang import finite_automaton as fa
 
 from project import automata_utils
 from project import graph_utils
-from testing_utils import load_test_data
 from testing_utils import dot_str_to_graph
+from testing_utils import load_test_data
+from testing_utils import load_test_ids
 
 
 def _check_is_isomorphic(actual_fa: fa.FiniteAutomaton, expected_fa_graph: nx.Graph):
@@ -44,6 +45,7 @@ class TestRegexToMinDfa:
             "TestRegexToMinDfa.test_regex_converts_to_correct_dfa",
             lambda d: (d["raw_regex"], dot_str_to_graph(d["expected_dfa_dot"])),
         ),
+        ids=load_test_ids("TestRegexToMinDfa.test_regex_converts_to_correct_dfa"),
     )
     def test_regex_converts_to_correct_dfa(
         self, raw_regex: str, expected_dfa_graph: nx.Graph
@@ -65,6 +67,7 @@ class TestGraphToNfa:
                 dot_str_to_graph(d["expected_nfa_graph"]),
             ),
         ),
+        ids=load_test_ids("TestGraphToNfa.test_on_predefined_graph"),
     )
     def test_on_predefined_graph(
         self,
@@ -83,6 +86,7 @@ class TestGraphToNfa:
             "TestGraphToNfa.test_on_synthetic_graph",
             lambda d: (d["first_cycle_num"], d["second_cycle_num"]),
         ),
+        ids=load_test_ids("TestGraphToNfa.test_on_synthetic_graph"),
     )
     def test_on_synthetic_graph(self, first_cycle_num: int, second_cycle_num: int):
         expected_graph = graph_utils.build_labeled_two_cycles_graph(
@@ -106,6 +110,7 @@ class TestGraphToNfa:
                 d["dataset_graph_name"], marks=pytest.mark.skip("broken dataset")
             ),
         ),
+        ids=load_test_ids("TestGraphToNfa.test_on_dataset_graph"),
     )
     def test_on_dataset_graph(self, dataset_graph_name: str):
         expected_graph = graph_utils.load_graph_from_cfpq_data(dataset_graph_name)

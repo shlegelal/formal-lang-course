@@ -1,241 +1,119 @@
 {
   "TestTransitiveClosureAnySymbol": [
     {
+      "description": "empty decomposition",
       "adjs": {},
       "expected_indices": []
     },
     {
+      "description": "single node",
       "adjs": {
-        "a": [
-          0
-        ]
+        "a": [0]
       },
       "expected_indices": []
     },
     {
+      "description": "self-loop",
       "adjs": {
-        "a": [
-          1
-        ]
+        "a": [1]
       },
       "expected_indices": [
-        [
-          0,
-          0
-        ]
+        [0, 0]
       ]
     },
     {
+      "description": "self-loop on multiple symbols",
+      "adjs": {
+        "a": [1],
+        "b": [1]
+      },
+      "expected_indices": [
+        [0, 0]
+      ]
+    },
+    {
+      "description": "two nodes, single edge",
       "adjs": {
         "a": [
-          1
+          [0, 1],
+          [0, 0]
+        ]
+      },
+      "expected_indices": [
+        [0, 1]
+      ]
+    },
+    {
+      "description": "closure is full-graph (single symbol)",
+      "adjs": {
+        "a": [
+          [0, 1],
+          [1, 0]
+        ]
+      },
+      "expected_indices": [
+        [0, 0],
+        [0, 1],
+        [1, 0],
+        [1, 1]
+      ]
+    },
+    {
+      "description": "multiple nodes and edges",
+      "adjs": {
+        "a": [
+          [0, 1, 0],
+          [0, 0, 0],
+          [1, 0, 1]
+        ]
+      },
+      "expected_indices": [
+        [0, 1],
+        [2, 0],
+        [2, 1],
+        [2, 2]
+      ]
+    },
+    {
+      "description": "closure is full-graph (multiple symbols)",
+      "adjs": {
+        "a": [
+          [0, 1],
+          [0, 0]
         ],
         "b": [
-          1
+          [0, 1],
+          [1, 0]
         ]
       },
       "expected_indices": [
-        [
-          0,
-          0
-        ]
+        [0, 0],
+        [0, 1],
+        [1, 0],
+        [1, 1]
       ]
     },
     {
+      "description": "multimple nodes and edges, multiple symbols",
       "adjs": {
         "a": [
-          [
-            0,
-            1
-          ],
-          [
-            0,
-            0
-          ]
-        ]
-      },
-      "expected_indices": [
-        [
-          0,
-          1
-        ]
-      ]
-    },
-    {
-      "adjs": {
-        "a": [
-          [
-            0,
-            1
-          ],
-          [
-            1,
-            0
-          ]
-        ]
-      },
-      "expected_indices": [
-        [
-          0,
-          0
-        ],
-        [
-          0,
-          1
-        ],
-        [
-          1,
-          0
-        ],
-        [
-          1,
-          1
-        ]
-      ]
-    },
-    {
-      "adjs": {
-        "a": [
-          [
-            0,
-            1,
-            0
-          ],
-          [
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            0,
-            1
-          ]
-        ]
-      },
-      "expected_indices": [
-        [
-          0,
-          1
-        ],
-        [
-          2,
-          0
-        ],
-        [
-          2,
-          1
-        ],
-        [
-          2,
-          2
-        ]
-      ]
-    },
-    {
-      "adjs": {
-        "a": [
-          [
-            0,
-            1
-          ],
-          [
-            0,
-            0
-          ]
+          [0, 1, 0],
+          [0, 0, 1],
+          [0, 0, 0]
         ],
         "b": [
-          [
-            0,
-            1
-          ],
-          [
-            1,
-            0
-          ]
+          [0, 0, 0],
+          [0, 0, 0],
+          [0, 1, 0]
         ]
       },
       "expected_indices": [
-        [
-          0,
-          0
-        ],
-        [
-          0,
-          1
-        ],
-        [
-          1,
-          0
-        ],
-        [
-          1,
-          1
-        ]
-      ]
-    },
-    {
-      "adjs": {
-        "a": [
-          [
-            0,
-            1,
-            0
-          ],
-          [
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            0,
-            0
-          ]
-        ],
-        "b": [
-          [
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            1,
-            0
-          ]
-        ]
-      },
-      "expected_indices": [
-        [
-          0,
-          1
-        ],
-        [
-          0,
-          2
-        ],
-        [
-          1,
-          1
-        ],
-        [
-          1,
-          2
-        ],
-        [
-          2,
-          1
-        ],
-        [
-          2,
-          2
-        ]
+        [0, 1],
+        [0, 2],
+        [1, 1],
+        [1, 2],
+        [2, 1],
+        [2, 2]
       ]
     }
   ]

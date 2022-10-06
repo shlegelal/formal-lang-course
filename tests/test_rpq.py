@@ -1,9 +1,10 @@
-import pytest
 import networkx as nx
+import pytest
 
 from project import rpq
-from testing_utils import load_test_data
 from testing_utils import dot_str_to_graph
+from testing_utils import load_test_data
+from testing_utils import load_test_ids
 
 
 @pytest.mark.parametrize(
@@ -18,6 +19,7 @@ from testing_utils import dot_str_to_graph
             {tuple(pair) for pair in d["expected"]},
         ),
     ),
+    ids=load_test_ids("test_rpq_by_tensor"),
 )
 def test_rpq_by_tensor(
     graph: nx.Graph,
@@ -43,6 +45,7 @@ def test_rpq_by_tensor(
             {end for _, end in d["expected"]},
         ),
     ),
+    ids=load_test_ids("test_rpq_by_tensor"),
 )
 def test_rpq_by_bfs_for_all(
     graph: nx.Graph,
@@ -68,6 +71,7 @@ def test_rpq_by_bfs_for_all(
             {tuple(pair) for pair in d["expected"]},
         ),
     ),
+    ids=load_test_ids("test_rpq_by_tensor"),
 )
 def test_rpq_by_bfs_for_each(
     graph: nx.Graph,

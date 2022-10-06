@@ -1,6 +1,7 @@
 {
   "TestConstrainedBfs": [
     {
+      "description": "empty main, empty constraint",
       "main_states": [],
       "main_adjs": {},
       "constr_states": [],
@@ -8,6 +9,7 @@
       "expected": []
     },
     {
+      "description": "empty main, non-empty constraint with start and final",
       "main_states": [],
       "main_adjs": {},
       "constr_states": [
@@ -18,13 +20,12 @@
         }
       ],
       "constr_adjs": {
-        "a": [
-          1
-        ]
+        "a": [1]
       },
       "expected": []
     },
     {
+      "description": "empty main, non-empty constraint without starts and finals",
       "main_states": [],
       "main_adjs": {},
       "constr_states": [
@@ -35,13 +36,12 @@
         }
       ],
       "constr_adjs": {
-        "a": [
-          1
-        ]
+        "a": [1]
       },
       "expected": []
     },
     {
+      "description": "non-empty main with start and final, empty constraint",
       "main_states": [
         {
           "data": "1",
@@ -50,15 +50,14 @@
         }
       ],
       "main_adjs": {
-        "a": [
-          1
-        ]
+        "a": [1]
       },
       "constr_states": [],
       "constr_adjs": {},
       "expected": []
     },
     {
+      "description": "non-empty main without starts and finals, empty constraint",
       "main_states": [
         {
           "data": "1",
@@ -67,15 +66,14 @@
         }
       ],
       "main_adjs": {
-        "a": [
-          1
-        ]
+        "a": [1]
       },
       "constr_states": [],
       "constr_adjs": {},
       "expected": []
     },
     {
+      "description": "two-cycles main, linear constraint",
       "main_states": [
         {
           "data": "0",
@@ -100,56 +98,16 @@
       ],
       "main_adjs": {
         "a": [
-          [
-            0,
-            1,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            1,
-            0
-          ],
-          [
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0
-          ]
+          [0, 1, 0, 0],
+          [0, 0, 1, 0],
+          [1, 0, 0, 0],
+          [0, 0, 0, 0]
         ],
         "b": [
-          [
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            0,
-            1,
-            0
-          ]
+          [0, 0, 0, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 1],
+          [0, 0, 1, 0]
         ]
       },
       "constr_states": [
@@ -171,48 +129,22 @@
       ],
       "constr_adjs": {
         "a": [
-          [
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            0,
-            0
-          ]
+          [0, 0, 0],
+          [0, 0, 1],
+          [0, 0, 0]
         ],
         "b": [
-          [
-            0,
-            1,
-            0
-          ],
-          [
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0
-          ]
+          [0, 1, 0],
+          [0, 0, 0],
+          [0, 0, 0]
         ]
       },
       "expected": [
-        [
-          3,
-          0
-        ]
+        [3, 0]
       ]
     },
     {
+      "description": "equal main and constraint",
       "main_states": [
         {
           "data": "0",
@@ -227,14 +159,8 @@
       ],
       "main_adjs": {
         "a": [
-          [
-            0,
-            1
-          ],
-          [
-            0,
-            0
-          ]
+          [0, 1],
+          [0, 0]
         ]
       },
       "constr_states": [
@@ -251,24 +177,16 @@
       ],
       "constr_adjs": {
         "a": [
-          [
-            0,
-            1
-          ],
-          [
-            0,
-            0
-          ]
+          [0, 1],
+          [0, 0]
         ]
       },
       "expected": [
-        [
-          0,
-          1
-        ]
+        [0, 1]
       ]
     },
     {
+      "description": "self-loop main that satisfies constraint",
       "main_states": [
         {
           "data": "1",
@@ -277,9 +195,7 @@
         }
       ],
       "main_adjs": {
-        "a": [
-          1
-        ]
+        "a": [1]
       },
       "constr_states": [
         {
@@ -295,24 +211,16 @@
       ],
       "constr_adjs": {
         "a": [
-          [
-            0,
-            1
-          ],
-          [
-            0,
-            0
-          ]
+          [0, 1],
+          [0, 0]
         ]
       },
       "expected": [
-        [
-          0,
-          0
-        ]
+        [0, 0]
       ]
     },
     {
+      "description": "self-loop main that doesn't satisfy constraint",
       "main_states": [
         {
           "data": "1",
@@ -321,9 +229,7 @@
         }
       ],
       "main_adjs": {
-        "a": [
-          1
-        ]
+        "a": [1]
       },
       "constr_states": [
         {
@@ -339,14 +245,8 @@
       ],
       "constr_adjs": {
         "b": [
-          [
-            0,
-            1
-          ],
-          [
-            0,
-            0
-          ]
+          [0, 1],
+          [0, 0]
         ]
       },
       "expected": []

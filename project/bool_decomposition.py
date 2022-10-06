@@ -145,7 +145,7 @@ class BoolDecomposition:
 
         # Perform matrix-multiplication-based-BFS until visited stops changing
         while True:
-            old_visited = visited.copy()
+            old_visited_nnz = visited.nnz
 
             # Perform a BFS step for each matrix in direct sum
             for _, adj in direct_sum.adjs.items():
@@ -160,7 +160,7 @@ class BoolDecomposition:
             init_front = None
 
             # If no new non-zero elements have appeared, we've visited all we can
-            if visited.nnz == old_visited.nnz:
+            if visited.nnz == old_visited_nnz:
                 break
 
         # If visited a final self-state in final constraint-state, we found a result

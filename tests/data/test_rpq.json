@@ -1,6 +1,7 @@
 {
-  "test_rpq": [
+  "test_rpq_by_tensor": [
     {
+      "description": "empty graph and query",
       "graph": "digraph {}",
       "query": "",
       "starts": [],
@@ -8,6 +9,7 @@
       "expected": []
     },
     {
+      "description": "empty graph, non-empty query",
       "graph": "digraph {}",
       "query": "a*",
       "starts": [],
@@ -15,6 +17,7 @@
       "expected": []
     },
     {
+      "description": "empty graph, null starts and finals",
       "graph": "digraph {}",
       "query": "a*",
       "starts": null,
@@ -22,177 +25,112 @@
       "expected": []
     },
     {
+      "description": "single node",
       "graph": "digraph {1;}",
       "query": "a*",
-      "starts": [
-        "1"
-      ],
+      "starts": ["1"],
       "finals": [],
       "expected": []
     },
     {
+      "description": "self-loop with matching label",
       "graph": "digraph {1; 1 -> 1 [label=a]}",
       "query": "a*",
-      "starts": [
-        "1"
-      ],
-      "finals": [
-        "1"
-      ],
+      "starts": ["1"],
+      "finals": ["1"],
       "expected": [
-        [
-          "1",
-          "1"
-        ]
+        ["1", "1"]
       ]
     },
     {
+      "description": "self-loop with non-matching label",
       "graph": "digraph {1; 1 -> 1 [label=b]}",
       "query": "a*",
-      "starts": [
-        "1"
-      ],
-      "finals": [
-        "1"
-      ],
+      "starts": ["1"],
+      "finals": ["1"],
       "expected": []
     },
     {
+      "description": "single edge",
       "graph": "digraph {1; 2; 1 -> 2 [label=a]}",
       "query": "a",
-      "starts": [
-        "1"
-      ],
-      "finals": [
-        "2"
-      ],
+      "starts": ["1"],
+      "finals": ["2"],
       "expected": [
-        [
-          "1",
-          "2"
-        ]
+        ["1", "2"]
       ]
     },
     {
+      "description": "no starts",
       "graph": "digraph {1; 2; 1 -> 2 [label=a]}",
       "query": "a",
       "starts": [],
-      "finals": [
-        "2"
-      ],
+      "finals": ["2"],
       "expected": []
     },
     {
+      "description": "query with single symbol",
       "graph": "digraph {1; 2; 1 -> 2 [label=a]; 1 -> 3 [label=a]}",
       "query": "a",
-      "starts": [
-        "1"
-      ],
-      "finals": [
-        "2",
-        "3"
-      ],
+      "starts": ["1"],
+      "finals": ["2", "3"],
       "expected": [
-        [
-          "1",
-          "2"
-        ],
-        [
-          "1",
-          "3"
-        ]
+        ["1", "2"],
+        ["1", "3"]
       ]
     },
     {
+      "description": "query with concatenation",
       "graph": "digraph {1; 2; 1 -> 2 [label=a]; 2 -> 3 [label=a]}",
       "query": "a a",
-      "starts": [
-        "1"
-      ],
-      "finals": [
-        "2",
-        "3"
-      ],
+      "starts": ["1"],
+      "finals": ["2", "3"],
       "expected": [
-        [
-          "1",
-          "3"
-        ]
+        ["1", "3"]
       ]
     },
     {
+      "description": "query with alternative and concatenation",
       "graph": "digraph {1; 2; 1 -> 2 [label=a]; 2 -> 3 [label=a]}",
       "query": "(a|b) a",
-      "starts": [
-        "1"
-      ],
-      "finals": [
-        "3"
-      ],
+      "starts": ["1"],
+      "finals": ["3"],
       "expected": [
-        [
-          "1",
-          "3"
-        ]
+        ["1", "3"]
       ]
     },
     {
+      "description": "query with Kleene star",
       "graph": "digraph {1; 2; 1 -> 2 [label=a]; 2 -> 3 [label=a]}",
       "query": "a*",
-      "starts": [
-        "1"
-      ],
-      "finals": [
-        "2",
-        "3"
-      ],
+      "starts": ["1"],
+      "finals": ["2", "3"],
       "expected": [
-        [
-          "1",
-          "2"
-        ],
-        [
-          "1",
-          "3"
-        ]
+        ["1", "2"],
+        ["1", "3"]
       ]
     },
     {
+      "description": "null finals",
       "graph": "digraph {1;2;3;4; 1 -> 2 [label=a]; 1 -> 2 [label=b]; 2 -> 3 [label=c]; 1 -> 4 [label=c]}",
       "query": "a* c",
-      "starts": [
-        "1"
-      ],
+      "starts": ["1"],
       "finals": null,
       "expected": [
-        [
-          "1",
-          "3"
-        ],
-        [
-          "1",
-          "4"
-        ]
+        ["1", "3"],
+        ["1", "4"]
       ]
     },
     {
+      "description": "null starts and finals",
       "graph": "digraph {1;2;3;4; 1 -> 2 [label=a]; 1 -> 2 [label=b]; 2 -> 3 [label=c]; 1 -> 4 [label=c]}",
       "query": "a* c",
       "starts": null,
       "finals": null,
       "expected": [
-        [
-          "1",
-          "3"
-        ],
-        [
-          "1",
-          "4"
-        ],
-        [
-          "2",
-          "3"
-        ]
+        ["1", "3"],
+        ["1", "4"],
+        ["2", "3"]
       ]
     }
   ]

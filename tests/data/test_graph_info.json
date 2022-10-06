@@ -1,56 +1,66 @@
 {
   "test_nodes_num": [
     {
+      "description": "null graph",
       "graph_name": "null",
       "expected_nodes_num": 0
     },
     {
+      "description": "graph with single node",
       "graph_name": "trivial",
       "expected_nodes_num": 1
     },
     {
+      "description": "graph with single edge",
       "graph_name": "single_edge",
       "expected_nodes_num": 2
     },
     {
+      "description": "skos graph",
       "graph_name": "skos",
       "expected_nodes_num": 144
     }
   ],
   "test_edges_num": [
     {
+      "description": "null graph",
       "graph_name": "null",
       "expected_edges_num": 0
     },
     {
+      "description": "graph with single node",
       "graph_name": "trivial",
       "expected_edges_num": 0
     },
     {
+      "description": "graph with single edge",
       "graph_name": "single_edge",
       "expected_edges_num": 1
     },
     {
+      "description": "skos graph",
       "graph_name": "skos",
       "expected_edges_num": 252
     }
   ],
   "test_labels": [
     {
+      "description": "null graph",
       "graph_name": "null",
       "expected_labels": []
     },
     {
+      "description": "graph with single node",
       "graph_name": "trivial",
       "expected_labels": []
     },
     {
+      "description": "graph with single edge",
       "graph_name": "single_edge",
-      "expected_labels": [
-        "a"
-      ]
+      "expected_labels": ["a"]
     },
     {
+      "description": "skos graph",
       "graph_name": "skos",
       "expected_labels": [
         "subPropertyOf",

@@ -1,7 +1,10 @@
 from pyformlang.finite_automaton import EpsilonNFA
 from scipy.sparse import csr_array
 from scipy.sparse import dok_array
+from scipy.sparse import lil_array
 from scipy.sparse import kron
+from scipy.sparse import bmat
+from scipy.sparse import vstack
 from itertools import product
 from typing import Any
 from typing import NamedTuple
@@ -18,9 +21,6 @@ class BoolDecomposition:
         states: list[StateInfo] | None = None,
         adjs: dict[Any, csr_array] | None = None,
     ):
-        if states is not None and len(states) != len(set(states)):
-            raise ValueError("States cannot contain duplicates")
-
         self.states: list[BoolDecomposition.StateInfo] = (
             states if states is not None else []
         )
@@ -81,7 +81,9 @@ class BoolDecomposition:
         n = len(states)
         for symbol in set(self.adjs.keys()).union(set(other.adjs.keys())):
             if symbol in self.adjs and symbol in other.adjs:
-                adjs[symbol] = kron(self.adjs[symbol], other.adjs[symbol], format="csr")
+                adjs[symbol] = csr_array(
+                    kron(self.adjs[symbol], other.adjs[symbol], format="csr")
+                )
             else:
                 adjs[symbol] = csr_array((n, n))
 
@@ -106,3 +108,136 @@ class BoolDecomposition:
 
         # Convert to a more user-friendly representation
         return adj_all.nonzero()
+
+    def _direct_sum(self, other: "BoolDecomposition") -> "BoolDecomposition":
+        states = self.states + other.states
+
+        adjs = {}
+        for symbol in set(self.adjs.keys()).intersection(set(other.adjs.keys())):
+            adjs[symbol] = csr_array(
+                bmat([[self.adjs[symbol], None], [None, other.adjs[symbol]]])
+            )
+
+        return BoolDecomposition(states, adjs)
+
+    def constrained_bfs(
+        self, constraint: "BoolDecomposition", separated: bool = False
+    ) -> set[int] | set[tuple[int, int]]:
+        # Save states number because will use them heavily for matrix construction
+        n = len(constraint.states)
+        m = len(self.states)
+
+        direct_sum = constraint._direct_sum(self)
+
+        # Create initial front from starts of constraint (left) and self (right)
+        start_states_indices = [i for i, st in enumerate(self.states) if st.is_start]
+        init_front = (
+            _init_bfs_front(self.states, constraint.states)
+            if not separated
+            else _init_separated_bfs_front(
+                self.states, constraint.states, start_states_indices
+            )
+        )
+
+        # Create visited, fill with zeroes instead of init_front to get rid of initial
+        # positions in the result
+        visited = csr_array(init_front.shape)
+
+        # Perform matrix-multiplication-based-BFS until visited stops changing
+        while True:
+            old_visited_nnz = visited.nnz
+
+            # Perform a BFS step for each matrix in direct sum
+            for _, adj in direct_sum.adjs.items():
+                # Compute new front for the symbol
+                front_part = visited @ adj if init_front is None else init_front @ adj
+                # Transform the resulting front so that:
+                # 1. It only contains rows with non-zeros in both parts.
+                # 2. Its left part contains non-zeroes only on its main diagonal.
+                visited += _transform_front_part(front_part, m, n)
+
+            # Can use visited instead now
+            init_front = None
+
+            # If no new non-zero elements have appeared, we've visited all we can
+            if visited.nnz == old_visited_nnz:
+                break
+
+        # If visited a final self-state in final constraint-state, we found a result
+        results = set()
+        for i, j in zip(*visited.nonzero()):
+            # Check that the element is from the self part (which is the main BFS part)
+            # and the final state requirements are satisfied
+            if j >= n and constraint.states[i % n].is_final:  # % is for separated BFS
+                self_st_index = j - n
+                if self.states[self_st_index].is_final:
+                    results.add(
+                        self_st_index
+                        if not separated
+                        else (start_states_indices[i // n], self_st_index)
+                    )
+        return results
+
+
+def _init_bfs_front(
+    self_states: list[BoolDecomposition.StateInfo],
+    constr_states: list[BoolDecomposition.StateInfo],
+    self_start_row: lil_array | None = None,
+) -> csr_array:
+    front = lil_array((len(constr_states), len(constr_states) + len(self_states)))
+
+    if self_start_row is None:
+        self_start_row = lil_array([[int(st.is_start) for st in self_states]])
+
+    for i, st in enumerate(constr_states):
+        if st.is_start:
+            front[i, i] = 1  # Mark diagonal element as start
+            front[i, len(constr_states) :] = self_start_row  # Fill start row
+
+    return front.tocsr()
+
+
+def _init_separated_bfs_front(
+    self_states: list[BoolDecomposition.StateInfo],
+    constr_states: list[BoolDecomposition.StateInfo],
+    start_states_indices: list[int],
+) -> csr_array:
+    fronts = [
+        _init_bfs_front(
+            self_states,
+            constr_states,
+            self_start_row=lil_array(
+                [1 if i == st_i else 0 for i in range(len(self_states))]
+            ),
+        )
+        for st_i in start_states_indices
+    ]
+    return (
+        csr_array(vstack(fronts))
+        if len(fronts) > 0
+        else csr_array((len(constr_states), len(constr_states) + len(self_states)))
+    )
+
+
+def _transform_front_part(
+    front_part: csr_array,
+    self_states_num: int,
+    constr_states_num: int,
+) -> csr_array:
+    transformed_front_part = lil_array(front_part.shape)
+    # Perform the transformation by rows
+    for i, j in zip(*front_part.nonzero()):
+        # If the element is from the constraint part
+        if j < constr_states_num:
+            non_zero_row_right = front_part.getrow(i).tolil()[[0], constr_states_num:]
+            # If the right part contains non-zero elements
+            if non_zero_row_right.nnz > 0:
+                # Account for separated front
+                row_shift = i // constr_states_num * constr_states_num
+                # Mark the row in the left part
+                transformed_front_part[row_shift + j, j] = 1
+                # Move the right part of the row, saving what's already been moved
+                transformed_front_part[
+                    [row_shift + j], constr_states_num:
+                ] += non_zero_row_right
+    return transformed_front_part.tocsr()

@@ -1,0 +1,255 @@
+{
+  "TestConstrainedBfs": [
+    {
+      "description": "empty main, empty constraint",
+      "main_states": [],
+      "main_adjs": {},
+      "constr_states": [],
+      "constr_adjs": {},
+      "expected": []
+    },
+    {
+      "description": "empty main, non-empty constraint with start and final",
+      "main_states": [],
+      "main_adjs": {},
+      "constr_states": [
+        {
+          "data": "1",
+          "is_start": true,
+          "is_final": true
+        }
+      ],
+      "constr_adjs": {
+        "a": [1]
+      },
+      "expected": []
+    },
+    {
+      "description": "empty main, non-empty constraint without starts and finals",
+      "main_states": [],
+      "main_adjs": {},
+      "constr_states": [
+        {
+          "data": "1",
+          "is_start": false,
+          "is_final": false
+        }
+      ],
+      "constr_adjs": {
+        "a": [1]
+      },
+      "expected": []
+    },
+    {
+      "description": "non-empty main with start and final, empty constraint",
+      "main_states": [
+        {
+          "data": "1",
+          "is_start": true,
+          "is_final": true
+        }
+      ],
+      "main_adjs": {
+        "a": [1]
+      },
+      "constr_states": [],
+      "constr_adjs": {},
+      "expected": []
+    },
+    {
+      "description": "non-empty main without starts and finals, empty constraint",
+      "main_states": [
+        {
+          "data": "1",
+          "is_start": false,
+          "is_final": false
+        }
+      ],
+      "main_adjs": {
+        "a": [1]
+      },
+      "constr_states": [],
+      "constr_adjs": {},
+      "expected": []
+    },
+    {
+      "description": "two-cycles main, linear constraint",
+      "main_states": [
+        {
+          "data": "0",
+          "is_start": true,
+          "is_final": true
+        },
+        {
+          "data": "1",
+          "is_start": false,
+          "is_final": true
+        },
+        {
+          "data": "2",
+          "is_start": false,
+          "is_final": true
+        },
+        {
+          "data": "3",
+          "is_start": true,
+          "is_final": true
+        }
+      ],
+      "main_adjs": {
+        "a": [
+          [0, 1, 0, 0],
+          [0, 0, 1, 0],
+          [1, 0, 0, 0],
+          [0, 0, 0, 0]
+        ],
+        "b": [
+          [0, 0, 0, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 1],
+          [0, 0, 1, 0]
+        ]
+      },
+      "constr_states": [
+        {
+          "data": "0",
+          "is_start": true,
+          "is_final": false
+        },
+        {
+          "data": "1",
+          "is_start": false,
+          "is_final": false
+        },
+        {
+          "data": "2",
+          "is_start": false,
+          "is_final": true
+        }
+      ],
+      "constr_adjs": {
+        "a": [
+          [0, 0, 0],
+          [0, 0, 1],
+          [0, 0, 0]
+        ],
+        "b": [
+          [0, 1, 0],
+          [0, 0, 0],
+          [0, 0, 0]
+        ]
+      },
+      "expected": [
+        [3, 0]
+      ]
+    },
+    {
+      "description": "equal main and constraint",
+      "main_states": [
+        {
+          "data": "0",
+          "is_start": true,
+          "is_final": true
+        },
+        {
+          "data": "1",
+          "is_start": false,
+          "is_final": true
+        }
+      ],
+      "main_adjs": {
+        "a": [
+          [0, 1],
+          [0, 0]
+        ]
+      },
+      "constr_states": [
+        {
+          "data": "0",
+          "is_start": true,
+          "is_final": true
+        },
+        {
+          "data": "1",
+          "is_start": false,
+          "is_final": true
+        }
+      ],
+      "constr_adjs": {
+        "a": [
+          [0, 1],
+          [0, 0]
+        ]
+      },
+      "expected": [
+        [0, 1]
+      ]
+    },
+    {
+      "description": "self-loop main that satisfies constraint",
+      "main_states": [
+        {
+          "data": "1",
+          "is_start": true,
+          "is_final": true
+        }
+      ],
+      "main_adjs": {
+        "a": [1]
+      },
+      "constr_states": [
+        {
+          "data": "0",
+          "is_start": true,
+          "is_final": false
+        },
+        {
+          "data": "1",
+          "is_start": false,
+          "is_final": true
+        }
+      ],
+      "constr_adjs": {
+        "a": [
+          [0, 1],
+          [0, 0]
+        ]
+      },
+      "expected": [
+        [0, 0]
+      ]
+    },
+    {
+      "description": "self-loop main that doesn't satisfy constraint",
+      "main_states": [
+        {
+          "data": "1",
+          "is_start": true,
+          "is_final": true
+        }
+      ],
+      "main_adjs": {
+        "a": [1]
+      },
+      "constr_states": [
+        {
+          "data": "0",
+          "is_start": true,
+          "is_final": false
+        },
+        {
+          "data": "1",
+          "is_start": false,
+          "is_final": true
+        }
+      ],
+      "constr_adjs": {
+        "b": [
+          [0, 1],
+          [0, 0]
+        ]
+      },
+      "expected": []
+    }
+  ]
+}

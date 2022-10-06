@@ -1,6 +1,7 @@
 {
   "TestIntersect": [
     {
+      "description": "both empty",
       "states1": [],
       "adjs1": {},
       "states2": [],
@@ -9,6 +10,7 @@
       "expected_adjs": {}
     },
     {
+      "description": "both single node",
       "states1": [
         {
           "data": "1_1",
@@ -27,10 +29,7 @@
       "adjs2": {},
       "expected_states": [
         {
-          "data": [
-            "1_1",
-            "2_1"
-          ],
+          "data": ["1_1", "2_1"],
           "is_start": false,
           "is_final": false
         }
@@ -38,6 +37,7 @@
       "expected_adjs": {}
     },
     {
+      "description": "all start-final combinations in both",
       "states1": [
         {
           "data": "1_ff",
@@ -86,130 +86,82 @@
       "adjs2": {},
       "expected_states": [
         {
-          "data": [
-            "1_ff",
-            "2_ff"
-          ],
+          "data": ["1_ff", "2_ff"],
           "is_start": false,
           "is_final": false
         },
         {
-          "data": [
-            "1_ff",
-            "2_ft"
-          ],
+          "data": ["1_ff", "2_ft"],
           "is_start": false,
           "is_final": false
         },
         {
-          "data": [
-            "1_ff",
-            "2_tf"
-          ],
+          "data": ["1_ff", "2_tf"],
           "is_start": false,
           "is_final": false
         },
         {
-          "data": [
-            "1_ff",
-            "2_tt"
-          ],
+          "data": ["1_ff", "2_tt"],
           "is_start": false,
           "is_final": false
         },
         {
-          "data": [
-            "1_ft",
-            "2_ff"
-          ],
+          "data": ["1_ft", "2_ff"],
           "is_start": false,
           "is_final": false
         },
         {
-          "data": [
-            "1_ft",
-            "2_ft"
-          ],
+          "data": ["1_ft", "2_ft"],
           "is_start": false,
           "is_final": true
         },
         {
-          "data": [
-            "1_ft",
-            "2_tf"
-          ],
+          "data": ["1_ft", "2_tf"],
           "is_start": false,
           "is_final": false
         },
         {
-          "data": [
-            "1_ft",
-            "2_tt"
-          ],
+          "data": ["1_ft", "2_tt"],
           "is_start": false,
           "is_final": true
         },
         {
-          "data": [
-            "1_tf",
-            "2_ff"
-          ],
+          "data": ["1_tf", "2_ff"],
           "is_start": false,
           "is_final": false
         },
         {
-          "data": [
-            "1_tf",
-            "2_ft"
-          ],
+          "data": ["1_tf", "2_ft"],
           "is_start": false,
           "is_final": false
         },
         {
-          "data": [
-            "1_tf",
-            "2_tf"
-          ],
+          "data": ["1_tf", "2_tf"],
           "is_start": true,
           "is_final": false
         },
         {
-          "data": [
-            "1_tf",
-            "2_tt"
-          ],
+          "data": ["1_tf", "2_tt"],
           "is_start": true,
           "is_final": false
         },
         {
-          "data": [
-            "1_tt",
-            "2_ff"
-          ],
+          "data": ["1_tt", "2_ff"],
           "is_start": false,
           "is_final": false
         },
         {
-          "data": [
-            "1_tt",
-            "2_ft"
-          ],
+          "data": ["1_tt", "2_ft"],
           "is_start": false,
           "is_final": true
         },
         {
-          "data": [
-            "1_tt",
-            "2_tf"
-          ],
+          "data": ["1_tt", "2_tf"],
           "is_start": true,
           "is_final": false
         },
         {
-          "data": [
-            "1_tt",
-            "2_tt"
-          ],
+          "data": ["1_tt", "2_tt"],
           "is_start": true,
           "is_final": true
         }
@@ -217,6 +169,7 @@
       "expected_adjs": {}
     },
     {
+      "description": "multiple nodes, multiple edges",
       "states1": [
         {
           "data": "1_1",
@@ -231,14 +184,8 @@
       ],
       "adjs1": {
         "a": [
-          [
-            1,
-            1
-          ],
-          [
-            0,
-            1
-          ]
+          [1, 1],
+          [0, 1]
         ]
       },
       "states2": [
@@ -255,80 +202,43 @@
       ],
       "adjs2": {
         "a": [
-          [
-            0,
-            1
-          ],
-          [
-            1,
-            0
-          ]
+          [0, 1],
+          [1, 0]
         ]
       },
       "expected_states": [
         {
-          "data": [
-            "1_1",
-            "2_1"
-          ],
+          "data": ["1_1", "2_1"],
           "is_start": true,
           "is_final": true
         },
         {
-          "data": [
-            "1_1",
-            "2_2"
-          ],
+          "data": ["1_1", "2_2"],
           "is_start": true,
           "is_final": true
         },
         {
-          "data": [
-            "1_2",
-            "2_1"
-          ],
+          "data": ["1_2", "2_1"],
           "is_start": true,
           "is_final": true
         },
         {
-          "data": [
-            "1_2",
-            "2_2"
-          ],
+          "data": ["1_2", "2_2"],
           "is_start": true,
           "is_final": true
         }
       ],
       "expected_adjs": {
         "a": [
-          [
-            0,
-            1,
-            0,
-            1
-          ],
-          [
-            1,
-            0,
-            1,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            0,
-            1,
-            0
-          ]
+          [0, 1, 0, 1],
+          [1, 0, 1, 0],
+          [0, 0, 0, 1],
+          [0, 0, 1, 0]
         ]
       }
     },
     {
+      "description": "single node in first, multiple nodes in second",
       "states1": [
         {
           "data": "1_1",
@@ -337,9 +247,7 @@
         }
       ],
       "adjs1": {
-        "a": [
-          1
-        ]
+        "a": [1]
       },
       "states2": [
         {
@@ -355,48 +263,31 @@
       ],
       "adjs2": {
         "a": [
-          [
-            1,
-            0
-          ],
-          [
-            0,
-            1
-          ]
+          [1, 0],
+          [0, 1]
         ]
       },
       "expected_states": [
         {
-          "data": [
-            "1_1",
-            "2_1"
-          ],
+          "data": ["1_1", "2_1"],
           "is_start": true,
           "is_final": true
         },
         {
-          "data": [
-            "1_1",
-            "2_2"
-          ],
+          "data": ["1_1", "2_2"],
           "is_start": true,
           "is_final": true
         }
       ],
       "expected_adjs": {
         "a": [
-          [
-            1,
-            0
-          ],
-          [
-            0,
-            1
-          ]
+          [1, 0],
+          [0, 1]
         ]
       }
     },
     {
+      "description": "multiple symbols",
       "states1": [
         {
           "data": "1_1",
@@ -411,24 +302,12 @@
       ],
       "adjs1": {
         "a": [
-          [
-            0,
-            1
-          ],
-          [
-            0,
-            0
-          ]
+          [0, 1],
+          [0, 0]
         ],
         "b": [
-          [
-            0,
-            0
-          ],
-          [
-            0,
-            1
-          ]
+          [0, 0],
+          [0, 1]
         ]
       },
       "states2": [
@@ -445,112 +324,48 @@
       ],
       "adjs2": {
         "a": [
-          [
-            1,
-            0
-          ],
-          [
-            0,
-            0
-          ]
+          [1, 0],
+          [0, 0]
         ],
         "b": [
-          [
-            0,
-            1
-          ],
-          [
-            0,
-            0
-          ]
+          [0, 1],
+          [0, 0]
         ]
       },
       "expected_states": [
         {
-          "data": [
-            "1_1",
-            "2_1"
-          ],
+          "data": ["1_1", "2_1"],
           "is_start": true,
           "is_final": false
         },
         {
-          "data": [
-            "1_1",
-            "2_2"
-          ],
+          "data": ["1_1", "2_2"],
           "is_start": false,
           "is_final": false
         },
         {
-          "data": [
-            "1_2",
-            "2_1"
-          ],
+          "data": ["1_2", "2_1"],
           "is_start": false,
           "is_final": false
         },
         {
-          "data": [
-            "1_2",
-            "2_2"
-          ],
+          "data": ["1_2", "2_2"],
           "is_start": false,
           "is_final": true
         }
       ],
       "expected_adjs": {
         "a": [
-          [
-            0,
-            0,
-            1,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0
-          ]
+          [0, 0, 1, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0]
         ],
         "b": [
-          [
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0
-          ]
+          [0, 0, 0, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 1],
+          [0, 0, 0, 0]
         ]
       }
     }

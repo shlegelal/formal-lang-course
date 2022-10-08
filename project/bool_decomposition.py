@@ -125,7 +125,6 @@ class BoolDecomposition:
     ) -> set[int] | set[tuple[int, int]]:
         # Save states number because will use them heavily for matrix construction
         n = len(constraint.states)
-        m = len(self.states)
 
         direct_sum = constraint._direct_sum(self)
 
@@ -154,7 +153,7 @@ class BoolDecomposition:
                 # Transform the resulting front so that:
                 # 1. It only contains rows with non-zeros in both parts.
                 # 2. Its left part contains non-zeroes only on its main diagonal.
-                visited += _transform_front_part(front_part, m, n)
+                visited += _transform_front_part(front_part, n)
 
             # Can use visited instead now
             init_front = None
@@ -219,11 +218,7 @@ def _init_separated_bfs_front(
     )
 
 
-def _transform_front_part(
-    front_part: csr_array,
-    self_states_num: int,
-    constr_states_num: int,
-) -> csr_array:
+def _transform_front_part(front_part: csr_array, constr_states_num: int) -> csr_array:
     transformed_front_part = lil_array(front_part.shape)
     # Perform the transformation by rows
     for i, j in zip(*front_part.nonzero()):

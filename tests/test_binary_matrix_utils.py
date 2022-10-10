@@ -88,6 +88,6 @@ def test_transitive_closure(
     nfa_1: NondeterministicFiniteAutomaton, expected: list[list[bool]]
 ):
     bm = build_bm_by_nfa(nfa_1)
-    tc = dok_matrix(expected)
+    actual = transitive_closure(bm).toarray().tolist()
 
-    assert transitive_closure(bm).toarray().data == tc.toarray().data
+    assert actual == expected

@@ -3,10 +3,6 @@ import cfpq_data
 from networkx import drawing, MultiDiGraph
 from typing import IO
 from pathlib import Path
-from pyformlang.regular_expression import Regex
-
-from project.utils.automata_utils import *
-from project.utils.binary_matrix_utils import *
 
 GraphInfo = namedtuple("GraphInfo", "nodes_num edges_num labels")
 """

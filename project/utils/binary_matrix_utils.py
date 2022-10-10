@@ -1,6 +1,6 @@
 from collections import namedtuple
 from pyformlang.finite_automaton import NondeterministicFiniteAutomaton, State
-from scipy.sparse import dok_matrix, kron
+from scipy.sparse import kron, lil_array, csr_matrix
 
 BinaryMatrix = namedtuple(
     "BinaryMatrix", "indexed_states start_states final_states matrix"
@@ -22,7 +22,7 @@ def build_bm_by_nfa(nfa: NondeterministicFiniteAutomaton) -> BinaryMatrix:
     nfa_dict = nfa.to_dict()
 
     for label in nfa.symbols:
-        tmp_matrix = dok_matrix((len(nfa.states), len(nfa.states)), dtype=bool)
+        tmp_matrix = csr_matrix((len(nfa.states), len(nfa.states)), dtype=bool)
         for state_from, transitions in nfa_dict.items():
             states_to = set()
             if label in transitions:
@@ -74,7 +74,7 @@ def build_nfa_by_bm(bm: BinaryMatrix) -> NondeterministicFiniteAutomaton:
     return nfa
 
 
-def transitive_closure(bm: BinaryMatrix) -> dok_matrix:
+def transitive_closure(bm: BinaryMatrix) -> csr_matrix:
     """
     Computes transitive closure of binary matrix.
 
@@ -82,7 +82,7 @@ def transitive_closure(bm: BinaryMatrix) -> dok_matrix:
     :return: Transitive closure of binary matrix.
     """
     if not bm.matrix.values():
-        return dok_matrix((1, 1))
+        return lil_array((1, 1)).tocsr()
 
     tc = sum(bm.matrix.values())
     prev_nnz = tc.nnz
@@ -111,7 +111,7 @@ def intersect(bm_l: BinaryMatrix, bm_r: BinaryMatrix) -> BinaryMatrix:
     matrix = dict()
 
     for label in common_labels:
-        matrix[label] = kron(bm_l.matrix[label], bm_r.matrix[label], format="dok")
+        matrix[label] = kron(bm_l.matrix[label], bm_r.matrix[label], format="csr")
 
     for state_lhs, s_lhs_index in bm_l.indexed_states.items():
         for state_rhs, s_rhs_index in bm_r.indexed_states.items():

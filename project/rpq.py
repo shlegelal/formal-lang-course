@@ -1,4 +1,5 @@
 import networkx as nx
+import pyformlang.regular_expression as re
 from typing import TypeVar
 import enum
 
@@ -11,7 +12,7 @@ _NodeType = TypeVar("_NodeType")
 
 def rpq_by_tensor(
     graph: nx.Graph,
-    query: str,
+    query: str | re.Regex,
     starts: set[_NodeType] | None = None,
     finals: set[_NodeType] | None = None,
 ) -> set[tuple[_NodeType, _NodeType]]:
@@ -44,7 +45,7 @@ class BfsMode(enum.Enum):
 
 def rpq_by_bfs(
     graph: nx.Graph,
-    query: str,
+    query: str | re.Regex,
     starts: set[_NodeType] | None = None,
     finals: set[_NodeType] | None = None,
     mode: BfsMode = BfsMode.FIND_COMMON_REACHABLE_SET,

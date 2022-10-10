@@ -3,8 +3,9 @@ import pyformlang.finite_automaton as fa
 import networkx as nx
 
 
-def regex_to_min_dfa(raw_regex: str) -> fa.DeterministicFiniteAutomaton:
-    regex = re.Regex(raw_regex)
+def regex_to_min_dfa(regex: str | re.Regex) -> fa.DeterministicFiniteAutomaton:
+    if not isinstance(regex, re.Regex):
+        regex = re.Regex(regex)
     min_dfa = regex.to_epsilon_nfa().minimize()
     return min_dfa
 

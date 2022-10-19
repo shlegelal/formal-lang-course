@@ -16,14 +16,14 @@ class AutomataUtilsError(Exception):
         self.msg = msg
 
 
-def build_dfa_by_redex(redex: Regex) -> DeterministicFiniteAutomaton:
+def build_dfa_by_regex(regex: Regex) -> DeterministicFiniteAutomaton:
     """
     Builds DFA by a *regular expression* (https://pyformlang.readthedocs.io/en/latest/usage.html#regular-expression).
 
-    :param redex: Regular expression.
+    :param regex: Regular expression.
     :return: Minimal DFA built on given regular expression.
     """
-    return redex.to_epsilon_nfa().minimize()
+    return regex.to_epsilon_nfa().minimize()
 
 
 def build_nfa_by_graph(

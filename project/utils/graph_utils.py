@@ -1,7 +1,6 @@
 from collections import namedtuple
 import cfpq_data
 from networkx import drawing, MultiDiGraph
-from typing import IO
 from pathlib import Path
 
 GraphInfo = namedtuple("GraphInfo", "nodes_num edges_num labels")
@@ -24,7 +23,15 @@ def get_graph(name: str) -> MultiDiGraph:
     return graph
 
 
-def get_graph_info(name: str) -> GraphInfo:
+def get_graph_info(graph: MultiDiGraph) -> GraphInfo:
+    return GraphInfo(
+        graph.number_of_nodes(),
+        graph.number_of_edges(),
+        {i[2]["label"] for i in graph.edges.data(default=True)},
+    )
+
+
+def get_graph_info_by_name(name: str) -> GraphInfo:
     """
     Shows basic info of a graph with a given name from CFPQ_Data Dataset.
 
@@ -33,16 +40,12 @@ def get_graph_info(name: str) -> GraphInfo:
     :raises FileNotFoundError: if no graph with given name found.
     """
     graph = get_graph(name)
-    return GraphInfo(
-        graph.number_of_nodes(),
-        graph.number_of_edges(),
-        {i[2]["label"] for i in graph.edges.data(default=True)},
-    )
+    return get_graph_info(graph)
 
 
 def generate_labeled_two_cycles_graph(
-    nodes_num: tuple[int, int],
-    labels: tuple[str, str],
+    nodes_num: tuple,
+    labels: tuple,
 ) -> MultiDiGraph:
     """
     Returns a graph with two cycles with labeled edges.
@@ -58,7 +61,7 @@ def generate_labeled_two_cycles_graph(
     )
 
 
-def export_graph_to_dot(graph: MultiDiGraph, path: str | IO) -> Path:
+def export_graph_to_dot(graph: MultiDiGraph, path) -> Path:
     """
     Exports the given graph into the specified DOT file.
 
@@ -72,7 +75,7 @@ def export_graph_to_dot(graph: MultiDiGraph, path: str | IO) -> Path:
     return Path(path)
 
 
-def get_edges_by_label(graph: MultiDiGraph) -> set[tuple[any, any, any]]:
+def get_edges_by_label(graph: MultiDiGraph) -> set:
     """
     Returns a set of labeled edges.
 

@@ -75,7 +75,7 @@ def test_generate_and_export_graph():
 
 def test_raise_file_not_found_error():
     try:
-        broken = get_graph_info("aaa")
+        broken = get_graph_info_by_name("aaa")
         assert broken.nodes_num == "forty two"
     except FileNotFoundError:
         assert True

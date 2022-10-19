@@ -2,7 +2,7 @@ from networkx import MultiDiGraph
 from pyformlang.regular_expression import Regex
 from scipy.sparse import dok_matrix, block_diag, csr_array, lil_array, vstack
 
-from project.utils.automata_utils import build_dfa_by_redex, build_nfa_by_graph
+from project.utils.automata_utils import build_dfa_by_regex, build_nfa_by_graph
 from project.utils.binary_matrix_utils import (
     BinaryMatrix,
     build_bm_by_nfa,
@@ -26,7 +26,7 @@ def tensor_rpq(
     :return: Regular Path Querying
     """
     graph_bm = build_bm_by_nfa(build_nfa_by_graph(graph, start_states, final_states))
-    query_bm = build_bm_by_nfa(build_dfa_by_redex(query))
+    query_bm = build_bm_by_nfa(build_dfa_by_regex(query))
     intersection = intersect(graph_bm, query_bm)
     tc = transitive_closure(intersection)
     res = set()
@@ -93,7 +93,7 @@ def _init_front_separated(
     start_states: set,
     graph_states: dict,
     start_state: set,
-) -> (csr_array, list):
+) -> tuple:
     fs = []
     start_states_list = []
     for g_ss in start_state:
@@ -149,7 +149,7 @@ def bfs_rpq(
     """
 
     graph_bm = build_bm_by_nfa(build_nfa_by_graph(graph, start_states, final_states))
-    query_bm = build_bm_by_nfa(build_dfa_by_redex(query))
+    query_bm = build_bm_by_nfa(build_dfa_by_regex(query))
 
     n = len(graph_bm.indexed_states)
     k = len(query_bm.indexed_states)

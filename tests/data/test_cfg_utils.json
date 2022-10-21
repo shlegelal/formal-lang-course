@@ -1,0 +1,100 @@
+{
+  "test_cfg_utils": [
+    {
+      "description": "empty cfg",
+      "cfg_text": "",
+      "start": null,
+      "expected_wcnf": ""
+    },
+    {
+      "description": "single production, null start",
+      "cfg_text": "S -> a",
+      "start": null,
+      "expected_wcnf": "S -> a"
+    },
+    {
+      "description": "single production, default start",
+      "cfg_text": "S -> a",
+      "start": "S",
+      "expected_wcnf": "S -> a"
+    },
+    {
+      "description": "single production, non-default start",
+      "cfg_text": "A -> a",
+      "start": "A",
+      "expected_wcnf": "A -> a"
+    },
+    {
+      "description": "single production, non-existing start",
+      "cfg_text": "S -> a",
+      "start": "B",
+      "expected_wcnf": ""
+    },
+    {
+      "description": "three productions in CNF",
+      "cfg_text": "S -> A B\nA -> a\nB -> b",
+      "start": null,
+      "expected_wcnf": "S -> A B\nA -> a\nB -> b"
+    },
+    {
+      "description": "start in own body",
+      "cfg_text": "S -> A S | ending\nA -> a",
+      "start": null,
+      "expected_wcnf": "S -> A S | ending\nA -> a"
+    },
+    {
+      "description": "start in non-start body",
+      "cfg_text": "S -> A B | ending\nA -> B S\nB -> b",
+      "start": null,
+      "expected_wcnf": "S -> A B | ending\nA -> B S\nB -> b"
+    },
+    {
+      "description": "epsilon production for start variable",
+      "cfg_text": "S -> epsilon",
+      "start": null,
+      "expected_wcnf": "S -> epsilon"
+    },
+    {
+      "description": "epsilon production for non-start variable",
+      "cfg_text": "S -> A B\nA -> a\nB -> epsilon",
+      "start": null,
+      "expected_wcnf": "S -> A B\nA -> a\nB -> epsilon"
+    },
+    {
+      "description": "body with more than 2 variables",
+      "cfg_text": "S -> A B C D E\nA -> a\nB -> b\nC -> c\nD -> d\nE -> e",
+      "start": null,
+      "expected_wcnf": "S -> A C#CNF#1\nC#CNF#1 -> B C#CNF#2\nC#CNF#2 -> C C#CNF#3\nC#CNF#3 -> D E\nA -> a\nB -> b\nC -> c\nD -> d\nE -> e"
+    },
+    {
+      "description": "body with more than one terminal",
+      "cfg_text": "S -> a b c d e",
+      "start": null,
+      "expected_wcnf": "S -> \"VAR:a#CNF#\" C#CNF#1\nC#CNF#1 -> \"VAR:b#CNF#\" C#CNF#2\nC#CNF#2 -> \"VAR:c#CNF#\" C#CNF#3\nC#CNF#3 -> \"VAR:d#CNF#\" \"VAR:e#CNF#\"\na#CNF# -> a\nb#CNF# -> b\nc#CNF# -> c\nd#CNF# -> d\ne#CNF# -> e\n"
+    },
+    {
+      "description": "body with more than one terminal and epsilon",
+      "cfg_text": "S -> a b c epsilon",
+      "start": null,
+      "expected_wcnf": "S -> \"VAR:a#CNF#\" C#CNF#1\nC#CNF#1 -> \"VAR:b#CNF#\" \"VAR:c#CNF#\"\na#CNF# -> a\nb#CNF# -> b\nc#CNF# -> c\n"
+    },
+    {
+      "description": "body with both variables and terminals",
+      "cfg_text": "S -> a B c\nB -> b",
+      "start": null,
+      "expected_wcnf": "S -> \"VAR:a#CNF#\" C#CNF#1\nC#CNF#1 -> B \"VAR:c#CNF#\"\na#CNF# -> a\nB -> b\nc#CNF# -> c"
+    },
+    {
+      "description": "unit production",
+      "cfg_text": "S -> A\nA -> B\nB -> b",
+      "start": null,
+      "expected_wcnf": "S -> b"
+    },
+    {
+      "description": "complex non-weak-CNF grammar",
+      "cfg_text": "S -> a B C | epsilon\nB -> E b\nE -> epsilon\nC -> B | c F\n F -> E",
+      "start": null,
+      "expected_wcnf": "S -> \"VAR:a#CNF#\" C#CNF#1 | epsilon\nC#CNF#1 -> B C\nB -> E \"VAR:b#CNF#\"\nE -> epsilon\nC -> E \"VAR:b#CNF#\" | \"VAR:c#CNF#\" F\nF -> epsilon\na#CNF# -> a\nb#CNF# -> b\nc#CNF# -> c"
+    }
+  ]
+}

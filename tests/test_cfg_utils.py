@@ -26,18 +26,18 @@ def cfg_file_path(request, tmp_path: Path) -> Path:
     "cfg_file_path, start, expected",
     map(
         lambda d: (
+            d[0],
+            d[1],
+            c.CFG.from_text(
                 d[0],
-                d[1],
-                c.CFG.from_text(
-                    d[0],
-                    c.Variable(d[1]),
-                )
-                if d[1] is not None
-                else c.CFG.from_text(d[0])
+                c.Variable(d[1]),
+            )
+            if d[1] is not None
+            else c.CFG.from_text(d[0]),
         ),
-        load_test_res("test_cfg_utils")
+        load_test_res("test_cfg_utils"),
     ),
-    indirect=["cfg_file_path"]
+    indirect=["cfg_file_path"],
 )
 def test_read_cfg(cfg_file_path: Path, start: str, expected: c.CFG):
     actual = (
@@ -53,17 +53,17 @@ def test_read_cfg(cfg_file_path: Path, start: str, expected: c.CFG):
     "raw_cfg, start, expected",
     map(
         lambda d: (
-                d[0],
-                d[1],
-                c.CFG.from_text(
-                    d[2],
-                    c.Variable(d[1]),
-                )
-                if d[1] is not None
-                else c.CFG.from_text(d[2]),
+            d[0],
+            d[1],
+            c.CFG.from_text(
+                d[2],
+                c.Variable(d[1]),
+            )
+            if d[1] is not None
+            else c.CFG.from_text(d[2]),
         ),
-        load_test_res("test_cfg_utils")
-    )
+        load_test_res("test_cfg_utils"),
+    ),
 )
 def test_cfg_to_wcnf(raw_cfg: str, start: str, expected: c.CFG):
     actual = (

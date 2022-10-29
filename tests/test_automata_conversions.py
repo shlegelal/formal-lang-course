@@ -105,10 +105,7 @@ class TestGraphToNfa:
     @pytest.mark.parametrize(
         "dataset_graph_name",
         load_test_data(
-            "TestGraphToNfa.test_on_dataset_graph",
-            lambda d: pytest.param(
-                d["dataset_graph_name"], marks=pytest.mark.skip("broken dataset")
-            ),
+            "TestGraphToNfa.test_on_dataset_graph", lambda d: d["dataset_graph_name"]
         ),
         ids=load_test_ids("TestGraphToNfa.test_on_dataset_graph"),
     )

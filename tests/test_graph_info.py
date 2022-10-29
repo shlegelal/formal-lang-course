@@ -9,8 +9,7 @@ GRAPH_INFOS = {
     "null": graph_utils.get_graph_info(nx.null_graph()),
     "trivial": graph_utils.get_graph_info(nx.trivial_graph()),
     "single_edge": graph_utils.get_graph_info(nx.Graph([(1, 2, {"label": "a"})])),
-    "skos": None,  # cfpa_data dataset is broken
-    # "skos": graph_utils.get_graph_info(graph_utils.load_graph_from_cfpq_data("skos")),
+    "skos": graph_utils.get_graph_info(graph_utils.load_graph_from_cfpq_data("skos")),
 }
 
 
@@ -18,13 +17,7 @@ GRAPH_INFOS = {
     "graph_info, expected_nodes_num",
     load_test_data(
         "test_nodes_num",
-        lambda d: pytest.param(
-            GRAPH_INFOS[d["graph_name"]],
-            d["expected_nodes_num"],
-            marks=pytest.mark.skipif(
-                d["graph_name"] == "skos", reason="broken dataset"
-            ),
-        ),
+        lambda d: (GRAPH_INFOS[d["graph_name"]], d["expected_nodes_num"]),
     ),
     ids=load_test_ids("test_nodes_num"),
 )
@@ -36,13 +29,7 @@ def test_nodes_num(graph_info: graph_utils.GraphInfo, expected_nodes_num: int):
     "graph_info, expected_edges_num",
     load_test_data(
         "test_edges_num",
-        lambda d: pytest.param(
-            GRAPH_INFOS[d["graph_name"]],
-            d["expected_edges_num"],
-            marks=pytest.mark.skipif(
-                d["graph_name"] == "skos", reason="broken dataset"
-            ),
-        ),
+        lambda d: (GRAPH_INFOS[d["graph_name"]], d["expected_edges_num"]),
     ),
     ids=load_test_ids("test_edges_num"),
 )
@@ -53,14 +40,7 @@ def test_edges_num(graph_info: graph_utils.GraphInfo, expected_edges_num: int):
 @pytest.mark.parametrize(
     "graph_info, expected_labels",
     load_test_data(
-        "test_labels",
-        lambda d: pytest.param(
-            GRAPH_INFOS[d["graph_name"]],
-            d["expected_labels"],
-            marks=pytest.mark.skipif(
-                d["graph_name"] == "skos", reason="broken dataset"
-            ),
-        ),
+        "test_labels", lambda d: (GRAPH_INFOS[d["graph_name"]], d["expected_labels"])
     ),
     ids=load_test_ids("test_labels"),
 )

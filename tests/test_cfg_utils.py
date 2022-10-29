@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 from pyformlang import cfg as c
 
-from project import cfg_utils
+from project.cfpq import cfg_utils
 from testing_utils import load_test_data
 from testing_utils import load_test_ids
 

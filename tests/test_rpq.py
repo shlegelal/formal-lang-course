@@ -1,7 +1,7 @@
 import networkx as nx
 import pytest
 
-from project import rpq
+from project.rpq import rpq
 from testing_utils import dot_str_to_graph
 from testing_utils import load_test_data
 from testing_utils import load_test_ids

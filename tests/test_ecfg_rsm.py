@@ -14,7 +14,7 @@ from project.grammar.rsm import rsm_from_ecfg, minimize_rsm
     map(
         lambda res: c.CFG.from_text(res[0], res[1]),
         load_test_res("test_ecfg"),
-    )
+    ),
 )
 def test_correct_ecfg(cfg):
     ecfg = ecfg_from_cfg(cfg)
@@ -35,14 +35,11 @@ def test_correct_ecfg(cfg):
     "cfg, expected",
     map(
         lambda res: (
-                c.CFG.from_text(res[0], res[1]),
-                {
-                    c.Variable(pr[0]): Regex(pr[1])
-                    for pr in res[2]
-                }
+            c.CFG.from_text(res[0], res[1]),
+            {c.Variable(pr[0]): Regex(pr[1]) for pr in res[2]},
         ),
         load_test_res("test_ecfg"),
-    )
+    ),
 )
 def test_ecfg_productions(cfg, expected):
     ecfg = ecfg_from_cfg(cfg)
@@ -58,11 +55,11 @@ def test_ecfg_productions(cfg, expected):
     "ecfg",
     map(
         lambda res: (
-                ecfg_from_cfg(
-                    c.CFG.from_text(res[0], res[1])
-                    if res[1] is not None
-                    else c.CFG.from_text(res[0])
-                )
+            ecfg_from_cfg(
+                c.CFG.from_text(res[0], res[1])
+                if res[1] is not None
+                else c.CFG.from_text(res[0])
+            )
         ),
         load_test_res("test_ecfg"),
     ),
@@ -82,13 +79,13 @@ def test_correct_rsm(ecfg):
     "rsm",
     map(
         lambda res: (
-                rsm_from_ecfg(
-                        ecfg_from_cfg(
-                            c.CFG.from_text(res[0], res[1])
-                            if res[1] is not None
-                            else c.CFG.from_text(res[0])
-                        )
+            rsm_from_ecfg(
+                ecfg_from_cfg(
+                    c.CFG.from_text(res[0], res[1])
+                    if res[1] is not None
+                    else c.CFG.from_text(res[0])
                 )
+            )
         ),
         load_test_res("test_ecfg"),
     ),

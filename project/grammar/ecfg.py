@@ -9,9 +9,7 @@ ECFG = namedtuple("ECFG", "variables terminals start productions")
 
 def ecfg_from_cfg(cfg: CFG) -> ECFG:
     variables = set(cfg.variables)
-    start_symbol = (
-        cfg.start_symbol if cfg.start_symbol is not None else Variable("S")
-    )
+    start_symbol = cfg.start_symbol if cfg.start_symbol is not None else Variable("S")
     variables.add(start_symbol)
 
     productions: dict[Variable, Regex] = {}

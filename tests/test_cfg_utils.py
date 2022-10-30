@@ -2,7 +2,7 @@ from pathlib import Path
 import pytest
 from pyformlang import cfg as c
 
-from project.utils import cfg_utils
+from project.grammar import cfg_utils
 from load_test_res import load_test_res
 
 

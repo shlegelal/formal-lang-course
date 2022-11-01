@@ -6,60 +6,52 @@ from project.cfpq.ecfg import ECFG
 from project.cfpq.rsm import RSM
 from testing_utils import load_test_data
 from testing_utils import load_test_ids
+from testing_utils import dot_str_to_nfa
+from testing_utils import are_equivalent
 
 
 @pytest.mark.parametrize(
-    "ecfg",
+    "ecfg, expected",
     load_test_data(
-        "test_cfg_utils",
+        "test_rsm",
         lambda d: (
-            ECFG.from_cfg(
-                c.CFG.from_text(d["cfg_text"], d["start"])
-                if d["start"] is not None
-                else c.CFG.from_text(d["cfg_text"])
-            )
+            ECFG.from_cfg(c.CFG.from_text(d["cfg"])),
+            RSM(
+                c.Variable(d["rsm"]["start"]),
+                {
+                    c.Variable(var): dot_str_to_nfa(nfa)
+                    for var, nfa in d["rsm"]["boxes"].items()
+                },
+            ),
         ),
-        data_filename="test_cfg_utils",
     ),
-    ids=load_test_ids("test_cfg_utils", data_filename="test_cfg_utils"),
+    ids=load_test_ids("test_rsm"),
 )
 class TestFromEcfg:
-    def test_same_start(self, ecfg: ECFG):
-        rsm = RSM.from_ecfg(ecfg)
+    def test_same_start(self, ecfg: ECFG, expected: RSM):
+        actual = RSM.from_ecfg(ecfg)
 
-        assert rsm.start == ecfg.start
+        assert actual.start == expected.start
 
-    def test_boxes_are_equivalent_to_productions(self, ecfg: ECFG):
-        rsm = RSM.from_ecfg(ecfg)
+    def test_boxes_are_equivalent(self, ecfg: ECFG, expected: RSM):
+        actual = RSM.from_ecfg(ecfg)
 
-        assert len(rsm.boxes) == len(ecfg.productions)
-        for var in ecfg.productions:
-            actual = rsm.boxes[var]
-            expected = ecfg.productions[var].to_epsilon_nfa()
-            assert actual.is_equivalent_to(expected)
+        assert len(actual.boxes) == len(expected.boxes)
+        for var in expected.boxes:
+            assert are_equivalent(actual.boxes[var], expected.boxes[var])
 
 
 @pytest.mark.parametrize(
-    "rsm",
+    "original",
     load_test_data(
-        "test_cfg_utils",
-        lambda d: (
-            RSM.from_ecfg(
-                ECFG.from_cfg(
-                    c.CFG.from_text(d["cfg_text"], d["start"])
-                    if d["start"] is not None
-                    else c.CFG.from_text(d["cfg_text"])
-                )
-            )
-        ),
-        data_filename="test_cfg_utils",
+        "test_rsm",
+        lambda d: RSM.from_ecfg(ECFG.from_cfg(c.CFG.from_text(d["cfg"]))),
     ),
-    ids=load_test_ids("test_cfg_utils", data_filename="test_cfg_utils"),
+    ids=load_test_ids("test_rsm"),
 )
-class TestMinimize:
-    def test_minimized_are_equivalent_to_original(self, rsm: RSM):
-        actual = deepcopy(rsm).minimize()
+def test_minimized_are_equivalent_to_original(original: RSM):
+    minimized = deepcopy(original).minimize()
 
-        assert len(actual.boxes) == len(rsm.boxes)
-        for var in rsm.boxes:
-            assert actual.boxes[var].is_equivalent_to(rsm.boxes[var])
+    assert len(minimized.boxes) == len(original.boxes)
+    for var in original.boxes:
+        assert are_equivalent(minimized.boxes[var], original.boxes[var])

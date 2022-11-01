@@ -6,6 +6,7 @@ from typing import TextIO
 from typing import TypeVar
 
 import networkx as nx
+from pyformlang import finite_automaton as fa
 import pydot
 
 _T = TypeVar("_T")
@@ -48,3 +49,39 @@ def load_test_ids(
 
 def dot_str_to_graph(dot: str) -> nx.Graph:
     return nx.drawing.nx_pydot.from_pydot(pydot.graph_from_dot_data(dot)[0])
+
+
+def dot_str_to_nfa(dot: str) -> fa.EpsilonNFA:
+    graph = dot_str_to_graph(dot)
+
+    # Convert string-represented booleans in nodes from dot files
+    for _, data in graph.nodes.data():
+        if data["is_start"] in ("True", "False"):
+            data["is_start"] = data["is_start"] == "True"
+        if data["is_final"] in ("True", "False"):
+            data["is_final"] = data["is_final"] == "True"
+    # Convert string-represented epsilons in edges from dot files
+    for _, _, data in graph.edges.data():
+        if data["label"] == "epsilon":
+            data["label"] = fa.Epsilon
+
+    return fa.EpsilonNFA.from_networkx(graph)
+
+
+def are_equivalent(
+    fa1: fa.DeterministicFiniteAutomaton
+    | fa.NondeterministicFiniteAutomaton
+    | fa.EpsilonNFA,
+    fa2: fa.DeterministicFiniteAutomaton
+    | fa.NondeterministicFiniteAutomaton
+    | fa.EpsilonNFA,
+) -> bool:
+    # pyformlang silently fails to check for equivalence automatas with no start state when minimized
+    # But we can say such automatas are equivalent since they accept no words
+    min1 = fa1.minimize()
+    min2 = fa2.minimize()
+    return (
+        len(min1.start_states) == 0
+        and len(min2.start_states) == 0
+        or fa1.is_equivalent_to(fa2)
+    )

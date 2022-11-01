@@ -3,7 +3,7 @@ from pathlib import Path
 import networkx as nx
 import pytest
 
-from project import graph_utils
+from project.utils import graph_utils
 from testing_utils import load_test_data
 from testing_utils import load_test_ids
 

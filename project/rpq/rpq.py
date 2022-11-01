@@ -3,9 +3,9 @@ import pyformlang.regular_expression as re
 from typing import TypeVar
 import enum
 
-from project.bool_decomposition import BoolDecomposition
-from project.automata_utils import graph_to_nfa
-from project.automata_utils import regex_to_min_dfa
+from project.rpq.bool_decomposition import BoolDecomposition
+from project.rpq.fa_utils import graph_to_nfa
+from project.rpq.fa_utils import regex_to_min_dfa
 
 _NodeType = TypeVar("_NodeType")
 

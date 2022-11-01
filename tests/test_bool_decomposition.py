@@ -2,8 +2,8 @@ import pytest
 from pyformlang import finite_automaton as fa
 from scipy.sparse import csr_array
 
-from project.automata_utils import graph_to_nfa
-from project.bool_decomposition import BoolDecomposition
+from project.rpq.fa_utils import graph_to_nfa
+from project.rpq.bool_decomposition import BoolDecomposition
 from testing_utils import dot_str_to_graph
 from testing_utils import load_test_data
 from testing_utils import load_test_ids

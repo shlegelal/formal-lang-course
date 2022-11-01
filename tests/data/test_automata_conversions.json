@@ -112,7 +112,7 @@
       "graph": "digraph {1;2;1 -> 2}",
       "start_states": [],
       "final_states": [],
-      "expected_nfa_graph": "digraph {1 [is_final=False, is_start=False];2 [is_final=False, is_start=False];1 -> 2 [label=ε]}"
+      "expected_nfa_graph": "digraph {1 [is_final=False, is_start=False];2 [is_final=False, is_start=False];1 -> 2 [label=epsilon]}"
     },
     {
       "description": "two edges",

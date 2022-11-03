@@ -1,0 +1,96 @@
+{
+  "test_ecfg": [
+    {
+      "description": "empty CFG",
+      "cfg": "",
+      "start": null,
+      "expected_productions": []
+    },
+    {
+      "description": "single production, default start",
+      "cfg": "S -> a",
+      "start": null,
+      "expected_productions": [
+        {
+          "head": "S",
+          "body": "a"
+        }
+      ]
+    },
+    {
+      "description": "single production, non-default start",
+      "cfg": "A -> a",
+      "start": "A",
+      "expected_productions": [
+        {
+          "head": "A",
+          "body": "a"
+        }
+      ]
+    },
+    {
+      "description": "single production, null start",
+      "cfg": "S -> a",
+      "start": null,
+      "expected_productions": [
+        {
+          "head": "S",
+          "body": "a"
+        }
+      ]
+    },
+    {
+      "description": "unique heads",
+      "cfg": "S -> A B C\nA-> a\nB -> A\nC -> a B c",
+      "start": "S",
+      "expected_productions": [
+        {
+          "head": "S",
+          "body": "A B C"
+        },
+        {
+          "head": "A",
+          "body": "a"
+        },
+        {
+          "head": "B",
+          "body": "A"
+        },
+        {
+          "head": "C",
+          "body": "a B c"
+        }
+      ]
+    },
+    {
+      "description": "repeating heads",
+      "cfg": "S -> A B\nS -> $\nA-> A a\nA -> a\nB -> A\nB -> B\nB -> $",
+      "start": "S",
+      "expected_productions": [
+        {
+          "head": "S",
+          "body": "A B | $"
+        },
+        {
+          "head": "A",
+          "body": "A a | a"
+        },
+        {
+          "head": "B",
+          "body": "A | B | $"
+        }
+      ]
+    },
+    {
+      "description": "union symbol in productions",
+      "cfg": "S -> a S b S | $",
+      "start": "S",
+      "expected_productions": [
+        {
+          "head": "S",
+          "body": "a S b S | $"
+        }
+      ]
+    }
+  ]
+}

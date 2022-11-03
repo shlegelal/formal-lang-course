@@ -1,0 +1,57 @@
+{
+  "test_rsm": [
+    {
+      "description": "empty CFG",
+      "cfg": "",
+      "rsm": {
+        "start": "S",
+        "boxes": {}
+      }
+    },
+    {
+      "description": "single production",
+      "cfg": "S -> a",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=a]}"
+        }
+      }
+    },
+    {
+      "description": "unique heads",
+      "cfg": "S -> A\nA -> B C\nB -> b\nC -> c",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=A]}",
+          "A": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=False]; 3 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=B]; 2 -> 3 [key=0, label=C]}",
+          "B": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=b]}",
+          "C": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=c]}"
+        }
+      }
+    },
+    {
+      "description": "repeating heads",
+      "cfg": "S -> a S b | a b",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=False]; 3 [is_start=False, is_final=False]; 4 [is_start=False, is_final=False]; 5 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=a]; 2 -> 3 [key=0, label=S]; 3 -> 5 [key=0, label=b]; 1 -> 4 [key=0, label=a]; 4 -> 5 [key=0, label=b]}"
+        }
+      }
+    },
+    {
+      "description": "repeating heads with epsilon",
+      "cfg": "S -> A S | B S | $\nA -> a a a\nB -> b b",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {1 [is_start=True, is_final=True]; 2 [is_start=False, is_final=False]; 3 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=A]; 1 -> 2 [key=1, label=B]; 2 -> 3 [key=0, label=S]}",
+          "A": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=False]; 3 [is_start=False, is_final=False]; 4 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=a]; 2 -> 3 [key=0, label=a]; 3 -> 4 [key=0, label=a]}",
+          "B": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=False]; 3 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=b]; 2 -> 3 [key=0, label=b]}"
+        }
+      }
+    }
+  ]
+}

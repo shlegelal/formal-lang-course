@@ -76,3 +76,25 @@ def test_cfg_to_wcnf(raw_cfg: str, start: str, expected: c.CFG):
     )
 
     _assert_equal_cfgs(actual, expected)
+
+
+@pytest.mark.parametrize(
+    "cfg, word, expected",
+    load_test_data(
+        "test_accepts",
+        lambda d: [
+            (
+                c.CFG.from_text(d["cfg"]),
+                inp["word"],
+                inp["expected"],
+            )
+            for inp in d["inputs"]
+        ],
+        is_aggregated=True,
+    ),
+    ids=load_test_ids("test_accepts", get_repeats=lambda d: len(d["inputs"])),
+)
+def test_accepts(cfg: c.CFG, word: str, expected: bool):
+    actual = cfg_utils.accepts(cfg, word)
+
+    assert actual == expected

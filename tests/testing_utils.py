@@ -3,13 +3,10 @@ import json
 import pathlib
 from collections.abc import Callable
 from typing import TextIO
-from typing import TypeVar
 
 import networkx as nx
 from pyformlang import finite_automaton as fa
 import pydot
-
-_T = TypeVar("_T")
 
 
 def _open_test_json(
@@ -26,14 +23,21 @@ def _open_test_json(
 
 def load_test_data(
     test_name: str,
-    transform: Callable[[dict], _T],
+    transform: Callable[[dict], tuple | list[tuple]],
     *,
     data_filename: str | None = None,
     add_filename_suffix: bool = False,
-) -> list[_T]:
+    is_aggregated: bool = False,
+) -> list[tuple]:
     with _open_test_json(test_name, add_filename_suffix, data_filename) as f:
         test_datas = json.load(f)
-    return [transform(test_data) for test_data in test_datas[test_name]]
+    if not is_aggregated:
+        return [transform(test_data) for test_data in test_datas[test_name]]
+    else:
+        res = []
+        for test_data in test_datas[test_name]:
+            res += transform(test_data)
+        return res
 
 
 def load_test_ids(
@@ -41,10 +45,15 @@ def load_test_ids(
     *,
     data_filename: str | None = None,
     add_filename_suffix: bool = False,
+    get_repeats: Callable[[dict], int] = lambda _: 1,
 ) -> list[str]:
     with _open_test_json(test_name, add_filename_suffix, data_filename) as f:
         test_datas = json.load(f)
-    return [test_data["description"] for test_data in test_datas[test_name]]
+    return [
+        test_data["description"]
+        for test_data in test_datas[test_name]
+        for _ in range(get_repeats(test_data))
+    ]
 
 
 def dot_str_to_graph(dot: str) -> nx.Graph:

@@ -1,0 +1,89 @@
+{
+  "test_ecfg": [
+    {
+      "cfg": "",
+      "start": null,
+      "expected_productions": []
+    },
+    {
+      "cfg": "S -> a",
+      "start": null,
+      "expected_productions": [
+        [
+          "S",
+          "a"
+        ]
+      ]
+    },
+    {
+      "cfg": "A -> a",
+      "start": "A",
+      "expected_productions": [
+        [
+          "A",
+          "a"
+        ]
+      ]
+    },
+    {
+      "cfg": "S -> a",
+      "start": null,
+      "expected_productions": [
+        [
+          "S",
+          "a"
+        ]
+      ]
+    },
+    {
+      "cfg": "S -> A B C\nA-> a\nB -> A\nC -> a B c",
+      "start": "S",
+      "expected_productions": [
+        [
+          "S",
+          "A B C"
+        ],
+        [
+          "A",
+          "a"
+        ],
+        [
+          "B",
+          "A"
+        ],
+        [
+          "C",
+          "a B c"
+        ]
+      ]
+    },
+    {
+      "cfg": "S -> A B\nS -> $\nA-> A a\nA -> a\nB -> A\nB -> B\nB -> $",
+      "start": "S",
+      "expected_productions": [
+        [
+          "S",
+          "A B | $"
+        ],
+        [
+          "A",
+          "A a | a"
+        ],
+        [
+          "B",
+          "A | B | $"
+        ]
+      ]
+    },
+    {
+      "cfg": "S -> a S b S | $",
+      "start": "S",
+      "expected_productions": [
+        [
+          "S",
+          "a S b S | $"
+        ]
+      ]
+    }
+  ]
+}

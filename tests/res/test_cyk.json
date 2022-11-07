@@ -1,0 +1,79 @@
+{
+  "test_cyk": [
+    {
+      "cfg_text": "S -> epsilon",
+      "words": [
+        "",
+        "epsilon",
+        "abab"
+      ],
+      "result": [
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "cfg_text": "S -> a S b S\nS -> epsilon",
+      "words": [
+        "",
+        "aba",
+        "aabbababaaabbb",
+        "abcd",
+        "ab",
+        "aaaabbbb"
+      ],
+      "result": [
+        true,
+        false,
+        true,
+        false,
+        true,
+        true
+      ]
+    },
+    {
+      "cfg_text": "S -> A S2 | epsilon\nS1 -> A S2\nS2 -> b | B S1 | S1 S3\nS3 -> b | B S1\nA -> a\nB -> b",
+      "words": [
+        "aabbab",
+        "abaa"
+      ],
+      "result": [
+        true,
+        false
+      ]
+    },
+    {
+      "cfg_text": "S -> b S b b | A\nA -> a A | epsilon",
+      "words": [
+        "bbb",
+        "",
+        "babb",
+        "ab"
+      ],
+      "result": [
+        true,
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "cfg_text": "S -> epsilon\nS -> ( S )\nS -> S S",
+      "words": [
+        "()()",
+        "",
+        "()",
+        ")(",
+        "(("
+      ],
+      "result": [
+        true,
+        true,
+        true,
+        false,
+        false
+      ]
+    }
+  ]
+}

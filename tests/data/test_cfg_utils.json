@@ -96,5 +96,103 @@
       "start": null,
       "expected_wcnf": "S -> \"VAR:a#CNF#\" C#CNF#1 | epsilon\nC#CNF#1 -> B C\nB -> E \"VAR:b#CNF#\"\nE -> epsilon\nC -> E \"VAR:b#CNF#\" | \"VAR:c#CNF#\" F\nF -> epsilon\na#CNF# -> a\nb#CNF# -> b\nc#CNF# -> c"
     }
+  ],
+  "test_accepts": [
+    {
+      "description": "empty word to empty CFG",
+      "cfg": "",
+      "inputs": [
+        {
+          "word": "",
+          "expected": false
+        }
+      ]
+    },
+    {
+      "description": "empty word to non-nullable CFG",
+      "cfg": "S -> a",
+      "inputs": [
+        {
+          "word": "",
+          "expected": false
+        }
+      ]
+    },
+    {
+      "description": "empty word to simple nullable CFG",
+      "cfg": "S -> $",
+      "inputs": [
+        {
+          "word": "",
+          "expected": true
+        }
+      ]
+    },
+    {
+      "description": "empty word to complicated nullable CFG",
+      "cfg": "S -> A | B\nA -> A a | a\nB -> S | $",
+      "inputs": [
+        {
+          "word": "",
+          "expected": true
+        }
+      ]
+    },
+    {
+      "description": "dyck language without empty string in CNF",
+      "cfg": "S -> A S2\nS1 -> A S2\nS2 -> ] | B S1 | S1 S3\nS3 -> ] | B S1\nA -> [\nB -> ]",
+      "inputs": [
+        {
+          "word": "[[]][]",
+          "expected": true
+        },
+        {
+          "word": "[][[",
+          "expected": false
+        }
+      ]
+    },
+    {
+      "description": "dyck language",
+      "cfg": "S -> $ | [ S ] S",
+      "inputs": [
+        {
+          "word": "[]",
+          "expected": true
+        },
+        {
+          "word": "[[]]",
+          "expected": true
+        },
+        {
+          "word": "[][]",
+          "expected": true
+        },
+        {
+          "word": "[[]][]",
+          "expected": true
+        },
+        {
+          "word": "[",
+          "expected": false
+        },
+        {
+          "word": "]",
+          "expected": false
+        },
+        {
+          "word": "[][[",
+          "expected": false
+        },
+        {
+          "word": "][",
+          "expected": false
+        },
+        {
+          "word": "[[][]]]",
+          "expected": false
+        }
+      ]
+    }
   ]
 }

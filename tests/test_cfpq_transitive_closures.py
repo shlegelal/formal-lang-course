@@ -3,6 +3,7 @@ import networkx as nx
 from pyformlang import cfg as c
 
 from project.cfpq.hellings import constrained_transitive_closure_by_hellings
+from project.cfpq.matrix import constrained_transitive_closure_by_matrix
 from testing_utils import load_test_data
 from testing_utils import load_test_ids
 from testing_utils import dot_str_to_graph
@@ -11,7 +12,7 @@ from testing_utils import dot_str_to_graph
 @pytest.mark.parametrize(
     "graph, cfg, expected",
     load_test_data(
-        "test_constrained_transitive_closure_by_hellings",
+        "TestCfpqConstrainedTransitiveClosures",
         lambda d: (
             dot_str_to_graph(d["graph"]),
             c.CFG.from_text(d["cfg"]),
@@ -21,11 +22,15 @@ from testing_utils import dot_str_to_graph
             },
         ),
     ),
-    ids=load_test_ids("test_constrained_transitive_closure_by_hellings"),
+    ids=load_test_ids("TestCfpqConstrainedTransitiveClosures"),
 )
-def test_constrained_transitive_closure_by_hellings(
-    graph: nx.Graph, cfg: c.CFG, expected: set[tuple]
-):
-    actual = constrained_transitive_closure_by_hellings(graph, cfg)
+class TestCfpqConstrainedTransitiveClosures:
+    def test_hellings(self, graph: nx.Graph, cfg: c.CFG, expected: set[tuple]):
+        actual = constrained_transitive_closure_by_hellings(graph, cfg)
 
-    assert actual == expected
+        assert actual == expected
+
+    def test_matrix(self, graph: nx.Graph, cfg: c.CFG, expected: set[tuple]):
+        actual = constrained_transitive_closure_by_matrix(graph, cfg)
+
+        assert actual == expected

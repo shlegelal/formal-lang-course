@@ -1,19 +1,17 @@
 import networkx as nx
 import pyformlang.cfg as c
-from typing import TypeVar
 
+from project.utils.node_type import NodeType
 from project.cfpq.hellings import constrained_transitive_closure_by_hellings
-
-_NodeType = TypeVar("_NodeType")
 
 
 def cfpq_by_hellings(
     graph: nx.Graph,
     query: str | c.CFG,
-    start_nodes: set[_NodeType] | None = None,
-    final_nodes: set[_NodeType] | None = None,
+    start_nodes: set[NodeType] | None = None,
+    final_nodes: set[NodeType] | None = None,
     start_var: str | c.Variable = c.Variable("S"),
-) -> set[tuple[_NodeType, _NodeType]]:
+) -> set[tuple[NodeType, NodeType]]:
     if not isinstance(start_var, c.Variable):
         start_var = c.Variable(start_var)
     if not isinstance(query, c.CFG):

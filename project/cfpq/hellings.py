@@ -1,15 +1,13 @@
 import networkx as nx
 import pyformlang.cfg as c
-from typing import TypeVar
 
+from project.utils.node_type import NodeType
 from project.cfpq.cfg_utils import cfg_to_wcnf
-
-_NodeType = TypeVar("_NodeType")
 
 
 def constrained_transitive_closure_by_hellings(
     graph: nx.Graph, cfg: c.CFG
-) -> set[tuple[_NodeType, c.Variable, _NodeType]]:
+) -> set[tuple[NodeType, c.Variable, NodeType]]:
     cfg = cfg_to_wcnf(cfg)
 
     # Convert productions into a more efficient form

@@ -1,1 +1,1 @@
-__all__ = ["graph_utils"]
+__all__ = ["node_type", "graph_utils"]

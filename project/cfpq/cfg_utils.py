@@ -38,15 +38,15 @@ def accepts(cfg: c.CFG, word: str | list[c.Terminal]) -> bool:
     term_prods: dict[c.Variable, list[c.Terminal]] = {}  # A -> a
     var_prods: list[tuple[int, int, int]] = []  # A -> B C
     for p in cfg.productions:
-        match len(p.body):
-            case 1:
-                term_prods.setdefault(p.head, []).append(p.body[0])
-            case 2:
+        match p.body:
+            case [c.Terminal() as t]:
+                term_prods.setdefault(p.head, []).append(t)
+            case [c.Variable() as v1, c.Variable() as v2]:
                 var_prods.append(
                     (
                         vars_order[p.head],
-                        vars_order[p.body[0]],
-                        vars_order[p.body[1]],
+                        vars_order[v1],
+                        vars_order[v2],
                     )
                 )
 

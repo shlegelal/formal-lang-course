@@ -1,21 +1,19 @@
 import networkx as nx
 import pyformlang.regular_expression as re
-from typing import TypeVar
 import enum
 
+from project.utils.node_type import NodeType
 from project.rpq.bool_decomposition import BoolDecomposition
 from project.rpq.fa_utils import graph_to_nfa
 from project.rpq.fa_utils import regex_to_min_dfa
-
-_NodeType = TypeVar("_NodeType")
 
 
 def rpq_by_tensor(
     graph: nx.Graph,
     query: str | re.Regex,
-    starts: set[_NodeType] | None = None,
-    finals: set[_NodeType] | None = None,
-) -> set[tuple[_NodeType, _NodeType]]:
+    starts: set[NodeType] | None = None,
+    finals: set[NodeType] | None = None,
+) -> set[tuple[NodeType, NodeType]]:
     # Create boolean decompositions for the graph and the query
     graph_decomp = BoolDecomposition.from_nfa(graph_to_nfa(graph, starts, finals))
     query_decomp = BoolDecomposition.from_nfa(regex_to_min_dfa(query))
@@ -46,10 +44,10 @@ class BfsMode(enum.Enum):
 def rpq_by_bfs(
     graph: nx.Graph,
     query: str | re.Regex,
-    starts: set[_NodeType] | None = None,
-    finals: set[_NodeType] | None = None,
+    starts: set[NodeType] | None = None,
+    finals: set[NodeType] | None = None,
     mode: BfsMode = BfsMode.FIND_COMMON_REACHABLE_SET,
-) -> set[_NodeType] | set[tuple[_NodeType, _NodeType]]:
+) -> set[NodeType] | set[tuple[NodeType, NodeType]]:
     graph_decomp = BoolDecomposition.from_nfa(graph_to_nfa(graph, starts, finals))
     query_decomp = BoolDecomposition.from_nfa(regex_to_min_dfa(query))
 

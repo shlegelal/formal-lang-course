@@ -3,7 +3,12 @@ import pytest
 import pyformlang.cfg as c
 
 from load_test_res import load_test_res
-from project.grammar.helling import helling, constrained_transitive_closure
+from project.grammar.cfpq import (
+    helling_constrained_transitive_closure,
+    helling_cfpq,
+    matrix_constrained_transitive_closure,
+    matrix_cfpq,
+)
 from test_automata_utils import build_graph_by_srt
 
 
@@ -21,8 +26,12 @@ from test_automata_utils import build_graph_by_srt
         load_test_res("test_constrained_transitive_closure"),
     ),
 )
-def test_constrained_transitive(graph, cfg, expected):
-    actual = constrained_transitive_closure(graph, cfg)
+@pytest.mark.parametrize(
+    "ctc",
+    [helling_constrained_transitive_closure, matrix_constrained_transitive_closure],
+)
+def test_constrained_transitive(graph, cfg, expected, ctc):
+    actual = ctc(graph, cfg)
 
     assert actual == expected
 
@@ -41,14 +50,16 @@ def test_constrained_transitive(graph, cfg, expected):
         load_test_res("test_helling"),
     ),
 )
-def test_helling(
+@pytest.mark.parametrize("cfpq", [helling_cfpq, matrix_cfpq])
+def test_cfpq(
     graph: nx.Graph,
     query: c.CFG,
     start_states: set | None,
     final_states: set | None,
     start: str,
     expected: set[tuple],
+    cfpq,
 ):
-    actual = helling(graph, query, start_states, final_states, start)
+    actual = cfpq(graph, query, start_states, final_states, start)
 
     assert actual == expected

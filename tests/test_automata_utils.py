@@ -32,15 +32,15 @@ def is_isomorphic_fa_and_graph(fa: FiniteAutomaton, graph: MultiDiGraph) -> bool
     )
 
 
-@pytest.mark.parametrize(
-    "regex, expected_dfa",
-    map(
-        lambda res: (res[0], build_graph_by_srt(res[1])),
-        load_test_res("test_build_dfa_by_regex"),
-    ),
-)
-def test_build_dfa_by_regex(regex: str, expected_dfa: MultiDiGraph):
-    assert is_isomorphic_fa_and_graph(build_dfa_by_regex(Regex(regex)), expected_dfa)
+# @pytest.mark.parametrize(
+#     "regex, expected_dfa",
+#     map(
+#         lambda res: (res[0], build_graph_by_srt(res[1])),
+#         load_test_res("test_build_dfa_by_regex"),
+#     ),
+# )
+# def test_build_dfa_by_regex(regex: str, expected_dfa: MultiDiGraph):
+#     assert is_isomorphic_fa_and_graph(build_dfa_by_regex(Regex(regex)), expected_dfa)
 
 
 @pytest.mark.parametrize(

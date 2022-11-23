@@ -1,5 +1,5 @@
 {
-  "test_constrained_transitive_closure_by_hellings": [
+  "TestCfpqConstrainedTransitiveClosures": [
     {
       "description": "empty graph, empty cfg",
       "graph": "digraph {}",

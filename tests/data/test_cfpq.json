@@ -1,5 +1,5 @@
 {
-  "test_cfpq_by_hellings": [
+  "TestCfpq": [
     {
       "description": "empty graph and query",
       "graph": "digraph {}",

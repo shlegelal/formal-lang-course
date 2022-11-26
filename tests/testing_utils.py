@@ -3,6 +3,7 @@ import json
 import pathlib
 from collections.abc import Callable
 from typing import TextIO
+from typing import TypeVar
 
 import networkx as nx
 from pyformlang import finite_automaton as fa
@@ -21,14 +22,17 @@ def _open_test_json(
     return open(parent / "data" / f"{filename}.json")
 
 
+T_ = TypeVar("T_")
+
+
 def load_test_data(
     test_name: str,
-    transform: Callable[[dict], tuple | list[tuple]],
+    transform: Callable[[dict], T_ | tuple | list[tuple]],
     *,
     data_filename: str | None = None,
     add_filename_suffix: bool = False,
     is_aggregated: bool = False,
-) -> list[tuple]:
+) -> list[T_] | list[tuple]:
     with _open_test_json(test_name, add_filename_suffix, data_filename) as f:
         test_datas = json.load(f)
     if not is_aggregated:

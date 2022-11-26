@@ -16,6 +16,15 @@ class BoolDecomposition:
         is_start: bool
         is_final: bool
 
+        def __eq__(self, other):
+            return (
+                isinstance(other, BoolDecomposition.StateInfo)
+                and self.data == other.data
+            )
+
+        def __hash__(self):
+            return hash(self.data)
+
     def __init__(
         self,
         states: list[StateInfo] | None = None,
@@ -32,29 +41,30 @@ class BoolDecomposition:
     ) -> "BoolDecomposition":
         # Construct states, removing duplicates
         states = list(
-            set(
+            {
                 cls.StateInfo(
                     data=st.value,
                     is_start=st in nfa.start_states,
                     is_final=st in nfa.final_states,
                 )
                 for st in nfa.states
-            )
+            }
         )
         if sort_states:
-            states = sorted(states, key=lambda st: st.data)
+            states.sort(key=lambda st: st.data)
 
         # Construct adjacency matrices
         adjs = {}
         transitions = nfa.to_dict()
-        n = len(states)
         for n_from in transitions:
             for symbol, ns_to in transitions[n_from].items():
-                adj = adjs.setdefault(symbol.value, dok_array((n, n)))
-                beg_index = next(i for i, s in enumerate(states) if s.data == n_from)
+                adj = adjs.setdefault(
+                    symbol.value, dok_array((len(states), len(states)), dtype=bool)
+                )
+                start_index = next(i for i, s in enumerate(states) if s.data == n_from)
                 for n_to in ns_to if isinstance(ns_to, set) else {ns_to}:
                     end_index = next(i for i, s in enumerate(states) if s.data == n_to)
-                    adj[beg_index, end_index] = 1
+                    adj[start_index, end_index] = True
         # DOK is good for construction, CSR is good for calculations
         for key in adjs:
             adjs[key] = adjs[key].tocsr()
@@ -85,14 +95,14 @@ class BoolDecomposition:
                     kron(self.adjs[symbol], other.adjs[symbol], format="csr")
                 )
             else:
-                adjs[symbol] = csr_array((n, n))
+                adjs[symbol] = csr_array((n, n), dtype=bool)
 
         return BoolDecomposition(states, adjs)
 
     def transitive_closure_any_symbol(self) -> tuple[list[int], list[int]]:
         # Gather all matrices to get all existing paths
         n = len(self.states)
-        adj_all = sum(self.adjs.values(), start=csr_array((n, n)))
+        adj_all = sum(self.adjs.values(), start=csr_array((n, n), dtype=bool))
         # Remove explicit zeroes (just in case) to use nnz later
         adj_all.eliminate_zeros()
 
@@ -140,7 +150,7 @@ class BoolDecomposition:
 
         # Create visited, fill with zeroes instead of init_front to get rid of initial
         # positions in the result
-        visited = csr_array(init_front.shape)
+        visited = csr_array(init_front.shape, dtype=bool)
 
         # Perform matrix-multiplication-based-BFS until visited stops changing
         while True:
@@ -183,14 +193,16 @@ def _init_bfs_front(
     constr_states: list[BoolDecomposition.StateInfo],
     self_start_row: lil_array | None = None,
 ) -> csr_array:
-    front = lil_array((len(constr_states), len(constr_states) + len(self_states)))
+    front = lil_array(
+        (len(constr_states), len(constr_states) + len(self_states)), dtype=bool
+    )
 
     if self_start_row is None:
-        self_start_row = lil_array([[int(st.is_start) for st in self_states]])
+        self_start_row = lil_array([st.is_start for st in self_states], dtype=bool)
 
     for i, st in enumerate(constr_states):
         if st.is_start:
-            front[i, i] = 1  # Mark diagonal element as start
+            front[i, i] = True  # Mark diagonal element as start
             front[i, len(constr_states) :] = self_start_row  # Fill start row
 
     return front.tocsr()
@@ -206,7 +218,7 @@ def _init_separated_bfs_front(
             self_states,
             constr_states,
             self_start_row=lil_array(
-                [1 if i == st_i else 0 for i in range(len(self_states))]
+                [i == st_i for i in range(len(self_states))], dtype=bool
             ),
         )
         for st_i in start_states_indices
@@ -214,12 +226,14 @@ def _init_separated_bfs_front(
     return (
         csr_array(vstack(fronts))
         if len(fronts) > 0
-        else csr_array((len(constr_states), len(constr_states) + len(self_states)))
+        else csr_array(
+            (len(constr_states), len(constr_states) + len(self_states)), dtype=bool
+        )
     )
 
 
 def _transform_front_part(front_part: csr_array, constr_states_num: int) -> csr_array:
-    transformed_front_part = lil_array(front_part.shape)
+    transformed_front_part = lil_array(front_part.shape, dtype=bool)
     # Perform the transformation by rows
     for i, j in zip(*front_part.nonzero()):
         # If the element is from the constraint part
@@ -230,7 +244,7 @@ def _transform_front_part(front_part: csr_array, constr_states_num: int) -> csr_
                 # Account for separated front
                 row_shift = i // constr_states_num * constr_states_num
                 # Mark the row in the left part
-                transformed_front_part[row_shift + j, j] = 1
+                transformed_front_part[row_shift + j, j] = True
                 # Move the right part of the row, saving what's already been moved
                 transformed_front_part[
                     [row_shift + j], constr_states_num:

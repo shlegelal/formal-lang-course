@@ -1,1 +1,1 @@
-__all__ = ["rpq", "cfpq"]
+__all__ = ["rpq", "cfpq", "utils"]

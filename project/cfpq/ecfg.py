@@ -4,7 +4,7 @@ from pyformlang.cfg import CFG
 from pyformlang.regular_expression import Regex
 
 
-class ECFG:
+class Ecfg:
     def __init__(
         self,
         variables: set[Variable],

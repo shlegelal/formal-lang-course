@@ -2,7 +2,7 @@ import pytest
 from pyformlang import cfg as c
 from pyformlang import regular_expression as re
 
-from project.cfpq.ecfg import ECFG
+from project.cfpq.ecfg import Ecfg
 from testing_utils import load_test_data
 from testing_utils import load_test_ids
 
@@ -14,7 +14,7 @@ from testing_utils import load_test_ids
 )
 class TestCompareECFGToCFG:
     def test_correct_variables(self, cfg: c.CFG):
-        ecfg = ECFG.from_cfg(cfg)
+        ecfg = Ecfg.from_cfg(cfg)
 
         assert ecfg.variables == (
             cfg.variables
@@ -23,12 +23,12 @@ class TestCompareECFGToCFG:
         )
 
     def test_correct_terminals(self, cfg: c.CFG):
-        ecfg = ECFG.from_cfg(cfg)
+        ecfg = Ecfg.from_cfg(cfg)
 
         assert ecfg.terminals == cfg.terminals
 
     def test_correct_start(self, cfg: c.CFG):
-        ecfg = ECFG.from_cfg(cfg)
+        ecfg = Ecfg.from_cfg(cfg)
 
         if cfg.start_symbol is not None:
             assert ecfg.start == cfg.start_symbol
@@ -51,7 +51,7 @@ class TestCompareECFGToCFG:
     ids=load_test_ids("test_ecfg"),
 )
 def test_equivalent_productions(cfg: c.CFG, expected: dict[c.Variable, re.Regex]):
-    ecfg = ECFG.from_cfg(cfg)
+    ecfg = Ecfg.from_cfg(cfg)
 
     assert len(ecfg.productions) == len(expected)
     for head in expected:

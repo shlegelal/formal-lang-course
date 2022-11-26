@@ -3,7 +3,7 @@ import pyformlang.regular_expression as re
 import enum
 
 from project.utils.node_type import NodeType
-from project.rpq.bool_decomposition import BoolDecomposition
+from project.utils.bool_decomposition import BoolDecomposition
 from project.rpq.fa_utils import graph_to_nfa
 from project.rpq.fa_utils import regex_to_min_dfa
 

@@ -1,10 +1,13 @@
 import pytest
 from pyformlang import finite_automaton as fa
+from pyformlang import cfg as c
 from scipy.sparse import csr_array
 
 from project.rpq.fa_utils import graph_to_nfa
-from project.rpq.bool_decomposition import BoolDecomposition
+from project.cfpq.rsm import Rsm
+from project.utils.bool_decomposition import BoolDecomposition
 from testing_utils import dot_str_to_graph
+from testing_utils import dot_str_to_nfa
 from testing_utils import load_test_data
 from testing_utils import load_test_ids
 
@@ -25,8 +28,15 @@ def _dot_str_to_nfa(dot: str) -> fa.EpsilonNFA:
     return graph_to_nfa(graph, start_states, final_states)
 
 
-def _dict_to_state_info(d: dict) -> BoolDecomposition.StateInfo:
+def _dict_to_nfa_state_info(d: dict) -> BoolDecomposition.StateInfo:
     return BoolDecomposition.StateInfo(d["data"], d["is_start"], d["is_final"])
+
+
+def _dict_to_rsm_state_info(d: dict) -> BoolDecomposition.StateInfo:
+    var, val = d["data"]
+    return BoolDecomposition.StateInfo(
+        (c.Variable(var), val), d["is_start"], d["is_final"]
+    )
 
 
 def _dict_to_adjs(d: dict[str, list[list[int]]]) -> dict[str, csr_array]:
@@ -48,7 +58,7 @@ class TestFromNfa:
             "TestFromNfa",
             lambda d: (
                 _dot_str_to_nfa(d["graph"]),
-                [_dict_to_state_info(st) for st in d["expected_states"]],
+                [_dict_to_nfa_state_info(st) for st in d["expected_states"]],
             ),
             add_filename_suffix=True,
         ),
@@ -78,15 +88,65 @@ class TestFromNfa:
         _check_adjs_are_equal(decomp.adjs, expected_adjs)
 
 
+class TestFromRsm:
+    @pytest.mark.parametrize(
+        "rsm, expected_states",
+        load_test_data(
+            "TestFromRsm",
+            lambda d: (
+                Rsm(
+                    c.Variable("S"),
+                    {
+                        c.Variable(var): dot_str_to_nfa(nfa)
+                        for var, nfa in d["rsm_boxes"].items()
+                    },
+                ),
+                [_dict_to_rsm_state_info(st) for st in d["expected_states"]],
+            ),
+            add_filename_suffix=True,
+        ),
+        ids=load_test_ids("TestFromRsm", add_filename_suffix=True),
+    )
+    def test_states_are_correct(
+        self, rsm: Rsm, expected_states: list[BoolDecomposition.StateInfo]
+    ):
+        decomp = BoolDecomposition.from_rsm(rsm, sort_states=True)
+
+        assert decomp.states == expected_states
+
+    @pytest.mark.parametrize(
+        "rsm, expected_adjs",
+        load_test_data(
+            "TestFromRsm",
+            lambda d: (
+                Rsm(
+                    c.Variable("S"),
+                    {
+                        c.Variable(var): dot_str_to_nfa(nfa)
+                        for var, nfa in d["rsm_boxes"].items()
+                    },
+                ),
+                _dict_to_adjs(d["expected_adjs"]),
+            ),
+            add_filename_suffix=True,
+        ),
+        ids=load_test_ids("TestFromRsm", add_filename_suffix=True),
+    )
+    def test_adjs_are_correct(self, rsm: Rsm, expected_adjs: dict[str, csr_array]):
+        decomp = BoolDecomposition.from_rsm(rsm, sort_states=True)
+
+        _check_adjs_are_equal(decomp.adjs, expected_adjs)
+
+
 class TestIntersect:
     @pytest.mark.parametrize(
         "states1, adjs1, states2, adjs2, expected_states",
         load_test_data(
             "TestIntersect",
             lambda d: (
-                [_dict_to_state_info(st) for st in d["states1"]],
+                [_dict_to_nfa_state_info(st) for st in d["states1"]],
                 _dict_to_adjs(d["adjs1"]),
-                [_dict_to_state_info(st) for st in d["states2"]],
+                [_dict_to_nfa_state_info(st) for st in d["states2"]],
                 _dict_to_adjs(d["adjs2"]),
                 [
                     BoolDecomposition.StateInfo(
@@ -119,9 +179,9 @@ class TestIntersect:
         load_test_data(
             "TestIntersect",
             lambda d: (
-                [_dict_to_state_info(st) for st in d["states1"]],
+                [_dict_to_nfa_state_info(st) for st in d["states1"]],
                 _dict_to_adjs(d["adjs1"]),
-                [_dict_to_state_info(st) for st in d["states2"]],
+                [_dict_to_nfa_state_info(st) for st in d["states2"]],
                 _dict_to_adjs(d["adjs2"]),
                 _dict_to_adjs(d["expected_adjs"]),
             ),
@@ -176,9 +236,9 @@ class TestConstrainedBfs:
         load_test_data(
             "TestConstrainedBfs",
             lambda d: (
-                [_dict_to_state_info(st) for st in d["main_states"]],
+                [_dict_to_nfa_state_info(st) for st in d["main_states"]],
                 _dict_to_adjs(d["main_adjs"]),
-                [_dict_to_state_info(st) for st in d["constr_states"]],
+                [_dict_to_nfa_state_info(st) for st in d["constr_states"]],
                 _dict_to_adjs(d["constr_adjs"]),
                 {end for _, end in d["expected"]},
             ),
@@ -206,9 +266,9 @@ class TestConstrainedBfs:
         load_test_data(
             "TestConstrainedBfs",
             lambda d: (
-                [_dict_to_state_info(st) for st in d["main_states"]],
+                [_dict_to_nfa_state_info(st) for st in d["main_states"]],
                 _dict_to_adjs(d["main_adjs"]),
-                [_dict_to_state_info(st) for st in d["constr_states"]],
+                [_dict_to_nfa_state_info(st) for st in d["constr_states"]],
                 _dict_to_adjs(d["constr_adjs"]),
                 {(i, j) for i, j in d["expected"]},
             ),

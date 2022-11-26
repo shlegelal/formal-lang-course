@@ -9,6 +9,8 @@ from itertools import product
 from typing import Any
 from typing import NamedTuple
 
+from project.cfpq.rsm import Rsm
+
 
 class BoolDecomposition:
     class StateInfo(NamedTuple):
@@ -65,6 +67,46 @@ class BoolDecomposition:
                 for n_to in ns_to if isinstance(ns_to, set) else {ns_to}:
                     end_index = next(i for i, s in enumerate(states) if s.data == n_to)
                     adj[start_index, end_index] = True
+        # DOK is good for construction, CSR is good for calculations
+        for key in adjs:
+            adjs[key] = adjs[key].tocsr()
+
+        return cls(states, adjs)
+
+    @classmethod
+    def from_rsm(cls, rsm: Rsm, sort_states: bool = False) -> "BoolDecomposition":
+        # Construct states with respect to box variables, removing duplicates
+        states = list(
+            {
+                cls.StateInfo(
+                    data=(var, st.value),
+                    is_start=st in nfa.start_states,
+                    is_final=st in nfa.final_states,
+                )
+                for var, nfa in rsm.boxes.items()
+                for st in nfa.states
+            }
+        )
+        if sort_states:
+            states.sort(key=lambda st: (st.data[0].value, st.data[1]))
+
+        # Construct adjacency matrices
+        adjs = {}
+        for var, nfa in rsm.boxes.items():
+            transitions = nfa.to_dict()
+            for n_from in transitions:
+                for symbol, ns_to in transitions[n_from].items():
+                    adj = adjs.setdefault(
+                        symbol.value, dok_array((len(states), len(states)), dtype=bool)
+                    )
+                    start_index = next(
+                        i for i, s in enumerate(states) if s.data == (var, n_from)
+                    )
+                    for n_to in ns_to if isinstance(ns_to, set) else {ns_to}:
+                        end_index = next(
+                            i for i, s in enumerate(states) if s.data == (var, n_to)
+                        )
+                        adj[start_index, end_index] = True
         # DOK is good for construction, CSR is good for calculations
         for key in adjs:
             adjs[key] = adjs[key].tocsr()

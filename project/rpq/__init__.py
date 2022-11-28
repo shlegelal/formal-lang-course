@@ -1,1 +1,1 @@
-__all__ = ["fa_utils", "bool_decomposition", "rpq"]
+__all__ = ["fa_utils", "rpq"]

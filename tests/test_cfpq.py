@@ -50,3 +50,16 @@ class TestCfpq:
         actual = cfpq.cfpq_by_matrix(graph, query, start_nodes, final_nodes, start_var)
 
         assert actual == expected
+
+    def test_tensor(
+        self,
+        graph: nx.Graph,
+        query: str,
+        start_nodes: set | None,
+        final_nodes: set | None,
+        start_var: str,
+        expected: set[tuple],
+    ):
+        actual = cfpq.cfpq_by_tensor(graph, query, start_nodes, final_nodes, start_var)
+
+        assert actual == expected

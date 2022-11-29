@@ -1,6 +1,6 @@
-import networkx as nx
 import pytest
 import pyformlang.cfg as c
+from networkx import MultiDiGraph
 
 from load_test_res import load_test_res
 from project.grammar.cfpq import (
@@ -8,7 +8,10 @@ from project.grammar.cfpq import (
     helling_cfpq,
     matrix_constrained_transitive_closure,
     matrix_cfpq,
+    tensor_cfpq,
+    tensor_constrained_transitive_closure,
 )
+from project.utils.graph_utils import generate_labeled_two_cycles_graph
 from test_automata_utils import build_graph_by_srt
 
 
@@ -28,7 +31,11 @@ from test_automata_utils import build_graph_by_srt
 )
 @pytest.mark.parametrize(
     "ctc",
-    [helling_constrained_transitive_closure, matrix_constrained_transitive_closure],
+    [
+        helling_constrained_transitive_closure,
+        matrix_constrained_transitive_closure,
+        tensor_constrained_transitive_closure,
+    ],
 )
 def test_constrained_transitive(graph, cfg, expected, ctc):
     actual = ctc(graph, cfg)
@@ -50,9 +57,9 @@ def test_constrained_transitive(graph, cfg, expected, ctc):
         load_test_res("test_helling"),
     ),
 )
-@pytest.mark.parametrize("cfpq", [helling_cfpq, matrix_cfpq])
+@pytest.mark.parametrize("cfpq", [helling_cfpq, matrix_cfpq, tensor_cfpq])
 def test_cfpq(
-    graph: nx.Graph,
+    graph: MultiDiGraph,
     query: c.CFG,
     start_states: set | None,
     final_states: set | None,

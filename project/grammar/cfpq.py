@@ -1,13 +1,17 @@
 from typing import Callable
-import networkx as nx
 import pyformlang.cfg as c
+from networkx import MultiDiGraph
 from scipy.sparse import dok_array, csr_array, eye
 
 from project.grammar.cfg_utils import cfg_to_wcnf
+from project.grammar.ecfg import ecfg_by_cfg
+from project.grammar.rsm import bm_by_rsm, rsm_by_ecfg, minimize_rsm
+from project.utils.automata_utils import nfa_by_graph
+from project.utils.binary_matrix_utils import bm_by_nfa, intersect, transitive_closure
 
 
 def helling_cfpq(
-    graph: nx.Graph,
+    graph: MultiDiGraph,
     query: c.CFG,
     sn: set = None,
     fn: set = None,
@@ -19,7 +23,7 @@ def helling_cfpq(
 
 
 def matrix_cfpq(
-    graph: nx.Graph,
+    graph: MultiDiGraph,
     query: c.CFG,
     sn: set = None,
     fn: set = None,
@@ -30,8 +34,25 @@ def matrix_cfpq(
     )
 
 
+def tensor_cfpq(
+    graph: MultiDiGraph,
+    query: str | c.CFG,
+    sn: set | None = None,
+    fn: set | None = None,
+    start: str | c.Variable = c.Variable("S"),
+) -> set:
+    return _cfpq_transitive_closure(
+        graph,
+        query,
+        sn,
+        fn,
+        start,
+        tensor_constrained_transitive_closure,
+    )
+
+
 def _cfpq_transitive_closure(
-    graph: nx.Graph,
+    graph: MultiDiGraph,
     query: str | c.CFG,
     start_nodes: set | None,
     final_nodes: set | None,
@@ -56,7 +77,7 @@ def _cfpq_transitive_closure(
     }
 
 
-def helling_constrained_transitive_closure(graph: nx.Graph, cfg: c.CFG) -> set:
+def helling_constrained_transitive_closure(graph: MultiDiGraph, cfg: c.CFG) -> set:
     cfg = cfg_to_wcnf(cfg)
     eps_prods = set()
     term_prods = {}
@@ -99,7 +120,7 @@ def helling_constrained_transitive_closure(graph: nx.Graph, cfg: c.CFG) -> set:
     return res
 
 
-def matrix_constrained_transitive_closure(graph: nx.Graph, cfg: c.CFG) -> set:
+def matrix_constrained_transitive_closure(graph: MultiDiGraph, cfg: c.CFG) -> set:
     cfg = cfg_to_wcnf(cfg)
     eps_prods = set()
     term_prods = {}
@@ -114,7 +135,7 @@ def matrix_constrained_transitive_closure(graph: nx.Graph, cfg: c.CFG) -> set:
                 var_prods.add((p.head, v1, v2))
 
     nodes = {n: i for i, n in enumerate(graph.nodes)}
-    adjs: dict[c.Variable, dok_array] = {
+    matrix: dict[c.Variable, dok_array] = {
         v: dok_array((len(nodes), len(nodes)), dtype=bool) for v in cfg.variables
     }
 
@@ -122,26 +143,70 @@ def matrix_constrained_transitive_closure(graph: nx.Graph, cfg: c.CFG) -> set:
         i = nodes[n1]
         j = nodes[n2]
         for v in term_prods.setdefault(l, set()):
-            adjs[v][i, j] = True
+            matrix[v][i, j] = True
 
-    for adj in adjs.values():
-        adj.tocsr()
+    for tmp in matrix.values():
+        tmp.tocsr()
 
     diag = csr_array(eye(len(nodes), dtype=bool))
     for v in eps_prods:
-        adjs[v] += diag
+        matrix[v] += diag
 
     changed = True
     while changed:
         changed = False
         for h, b1, b2 in var_prods:
-            nnz_old = adjs[h].nnz
-            adjs[h] += adjs[b1] @ adjs[b2]
-            changed |= adjs[h].nnz != nnz_old
+            nnz_old = matrix[h].nnz
+            matrix[h] += matrix[b1] @ matrix[b2]
+            changed |= matrix[h].nnz != nnz_old
 
     nodes = {i: n for n, i in nodes.items()}
     result = set()
-    for v, adj in adjs.items():
-        for i, j in zip(*adj.nonzero()):
+    for v, tmp in matrix.items():
+        for i, j in zip(*tmp.nonzero()):
             result.add((nodes[i], v, nodes[j]))
+    return result
+
+
+def tensor_constrained_transitive_closure(graph: MultiDiGraph, cfg: c.CFG) -> set:
+    rsm_d = bm_by_rsm(minimize_rsm(rsm_by_ecfg(ecfg_by_cfg(cfg))))
+    graph_d = bm_by_nfa(nfa_by_graph(graph))
+
+    diag = csr_array(eye(len(graph_d.states), dtype=bool))
+    for v in cfg.get_nullable_symbols():
+        graph_d.matrix[v.value] += diag
+
+    transitive_closure_size = 0
+    while True:
+        transitive_closure_indices = list(
+            zip(*transitive_closure(intersect(rsm_d, graph_d)))
+        )
+
+        if len(transitive_closure_indices) == transitive_closure_size:
+            break
+        transitive_closure_size = len(transitive_closure_indices)
+
+        for i, j in transitive_closure_indices:
+            r_i, r_j = i // len(graph_d.states), j // len(graph_d.states)
+            s, f = rsm_d.states[r_i], rsm_d.states[r_j]
+            if s.is_start and f.is_final:
+                v = s.value[0]
+
+                g_i, g_j = i % len(graph_d.states), j % len(graph_d.states)
+                ij_graph_adj = csr_array(
+                    ([True], ([g_i], [g_j])),
+                    shape=(len(graph_d.states), len(graph_d.states)),
+                    dtype=bool,
+                )
+
+                if v in graph_d.matrix:
+                    graph_d.matrix[v] += ij_graph_adj
+                else:
+                    graph_d.matrix[v] = ij_graph_adj.copy()
+
+    result = set()
+    for v, adj in graph_d.matrix.items():
+        if isinstance(v, c.Variable):
+            for i, j in zip(*adj.nonzero()):
+                result.add((graph_d.states[i].value, v, graph_d.states[j].value))
     return result

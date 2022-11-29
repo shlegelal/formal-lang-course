@@ -3,10 +3,24 @@ from copy import deepcopy
 import pytest
 from pyformlang import cfg as c
 from pyformlang.regular_expression import Regex
+from pyformlang import finite_automaton as fa
 
 from load_test_res import load_test_res
 from project.grammar.ecfg import ecfg_from_cfg
-from project.grammar.rsm import rsm_from_ecfg, minimize_rsm
+from project.grammar.rsm import rsm_from_ecfg, minimize_rsm, RSM, bm_from_rsm
+from test_automata_utils import build_graph_by_srt
+
+
+def dot_str_to_nfa(dot: str):
+    graph = build_graph_by_srt(dot)
+
+    for _, data in graph.nodes.data():
+        if data["is_start"] in ("True", "False"):
+            data["is_start"] = data["is_start"] == "True"
+        if data["is_final"] in ("True", "False"):
+            data["is_final"] = data["is_final"] == "True"
+
+    return fa.EpsilonNFA.from_networkx(graph)
 
 
 @pytest.mark.parametrize(
@@ -96,3 +110,31 @@ def test_minimize_rsm(rsm):
     assert len(actual.boxes) == len(rsm.boxes)
     for var in rsm.boxes:
         assert actual.boxes[var].is_equivalent_to(rsm.boxes[var])
+
+
+@pytest.mark.parametrize(
+    "rsm, expected_st, expected_starts, expected_finals",
+    map(
+        lambda r: (
+            RSM(
+                c.Variable("S"),
+                {c.Variable(var): dot_str_to_nfa(nfa) for var, nfa in r[0].items()},
+            ),
+            r[1],
+            r[2],
+            r[3],
+        ),
+        load_test_res("test_rsm_to_bm"),
+    ),
+)
+def test_rsm_to_bm(rsm: RSM, expected_st, expected_starts, expected_finals):
+    bm = bm_from_rsm(rsm)
+    states = bm.indexed_states.keys()
+    for st in states:
+        assert [st.value[0].value, st.value[1]] in expected_st
+
+    for st in {st for st in states if bm.indexed_states[st] in bm.start_states}:
+        assert [st.value[0].value, st.value[1]] in expected_starts
+
+    for st in {st for st in states if bm.indexed_states[st] in bm.final_states}:
+        assert [st.value[0].value, st.value[1]] in expected_finals

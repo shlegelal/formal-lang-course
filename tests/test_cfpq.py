@@ -8,6 +8,7 @@ from project.grammar.cfpq import (
     helling_cfpq,
     matrix_constrained_transitive_closure,
     matrix_cfpq,
+    tensor_cfpq,
 )
 from test_automata_utils import build_graph_by_srt
 
@@ -50,7 +51,7 @@ def test_constrained_transitive(graph, cfg, expected, ctc):
         load_test_res("test_helling"),
     ),
 )
-@pytest.mark.parametrize("cfpq", [helling_cfpq, matrix_cfpq])
+@pytest.mark.parametrize("cfpq", [helling_cfpq, matrix_cfpq, tensor_cfpq])
 def test_cfpq(
     graph: nx.Graph,
     query: c.CFG,

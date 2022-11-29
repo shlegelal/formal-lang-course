@@ -85,5 +85,166 @@
         ]
       ]
     }
+  ],
+  "test_rsm_to_bm": [
+    {
+      "rsm_boxes": {},
+      "expected_states": [],
+      "expected_starts": [],
+      "expected_finals": []
+    },
+    {
+      "rsm_boxes": {
+        "S": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=True]; 1 -> 2 [label=a]}"
+      },
+      "expected_states": [
+        [
+          "S",
+          "1"
+        ],
+        [
+          "S",
+          "2"
+        ]
+      ],
+      "expected_starts": [
+        [
+          "S",
+          "1"
+        ]
+      ],
+      "expected_finals": [
+        [
+          "S",
+          "2"
+        ]
+      ]
+    },
+    {
+      "rsm_boxes": {
+        "S": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=True]; 1 -> 2 [label=A]}",
+        "A": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=False]; 3 [is_start=False, is_final=True]; 1 -> 2 [label=B]; 2 -> 3 [label=C]}",
+        "B": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=True]; 1 -> 2 [label=b]}",
+        "C": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=True]; 1 -> 2 [label=c]}"
+      },
+      "expected_states": [
+        [
+          "A",
+          "1"
+        ],
+        [
+          "A",
+          "2"
+        ],
+        [
+          "A",
+          "3"
+        ],
+        [
+          "B",
+          "1"
+        ],
+        [
+          "B",
+          "2"
+        ],
+        [
+          "C",
+          "1"
+        ],
+        [
+          "C",
+          "2"
+        ],
+        [
+          "S",
+          "1"
+        ],
+        [
+          "S",
+          "2"
+        ]
+      ],
+      "expected_starts": [
+        [
+          "A",
+          "1"
+        ],
+        [
+          "B",
+          "1"
+        ],
+        [
+          "C",
+          "1"
+        ],
+        [
+          "S",
+          "1"
+        ]
+      ],
+      "expected_finals": [
+        [
+          "A",
+          "3"
+        ],
+        [
+          "B",
+          "2"
+        ],
+        [
+          "C",
+          "2"
+        ],
+        [
+          "S",
+          "2"
+        ]
+      ]
+    },
+    {
+      "rsm_boxes": {
+        "A": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=True]; 1 -> 2 [label=a]}",
+        "B": "digraph {1 [is_start=False, is_final=True]; 2 [is_start=True, is_final=False]; 2 -> 1 [label=a]}"
+      },
+      "expected_states": [
+        [
+          "A",
+          "1"
+        ],
+        [
+          "A",
+          "2"
+        ],
+        [
+          "B",
+          "1"
+        ],
+        [
+          "B",
+          "2"
+        ]
+      ],
+      "expected_starts": [
+        [
+          "A",
+          "1"
+        ],
+        [
+          "B",
+          "2"
+        ]
+      ],
+      "expected_finals": [
+        [
+          "A",
+          "2"
+        ],
+        [
+          "B",
+          "1"
+        ]
+      ]
+    }
   ]
 }

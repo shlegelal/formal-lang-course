@@ -41,7 +41,7 @@ def constrained_transitive_closure_by_tensor(
         # Iterate over non-empty indices
         for i, j in transitive_closure_indices:
             # Translate intersection indices into RSM decomposition indices
-            r_i, r_j = i // len(rsm_decomp.states), j // len(rsm_decomp.states)
+            r_i, r_j = i // len(graph_decomp.states), j // len(graph_decomp.states)
             # If the edge is from a start RSM node to a final RSM node
             s, f = rsm_decomp.states[r_i], rsm_decomp.states[r_j]
             if s.is_start and f.is_final:
@@ -50,7 +50,7 @@ def constrained_transitive_closure_by_tensor(
                 v = s.data[0]
 
                 # Translate intersection indices into graph decomposition indices
-                g_i, g_j = i % len(rsm_decomp.states), j % len(rsm_decomp.states)
+                g_i, g_j = i % len(graph_decomp.states), j % len(graph_decomp.states)
                 # Cannot directly update CSR arrays element-wise
                 ij_graph_adj = csr_array(
                     ([True], ([g_i], [g_j])),

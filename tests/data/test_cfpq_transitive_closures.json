@@ -43,7 +43,7 @@
       ]
     },
     {
-      "description": "two cycles graphF",
+      "description": "two cycles graph",
       "graph": "digraph {0 [is_start=True, is_final=True]; 1 [is_start=True, is_final=True]; 2 [is_start=True, is_final=True]; 3 [is_start=True, is_final=True]; 0 -> 1 [label=a]; 1 -> 2 [label=a]; 2 -> 0 [label=a]; 2 -> 3 [label=b]; 3 -> 2 [label=b]}",
       "cfg": "S -> A B | A S1\nS1 -> S B\nA -> a\nB -> b",
       "expected": [

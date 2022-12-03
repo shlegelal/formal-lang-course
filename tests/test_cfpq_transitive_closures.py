@@ -4,6 +4,7 @@ from pyformlang import cfg as c
 
 from project.cfpq.hellings import constrained_transitive_closure_by_hellings
 from project.cfpq.matrix import constrained_transitive_closure_by_matrix
+from project.cfpq.tensor import constrained_transitive_closure_by_tensor
 from testing_utils import load_test_data
 from testing_utils import load_test_ids
 from testing_utils import dot_str_to_graph
@@ -32,5 +33,10 @@ class TestCfpqConstrainedTransitiveClosures:
 
     def test_matrix(self, graph: nx.Graph, cfg: c.CFG, expected: set[tuple]):
         actual = constrained_transitive_closure_by_matrix(graph, cfg)
+
+        assert actual == expected
+
+    def test_tensor(self, graph: nx.Graph, cfg: c.CFG, expected: set[tuple]):
+        actual = constrained_transitive_closure_by_tensor(graph, cfg)
 
         assert actual == expected

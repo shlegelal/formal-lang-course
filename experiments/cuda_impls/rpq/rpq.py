@@ -1,10 +1,9 @@
-import enum
-
 import networkx as nx
 import pyformlang.regular_expression as re
 
+from experiments.cuda_impls.utils.bool_decomposition import BoolDecomposition
 from project.rpq import fa_utils
-from project.utils.bool_decomposition import BoolDecomposition
+from project.rpq.rpq import BfsMode
 from project.utils.node_type import NodeType
 
 
@@ -36,11 +35,6 @@ def rpq_by_tensor(
             end_graph_node = n_to.data[0]
             results.add((beg_graph_node, end_graph_node))
     return results
-
-
-class BfsMode(enum.Enum):
-    FIND_COMMON_REACHABLE_SET = enum.auto()
-    FIND_REACHABLE_FOR_EACH_START = enum.auto()
 
 
 def rpq_by_bfs(

@@ -29,7 +29,6 @@ expr =
   | Concat of expr * expr        // конкатенация языков
   | Union of expr * expr         // объединение языков
   | Star of expr                 // замыкание языков (звезда Клини)
-  | Smb of expr                  // единичный переход
   | Contains of expr * expt      // проверка на вхождение элемента в множество
   | Set of expr list             // множество элементов одного типа
   | Pair of expr * expr          // пара
@@ -38,7 +37,9 @@ expr =
 val =
     Int of int
   | Bool of bool
-  | String of string
+  | String of string  // регулярное выражение, интерпретируемое как единый символ
+  | Reg of string     // строковое регулярное выражение, где *, |, . и др. интерпретируются соответствующим образом
+  | Cfg of string     // строковая КС-грамматика
 
 lambda = pattern * expr
 
@@ -60,7 +61,7 @@ stmt ->
 
 expr ->
     ID                                  // var
-  | INT | BOOL | STR                    // val
+  | INT | BOOL | STR | REG | CFG        // val
   | 'set_starts' '(' expr ',' expr ')'
   | 'set_finals' '(' expr ',' expr ')'
   | 'add_starts' '(' expr ',' expr ')'
@@ -99,6 +100,8 @@ ID -> [a-zA-Z][a-zA-Z0-9]*
 INT -> 0 | -?[1-9][0-9]+
 BOOL -> 'true' | 'false'
 STR -> '"' .*? '"'
+REG -> 'r' STR
+CFG -> 'c' STR
 
 COMMENT = '//' (~EOL)*
 
@@ -109,6 +112,7 @@ EOL -> '\r'? '\n'
 ## Примеры
 
 Получение вершин, достижимых из определённого множества:
+
 ```
 g = load("graph.dot")                                                       // FA<int>
 
@@ -123,17 +127,19 @@ res = map({ (_, f) -> f }, get_reachables(g))                               // S
 print(res)
 ```
 
-Получение пар вершин, между которыми существует путь, удовлетворяющий регулярному ограничению:
+Получение пар вершин, между которыми существует путь, удовлетворяющий КС-ограничению:
+
 ```
-g = smb("c")                                                           // FA<int>
-r = smb("a") . smb("b")                                                // FA<int>
-intersection = g & r                                                   // FA<int * int>
+g = "a" . "b"                                                          // FA<int>
+r = c"S -> a S b | a b"                                                // RSM<int>
+intersection = g & r                                                   // RSM<int * int>
 res = map({((u, _), (v, _)) -> (u, v)}, get_reachables(intersection))  // Set<int * int>
 print(res)
 ```
 
 Получение вершин, имеющих исходящие рёбра:
+
 ```
-g = load("graph.dot")
+g = r"a | b | c"                              // FA<int>
 print(map({ (v, _, _) -> v }, get_edges(g)))
 ```

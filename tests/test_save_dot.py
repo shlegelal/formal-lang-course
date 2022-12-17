@@ -13,13 +13,13 @@ def _check_build_and_save_dot_then_load_is_isomorphic(
     second_cycle_num: int,
     tmp_path: Path,
 ):
-    path = (tmp_path / "test_graph.dot").as_posix()
+    path = tmp_path / "test_graph.dot"
 
     expected_graph = graph_utils.build_and_save_labeled_two_cycles_graph_as_dot(
         first_cycle_num, "a", second_cycle_num, "b", path
     )
 
-    actual_graph = nx.drawing.nx_pydot.read_dot(path)
+    actual_graph = nx.drawing.nx_pydot.read_dot(path.as_posix())
     # Convert string node labels back to ints
     int_mapping = dict(map(lambda n: (n, int(n)), actual_graph.nodes))
     actual_graph = nx.relabel_nodes(actual_graph, int_mapping)
@@ -91,7 +91,7 @@ class TestDotContents:
         expected_contents: str,
         tmp_path: Path,
     ):
-        path = (tmp_path / "test_graph.dot").as_posix()
+        path = tmp_path / "test_graph.dot"
 
         graph_utils.build_and_save_labeled_two_cycles_graph_as_dot(
             first_cycle_num, "a", second_cycle_num, "b", path

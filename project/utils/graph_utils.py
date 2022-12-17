@@ -1,8 +1,8 @@
 import cfpq_data
 import networkx as nx
+from pathlib import Path
 from typing import NamedTuple
 from typing import Iterable
-from typing import IO
 
 
 class GraphInfo(NamedTuple):
@@ -39,7 +39,7 @@ def build_labeled_two_cycles_graph(
     return graph
 
 
-def save_graph_as_dot(graph: nx.Graph, path: str | IO):
+def save_graph_as_dot(graph: nx.Graph, path: Path | str):
     pydot_graph = nx.drawing.nx_pydot.to_pydot(graph)
     with open(path, "w") as f:
         # Remove newlines as pydot treats some of them as nodes on import
@@ -51,7 +51,7 @@ def build_and_save_labeled_two_cycles_graph_as_dot(
     first_cycle_label: str,
     second_cycle_num: int,
     second_cycle_label: str,
-    path: str | IO,
+    path: Path | str,
 ) -> nx.MultiDiGraph:
     graph = build_labeled_two_cycles_graph(
         first_cycle_num,

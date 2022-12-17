@@ -525,5 +525,22 @@
       "input": "g = \"a\" . \"b\";\nr = c\"S -> a S b | a b\";\nintersection = g & r;\nres = map({((u, _), (v, _)) -> (u, v)}, get_reachables(intersection));\nprint(res)",
       "is_correct": true
     }
+  ],
+  "test_save_parse_tree_as_dot": [
+    {
+      "description": "empty",
+      "input": "",
+      "expected": "strict digraph parse_tree {\n0 [label=prog];\n1 [label=\"'<EOF>'\", shape=box];\n0 -> 1;\n}\n"
+    },
+    {
+      "description": "simple bind",
+      "input": "x = 1",
+      "expected": "strict digraph parse_tree {\n0 [label=prog];\n1 [label=stmt];\n0 -> 1;\n2 [label=\"'x'\", shape=box];\n1 -> 2;\n3 [label=\"'='\", shape=box];\n1 -> 3;\n4 [label=expr];\n1 -> 4;\n5 [label=\"'1'\", shape=box];\n4 -> 5;\n6 [label=\"'<EOF>'\", shape=box];\n0 -> 6;\n}\n"
+    },
+    {
+      "description": "multiple statements",
+      "input": "g = load(\"g.dot\");g = set_starts({1, 2, 3}, g);\nprint(get_starts(g))",
+      "expected": "strict digraph parse_tree {\n0 [label=prog];\n1 [label=stmt];\n0 -> 1;\n2 [label=\"'g'\", shape=box];\n1 -> 2;\n3 [label=\"'='\", shape=box];\n1 -> 3;\n4 [label=expr];\n1 -> 4;\n5 [label=\"'load'\", shape=box];\n4 -> 5;\n6 [label=\"'('\", shape=box];\n4 -> 6;\n7 [label=expr];\n4 -> 7;\n8 [label=\"'\\\"g.dot\\\"'\", shape=box];\n7 -> 8;\n9 [label=\"')'\", shape=box];\n4 -> 9;\n10 [label=\"';'\", shape=box];\n0 -> 10;\n11 [label=stmt];\n0 -> 11;\n12 [label=\"'g'\", shape=box];\n11 -> 12;\n13 [label=\"'='\", shape=box];\n11 -> 13;\n14 [label=expr];\n11 -> 14;\n15 [label=\"'set_starts'\", shape=box];\n14 -> 15;\n16 [label=\"'('\", shape=box];\n14 -> 16;\n17 [label=expr];\n14 -> 17;\n18 [label=\"'{'\", shape=box];\n17 -> 18;\n19 [label=expr];\n17 -> 19;\n20 [label=\"'1'\", shape=box];\n19 -> 20;\n21 [label=\"','\", shape=box];\n17 -> 21;\n22 [label=expr];\n17 -> 22;\n23 [label=\"'2'\", shape=box];\n22 -> 23;\n24 [label=\"','\", shape=box];\n17 -> 24;\n25 [label=expr];\n17 -> 25;\n26 [label=\"'3'\", shape=box];\n25 -> 26;\n27 [label=\"'}'\", shape=box];\n17 -> 27;\n28 [label=\"','\", shape=box];\n14 -> 28;\n29 [label=expr];\n14 -> 29;\n30 [label=\"'g'\", shape=box];\n29 -> 30;\n31 [label=\"')'\", shape=box];\n14 -> 31;\n32 [label=\"';'\", shape=box];\n0 -> 32;\n33 [label=stmt];\n0 -> 33;\n34 [label=\"'print'\", shape=box];\n33 -> 34;\n35 [label=\"'('\", shape=box];\n33 -> 35;\n36 [label=expr];\n33 -> 36;\n37 [label=\"'get_starts'\", shape=box];\n36 -> 37;\n38 [label=\"'('\", shape=box];\n36 -> 38;\n39 [label=expr];\n36 -> 39;\n40 [label=\"'g'\", shape=box];\n39 -> 40;\n41 [label=\"')'\", shape=box];\n36 -> 41;\n42 [label=\"')'\", shape=box];\n33 -> 42;\n43 [label=\"'<EOF>'\", shape=box];\n0 -> 43;\n}\n"
+    }
   ]
 }

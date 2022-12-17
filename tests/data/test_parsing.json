@@ -1,0 +1,529 @@
+{
+  "test_check": [
+    {
+      "description": "empty input",
+      "input": "",
+      "is_correct": true
+    },
+    {
+      "description": "variable",
+      "input": "x = y",
+      "is_correct": true
+    },
+    {
+      "description": "variable starting with underscore",
+      "input": "x = _y",
+      "is_correct": true
+    },
+    {
+      "description": "variable starting with capital",
+      "input": "x = Y",
+      "is_correct": true
+    },
+    {
+      "description": "variable starting with integer",
+      "input": "x = 1y",
+      "is_correct": false
+    },
+    {
+      "description": "variable with capitals, underscores, and integers",
+      "input": "x = _some_vArIabLe123",
+      "is_correct": true
+    },
+    {
+      "description": "integer",
+      "input": "x = 101",
+      "is_correct": true
+    },
+    {
+      "description": "zero",
+      "input": "x = 0",
+      "is_correct": true
+    },
+    {
+      "description": "non-zero integer starting with zero",
+      "input": "x = 023423",
+      "is_correct": false
+    },
+    {
+      "description": "many zeroes integer",
+      "input": "x = 0000",
+      "is_correct": false
+    },
+    {
+      "description": "negative integer",
+      "input": "x = -1035345435",
+      "is_correct": true
+    },
+    {
+      "description": "true",
+      "input": "x = true",
+      "is_correct": true
+    },
+    {
+      "description": "false",
+      "input": "x = false",
+      "is_correct": true
+    },
+    {
+      "description": "string",
+      "input": "x = \"kjhfksdhfk\n   \n dhlk {}()!!\\'' 13 = _,.*|& dhgslkgh\n\n;;;;\n sghksdhglsdk\"",
+      "is_correct": true
+    },
+    {
+      "description": "regex string",
+      "input": "x = r\"a* b* (c | d)\"",
+      "is_correct": true
+    },
+    {
+      "description": "cfg string",
+      "input": "x = c\"S -> a S b | $\"",
+      "is_correct": true
+    },
+    {
+      "description": "set_starts",
+      "input": "x = set_starts({1, 2, 3}, g)",
+      "is_correct": true
+    },
+    {
+      "description": "set_starts too few arguments",
+      "input": "x = set_starts()",
+      "is_correct": false
+    },
+    {
+      "description": "set_starts too many arguments",
+      "input": "x = set_starts({1, 2, 3}, g, 1)",
+      "is_correct": false
+    },
+    {
+      "description": "set_finals",
+      "input": "x = set_finals({1, 2, 3}, g)",
+      "is_correct": true
+    },
+    {
+      "description": "set_finals too few arguments",
+      "input": "x = set_finals({1, 2, 3})",
+      "is_correct": false
+    },
+    {
+      "description": "set_finals too many arguments",
+      "input": "x = set_finals({1, 2, 3}, g, 1)",
+      "is_correct": false
+    },
+    {
+      "description": "add_starts",
+      "input": "x = add_starts({1, 2, 3}, g)",
+      "is_correct": true
+    },
+    {
+      "description": "add_starts too few arguments",
+      "input": "x = add_starts({1, 2, 3})",
+      "is_correct": false
+    },
+    {
+      "description": "add_starts too many arguments",
+      "input": "x = add_starts({1, 2, 3}, g, 1)",
+      "is_correct": false
+    },
+    {
+      "description": "add_finals",
+      "input": "x = add_finals({1, 2, 3}, g)",
+      "is_correct": true
+    },
+    {
+      "description": "add_finals too few arguments",
+      "input": "x = add_finals({1, 2, 3})",
+      "is_correct": false
+    },
+    {
+      "description": "add_finals too many arguments",
+      "input": "x = add_finals({1, 2, 3}, g, 1)",
+      "is_correct": false
+    },
+    {
+      "description": "get_starts",
+      "input": "x = get_starts(g)",
+      "is_correct": true
+    },
+    {
+      "description": "get_starts too few arguments",
+      "input": "x = get_starts()",
+      "is_correct": false
+    },
+    {
+      "description": "get_starts too many arguments",
+      "input": "x = get_starts(g, 1)",
+      "is_correct": false
+    },
+    {
+      "description": "get_finals",
+      "input": "x = get_finals(g)",
+      "is_correct": true
+    },
+    {
+      "description": "get_finals too few arguments",
+      "input": "x = get_finals()",
+      "is_correct": false
+    },
+    {
+      "description": "get_finals too many arguments",
+      "input": "x = get_finals(g, 1)",
+      "is_correct": false
+    },
+    {
+      "description": "get_reachables",
+      "input": "x = get_reachables(g)",
+      "is_correct": true
+    },
+    {
+      "description": "get_reachables too few arguments",
+      "input": "x = get_reachables()",
+      "is_correct": false
+    },
+    {
+      "description": "get_reachables too many arguments",
+      "input": "x = get_reachables(g, 1)",
+      "is_correct": false
+    },
+    {
+      "description": "get_vertices",
+      "input": "x = get_vertices(g)",
+      "is_correct": true
+    },
+    {
+      "description": "get_vertices too few arguments",
+      "input": "x = get_vertices()",
+      "is_correct": false
+    },
+    {
+      "description": "get_vertices too many arguments",
+      "input": "x = get_vertices(g, 1)",
+      "is_correct": false
+    },
+    {
+      "description": "get_edges",
+      "input": "x = get_edges(g)",
+      "is_correct": true
+    },
+    {
+      "description": "get_edges too few arguments",
+      "input": "x = get_edges()",
+      "is_correct": false
+    },
+    {
+      "description": "get_edges too many arguments",
+      "input": "x = get_edges(g, 1)",
+      "is_correct": false
+    },
+    {
+      "description": "get_labels",
+      "input": "x = get_labels(g)",
+      "is_correct": true
+    },
+    {
+      "description": "get_labels too few arguments",
+      "input": "x = get_labels()",
+      "is_correct": false
+    },
+    {
+      "description": "get_labels too many arguments",
+      "input": "x = get_labels(g, 1)",
+      "is_correct": false
+    },
+    {
+      "description": "map",
+      "input": "x = map({ v -> 1 }, g)",
+      "is_correct": true
+    },
+    {
+      "description": "map too few arguments",
+      "input": "x = map({ v -> 1 })",
+      "is_correct": false
+    },
+    {
+      "description": "map too many arguments",
+      "input": "x = map({ v -> 1 }, g, 1)",
+      "is_correct": false
+    },
+    {
+      "description": "filter",
+      "input": "x = filter({ v -> false }, {1, 2, 3})",
+      "is_correct": true
+    },
+    {
+      "description": "filter too few arguments",
+      "input": "x = filter({ v -> false })",
+      "is_correct": false
+    },
+    {
+      "description": "filter too many arguments",
+      "input": "x = filter({ v -> false }, g, 1)",
+      "is_correct": false
+    },
+    {
+      "description": "load",
+      "input": "x = load(\"path.txt\")",
+      "is_correct": true
+    },
+    {
+      "description": "load too few arguments",
+      "input": "x = load()",
+      "is_correct": false
+    },
+    {
+      "description": "load too many arguments",
+      "input": "x = load(\"path.txt\", 1)",
+      "is_correct": false
+    },
+    {
+      "description": "intersect",
+      "input": "x = a & b",
+      "is_correct": true
+    },
+    {
+      "description": "intersect no left argument",
+      "input": "x = & b",
+      "is_correct": false
+    },
+    {
+      "description": "intersect no right argument",
+      "input": "x = a &",
+      "is_correct": false
+    },
+    {
+      "description": "concat",
+      "input": "x = a . b",
+      "is_correct": true
+    },
+    {
+      "description": "concat no left argument",
+      "input": "x = . b",
+      "is_correct": false
+    },
+    {
+      "description": "concat no right argument",
+      "input": "x = a .",
+      "is_correct": false
+    },
+    {
+      "description": "union",
+      "input": "x = a | b",
+      "is_correct": true
+    },
+    {
+      "description": "union no left argument",
+      "input": "x = | b",
+      "is_correct": false
+    },
+    {
+      "description": "union no right argument",
+      "input": "x = a |",
+      "is_correct": false
+    },
+    {
+      "description": "contains",
+      "input": "x = a in b",
+      "is_correct": true
+    },
+    {
+      "description": "contains no left argument",
+      "input": "x = in b",
+      "is_correct": false
+    },
+    {
+      "description": "contains no right argument",
+      "input": "x = a in",
+      "is_correct": false
+    },
+    {
+      "description": "star",
+      "input": "x = a*",
+      "is_correct": true
+    },
+    {
+      "description": "star before the argument",
+      "input": "x = * b",
+      "is_correct": false
+    },
+    {
+      "description": "star between arguments",
+      "input": "x = a * b",
+      "is_correct": false
+    },
+    {
+      "description": "empty set",
+      "input": "x = {}",
+      "is_correct": true
+    },
+    {
+      "description": "set of a single element",
+      "input": "x = {1}",
+      "is_correct": true
+    },
+    {
+      "description": "set of multiple elements",
+      "input": "x = {1, 2, 3, 4, 5, 6}",
+      "is_correct": true
+    },
+    {
+      "description": "set with a single comma",
+      "input": "x = {,}",
+      "is_correct": false
+    },
+    {
+      "description": "set with elements ending with comma",
+      "input": "x = {1, 2,}",
+      "is_correct": false
+    },
+    {
+      "description": "set with elements separated by whitespaces",
+      "input": "x = {1 2 3}",
+      "is_correct": false
+    },
+    {
+      "description": "pair",
+      "input": "x = (a, b)",
+      "is_correct": true
+    },
+    {
+      "description": "pair with with a single comma",
+      "input": "x = (,)",
+      "is_correct": false
+    },
+    {
+      "description": "pair with elements ending with comma",
+      "input": "x = (a,)",
+      "is_correct": false
+    },
+    {
+      "description": "edge",
+      "input": "x = (a, \"label\", b)",
+      "is_correct": true
+    },
+    {
+      "description": "edge with with two commas",
+      "input": "x = (,,)",
+      "is_correct": false
+    },
+    {
+      "description": "edge with too many elements",
+      "input": "x = (a, \"label\", b, 1)",
+      "is_correct": false
+    },
+    {
+      "description": "edge with elements ending with comma",
+      "input": "x = (a, \"label\", b,)",
+      "is_correct": false
+    },
+    {
+      "description": "simple nested expression",
+      "input": "x = (a)",
+      "is_correct": true
+    },
+    {
+      "description": "empty nested expression",
+      "input": "x = ()",
+      "is_correct": false
+    },
+    {
+      "description": "deep nested expression",
+      "input": "x = (((((1, 2), ((1), (1, 2, (3, 4)), (1, 2))))))",
+      "is_correct": true
+    },
+    {
+      "description": "wildcard pattern",
+      "input": "x = map({ _ -> 1 }, {})",
+      "is_correct": true
+    },
+    {
+      "description": "name pattern",
+      "input": "x = map({ some_Long_Name0 -> 1 }, {})",
+      "is_correct": true
+    },
+    {
+      "description": "pair pattern",
+      "input": "x = map({ (a, b) -> 1 }, {})",
+      "is_correct": true
+    },
+    {
+      "description": "edge pattern",
+      "input": "x = map({ (a, b, c) -> 1 }, {})",
+      "is_correct": true
+    },
+    {
+      "description": "nested pattern",
+      "input": "x = map({ (((_, (v1, _)), (a, b)), _, (_, _)) -> 1 }, {})",
+      "is_correct": true
+    },
+    {
+      "description": "constant as pattern",
+      "input": "x = map({ 1 -> 1 }, {})",
+      "is_correct": false
+    },
+    {
+      "description": "bind nothing",
+      "input": "x =",
+      "is_correct": false
+    },
+    {
+      "description": "nothing to nothing",
+      "input": "= 1",
+      "is_correct": false
+    },
+    {
+      "description": "bind multiple",
+      "input": "x = 1 2 3",
+      "is_correct": false
+    },
+    {
+      "description": "bind to multiple",
+      "input": "x y z = 1",
+      "is_correct": false
+    },
+    {
+      "description": "print integer",
+      "input": "print(1)",
+      "is_correct": true
+    },
+    {
+      "description": "print nothing",
+      "input": "print()",
+      "is_correct": false
+    },
+    {
+      "description": "print multiple",
+      "input": "print(1, 2, 3)",
+      "is_correct": false
+    },
+    {
+      "description": "print multiple separated by whitespaces",
+      "input": "print(1 2 3)",
+      "is_correct": false
+    },
+    {
+      "description": "comment after statement",
+      "input": "print(1) // some comment",
+      "is_correct": true
+    },
+    {
+      "description": "semicolons and newlines",
+      "input": "\n\n\n\n\nprint(1); print(2);print(3)\r\n\n\n\n;\n\r\n\n\nprint(4);\n\n\n\n\n",
+      "is_correct": true
+    },
+    {
+      "description": "semicolons, newlines, and comments",
+      "input": "print(1); print(2);print(3)//comment\n//comment\n//comment\n\n;\n\n\n\nprint(4);//comment",
+      "is_correct": true
+    },
+    {
+      "description": "whitespaces in many places",
+      "input": "print(        \n1\n )               ;",
+      "is_correct": true
+    },
+    {
+      "description": "complicated statements",
+      "input": "g = \"a\" . \"b\";\nr = c\"S -> a S b | a b\";\nintersection = g & r;\nres = map({((u, _), (v, _)) -> (u, v)}, get_reachables(intersection));\nprint(res)",
+      "is_correct": true
+    }
+  ]
+}

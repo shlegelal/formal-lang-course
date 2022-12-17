@@ -44,16 +44,16 @@ val =
 lambda = pattern * expr
 
 pattern =
-    Wildcard                              // отбрасывание значения
-  | Name of string                        // именование значения
-  | Unpair of pattern * pattern           // раскрытие пары
-  | Unedge of pattern * string * pattern  // раскрытие ребра
+    Wildcard                               // отбрасывание значения
+  | Name of string                         // именование значения
+  | Unpair of pattern * pattern            // раскрытие пары
+  | Unedge of pattern * pattern * pattern  // раскрытие ребра
 ```
 
 ## Конкретный синтаксис
 
 ```
-prog -> (COMMENT? EOL)* (stmt ((COMMENT? EOL)+ stmt)*)? (COMMENT? EOL)* EOF
+prog -> (COMMENT? ';')* (stmt ((COMMENT? ';')+ stmt)*)? (COMMENT? ';')* EOF
 
 stmt ->
     ID '=' expr
@@ -70,7 +70,6 @@ expr ->
   | 'get_finals' '(' expr ')'
   | 'get_reachables' '(' expr ')'
   | 'get_vertices' '(' expr ')'
-  | 'get_vertices' '(' expr ')'
   | 'get_edges' '(' expr ')'
   | 'get_labels' '(' expr ')'
   | 'map' '(' lambda ',' expr ')'
@@ -80,7 +79,6 @@ expr ->
   | expr '.' expr                       // Concat
   | expr '|' expr                       // Union
   | expr '*'                            // Star
-  | 'smb' '(' expr ')'
   | expr 'in' expr                      // Contains
   | '{' (expr (',' expr)*)? '}'         // Set
   | '(' expr ',' expr ')'               // Pair
@@ -93,20 +91,18 @@ pattern ->
     '_'
   | ID
   | '(' pattern ',' pattern ')'
-  | '(' pattern ',' ID ',' pattern ')'
+  | '(' pattern ',' pattern ',' pattern ')'
 
-ID -> [a-zA-Z][a-zA-Z0-9]*
+ID -> [a-zA-Z_][a-zA-Z_0-9]*
 
-INT -> 0 | -?[1-9][0-9]+
+INT -> '0' | '-'? [1-9][0-9]*
 BOOL -> 'true' | 'false'
 STR -> '"' .*? '"'
 REG -> 'r' STR
 CFG -> 'c' STR
 
-COMMENT = '//' (~EOL)*
-
-WS -> [ \t\f]+
-EOL -> '\r'? '\n'
+COMMENT -> '//' ~[\r\n]*
+WS -> [ \t\n\r\f]+
 ```
 
 ## Примеры
@@ -114,32 +110,32 @@ EOL -> '\r'? '\n'
 Получение вершин, достижимых из определённого множества:
 
 ```
-g = load("graph.dot")                                                       // FA<int>
+g = load("graph.dot");                                                       // FA<int>
 
 // Вариант 1
-reachable_pairs = filter({ (s, _) -> s in {1, 2, 42} }, get_reachables(g))  // Set<int * int>
-res = map({ (_, f) -> f }, reachable_pairs)                                 // Set<int>
-print(res)
+reachable_pairs = filter({ (s, _) -> s in {1, 2, 42} }, get_reachables(g));  // Set<int * int>
+res = map({ (_, f) -> f }, reachable_pairs) ;                                // Set<int>
+print(res);
 
 // Вариант 2
-g = set_starts({1, 2, 42}, g)                                               // FA<int>
-res = map({ (_, f) -> f }, get_reachables(g))                               // Set<int>
+g = set_starts({1, 2, 42}, g);                                               // FA<int>
+res = map({ (_, f) -> f }, get_reachables(g));                               // Set<int>
 print(res)
 ```
 
 Получение пар вершин, между которыми существует путь, удовлетворяющий КС-ограничению:
 
 ```
-g = "a" . "b"                                                          // FA<int>
-r = c"S -> a S b | a b"                                                // RSM<int>
-intersection = g & r                                                   // RSM<int * int>
-res = map({((u, _), (v, _)) -> (u, v)}, get_reachables(intersection))  // Set<int * int>
+g = "a" . "b";                                                          // FA<int>
+r = c"S -> a S b | a b";                                                // RSM<int>
+intersection = g & r;                                                   // RSM<int * int>
+res = map({((u, _), (v, _)) -> (u, v)}, get_reachables(intersection));  // Set<int * int>
 print(res)
 ```
 
 Получение вершин, имеющих исходящие рёбра:
 
 ```
-g = r"a | b | c"                              // FA<int>
+g = r"a | b | c";                              // FA<int>
 print(map({ (v, _, _) -> v }, get_edges(g)))
 ```

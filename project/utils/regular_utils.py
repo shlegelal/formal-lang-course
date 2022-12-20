@@ -1,13 +1,13 @@
 from networkx import MultiDiGraph
 from pyformlang.regular_expression import Regex
-from scipy.sparse import dok_matrix, block_diag, csr_array, lil_array, vstack
+from scipy.sparse import csr_array, lil_array, vstack
 
-from project.utils.automata_utils import build_dfa_by_regex, build_nfa_by_graph
+from project.utils.automata_utils import dfa_by_regex, nfa_by_graph
 from project.utils.binary_matrix_utils import (
-    BinaryMatrix,
-    build_bm_by_nfa,
+    bm_by_nfa,
     intersect,
     transitive_closure,
+    direct_sum,
 )
 
 
@@ -25,107 +25,69 @@ def tensor_rpq(
     :param final_states: Final states in graph. If None, then every node in graph is the final.
     :return: Regular Path Querying
     """
-    graph_bm = build_bm_by_nfa(build_nfa_by_graph(graph, start_states, final_states))
-    query_bm = build_bm_by_nfa(build_dfa_by_regex(query))
+    graph_bm = bm_by_nfa(nfa_by_graph(graph, start_states, final_states))
+    query_bm = bm_by_nfa(dfa_by_regex(query))
+
     intersection = intersect(graph_bm, query_bm)
     tc = transitive_closure(intersection)
     res = set()
-    indexes = {i: st for st, i in graph_bm.indexed_states.items()}
-
-    for state_from, state_to in zip(*tc.nonzero()):
-        if (
-            state_from in intersection.start_states
-            and state_to in intersection.final_states
-        ):
-            res.add(
-                (
-                    indexes[state_from // len(query_bm.indexed_states)],
-                    indexes[state_to // len(query_bm.indexed_states)],
-                )
-            )
+    for n_from_i, n_to_i in zip(*tc):
+        n_from = intersection.states[n_from_i]
+        n_to = intersection.states[n_to_i]
+        if n_from.is_start and n_to.is_final:
+            beg_node = n_from.value[0]
+            end_node = n_to.value[0]
+            res.add((beg_node, end_node))
 
     return res
 
 
-def _direct_sum(
-    bm_left: BinaryMatrix,
-    bm_right: BinaryMatrix,
-) -> dict:
-    matrix = dict()
-    n = len(bm_right.indexed_states)
-    for key in bm_left.matrix.keys():
-        matrix[key] = csr_array(
-            block_diag(
-                (
-                    bm_left.matrix[key],
-                    (
-                        dok_matrix((n, n))
-                        if key not in bm_right.matrix.keys()
-                        else bm_right.matrix[key]
-                    ),
-                )
-            )
-        )
-
-    return matrix
-
-
 def _init_front(
-    x: int,
-    y: int,
-    states: dict,
-    start_states: set,
+    graph_states: list,
+    query_states: list,
     start_row: lil_array,
 ) -> csr_array:
-    f = lil_array((x, y))
-    for st, i in states.items():
-        if st in start_states:
-            f[i, i] = 1
+    x = len(query_states)
+    y = len(query_states) + len(graph_states)
+    f = lil_array((x, y), dtype=bool)
+    for i, st in enumerate(query_states):
+        if st.is_start:
+            f[i, i] = True
             f[i, x:] = start_row
 
     return f.tocsr()
 
 
 def _init_front_separated(
-    x: int,
-    y: int,
-    states: dict,
-    start_states: set,
-    graph_states: dict,
-    start_state: set,
-) -> tuple:
-    fs = []
-    start_states_list = []
-    for g_ss in start_state:
-        start_states_list.append(g_ss)
-
-        fs.append(
-            _init_front(
-                x,
-                y,
-                states,
-                start_states,
-                lil_array([[int(g_ss == st) for st in graph_states.keys()]]),
-            )
+    graph_states: list,
+    query_states: list,
+    start_indexes: list,
+) -> csr_array:
+    x = len(query_states)
+    y = len(graph_states)
+    fs = [
+        _init_front(
+            graph_states,
+            query_states,
+            lil_array([i == st_i for i in range(y)], dtype=bool),
         )
+        for st_i in start_indexes
+    ]
 
-    return (
-        csr_array(vstack(fs)) if len(fs) > 0 else csr_array((x, y)),
-        start_states_list,
-    )
+    return csr_array(vstack(fs)) if len(fs) else csr_array((x, x + y), dtype=bool)
 
 
-def _transport_front_part(
+def _transform_front_part(
     k: int,
     front: csr_array,
 ) -> csr_array:
-    result = lil_array(front.shape)
+    result = lil_array(front.shape, dtype=bool)
     for i, j in zip(*front.nonzero()):
         if j < k:
             non_zero_row_right = front.getrow(i).tolil()[[0], k:]
             if non_zero_row_right.nnz > 0:
                 row_shift = i // k * k
-                result[row_shift + j, j] = 1
+                result[row_shift + j, j] = True
                 result[[row_shift + j], k:] += non_zero_row_right
 
     return result.tocsr()
@@ -148,74 +110,56 @@ def bfs_rpq(
     :return: Regular Path Querying
     """
 
-    graph_bm = build_bm_by_nfa(build_nfa_by_graph(graph, start_states, final_states))
-    query_bm = build_bm_by_nfa(build_dfa_by_regex(query))
+    graph_bm = bm_by_nfa(nfa_by_graph(graph, start_states, final_states))
+    query_bm = bm_by_nfa(dfa_by_regex(query))
 
-    n = len(graph_bm.indexed_states)
-    k = len(query_bm.indexed_states)
+    n = len(graph_bm.states)
+    k = len(query_bm.states)
 
     if not n:
         return set()
 
-    d = _direct_sum(query_bm, graph_bm)
-    graph_index_start_state = []
+    start_graph_indices = [i for i, st in enumerate(graph_bm.states) if st.is_start]
 
-    if separated:
-        front, graph_index_start_state = _init_front_separated(
-            k,
-            k + n,
-            query_bm.indexed_states,
-            query_bm.start_states,
-            graph_bm.indexed_states,
-            graph_bm.start_states,
+    init_front = (
+        _init_front(
+            graph_bm.states,
+            query_bm.states,
+            lil_array([st.is_start for st in graph_bm.states], dtype=bool),
         )
-    else:
-        front = _init_front(
-            k,
-            k + n,
-            query_bm.indexed_states,
-            query_bm.start_states,
-            lil_array(
-                [
-                    [
-                        int(st in graph_bm.start_states)
-                        for st in graph_bm.indexed_states.keys()
-                    ]
-                ]
-            ),
+        if not separated
+        else _init_front_separated(
+            graph_bm.states, query_bm.states, start_graph_indices
         )
+    )
 
-    visited = csr_array(front.shape)
-
+    visited = csr_array(init_front.shape, dtype=bool)
+    ds = direct_sum(query_bm, graph_bm)
     while True:
-        tmp = visited.copy()
+        prev_nnz = visited.nnz
 
-        for m in d.values():
-            front_part = visited @ m if front is None else front @ m
-            visited += _transport_front_part(k, front_part)
+        for tmp in ds.matrix.values():
+            front_part = visited @ tmp if init_front is None else init_front @ tmp
+            visited += _transform_front_part(len(query_bm.states), front_part)
 
-        front = None
+        init_front = None
 
-        if visited.nnz == tmp.nnz:
+        if visited.nnz == prev_nnz:
             break
 
-    result = set()
-    graph_states = {i: st for st, i in graph_bm.indexed_states.items()}
-    query_final_states_index = {
-        i for st, i in query_bm.indexed_states.items() if st in query_bm.final_states
-    }
-    graph_final_states_index = {
-        i for st, i in graph_bm.indexed_states.items() if st in graph_bm.final_states
-    }
-
+    res = set()
     for i, j in zip(*visited.nonzero()):
-        if j >= k and i % k in query_final_states_index:
-            graph_index = j - k
-            if graph_index in graph_final_states_index:
-                result.add(
-                    graph_states[graph_index]
+        if j >= k and query_bm.states[i % k].is_final:
+            g_st_index = j - k
+            if graph_bm.states[g_st_index].is_final:
+                res.add(
+                    g_st_index
                     if not separated
-                    else (graph_index_start_state[i // k], graph_states[graph_index])
+                    else (start_graph_indices[i // k], g_st_index)
                 )
 
-    return result
+    return (
+        {(graph_bm.states[i].value, graph_bm.states[j].value) for i, j in res}
+        if separated
+        else {graph_bm.states[i].value for i in res}
+    )

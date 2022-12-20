@@ -3,15 +3,15 @@ from pyformlang.finite_automaton import NondeterministicFiniteAutomaton, State
 from scipy.sparse import dok_matrix
 
 from project.utils.binary_matrix_utils import (
-    build_bm_by_nfa,
-    build_nfa_by_bm,
+    bm_by_nfa,
+    nfa_by_bm,
     intersect,
     transitive_closure,
 )
 from load_test_res import load_test_res
 
 
-def nfa(
+def nfa_by_transactions(
     transitions_list: list[tuple], start_states: set = None, final_states: set = None
 ) -> NondeterministicFiniteAutomaton:
     res = NondeterministicFiniteAutomaton()
@@ -29,23 +29,23 @@ def nfa(
 
 
 def test_build_empty():
-    nfa_1 = build_nfa_by_bm(build_bm_by_nfa(nfa([])))
+    nfa = nfa_by_bm(bm_by_nfa(nfa_by_transactions([])))
 
-    assert nfa_1.is_empty()
+    assert nfa.is_empty()
 
 
 @pytest.mark.parametrize(
-    "nfa_1",
+    "nfa",
     map(
-        lambda res: (nfa(res[0], res[1], res[2])),
+        lambda res: (nfa_by_transactions(res[0], res[1], res[2])),
         load_test_res("test_intersect"),
     ),
 )
-def test_intersect_with_empty(nfa_1: NondeterministicFiniteAutomaton):
-    bm = build_bm_by_nfa(nfa_1)
-    empty_bm = build_bm_by_nfa(nfa([]))
+def test_intersect_with_empty(nfa: NondeterministicFiniteAutomaton):
+    bm = bm_by_nfa(nfa)
+    empty_bm = bm_by_nfa(nfa_by_transactions([]))
 
-    intersection = build_nfa_by_bm(intersect(bm, empty_bm))
+    intersection = nfa_by_bm(intersect(bm, empty_bm))
 
     assert intersection.is_empty()
 
@@ -53,14 +53,14 @@ def test_intersect_with_empty(nfa_1: NondeterministicFiniteAutomaton):
 @pytest.mark.parametrize(
     "l_nfa",
     map(
-        lambda res: nfa(res[0], res[1], res[2]),
+        lambda res: nfa_by_transactions(res[0], res[1], res[2]),
         load_test_res("test_intersect"),
     ),
 )
 @pytest.mark.parametrize(
     "r_nfa",
     map(
-        lambda res: nfa(res[0], res[1], res[2]),
+        lambda res: nfa_by_transactions(res[0], res[1], res[2]),
         load_test_res("test_intersect"),
     ),
 )
@@ -69,25 +69,33 @@ def test_intersect(
 ):
     expected = l_nfa.get_intersection(r_nfa)
 
-    l_bm = build_bm_by_nfa(l_nfa)
-    r_bm = build_bm_by_nfa(r_nfa)
+    l_bm = bm_by_nfa(l_nfa)
+    r_bm = bm_by_nfa(r_nfa)
 
-    actual = build_nfa_by_bm(intersect(l_bm, r_bm))
+    actual = nfa_by_bm(intersect(l_bm, r_bm))
 
     assert expected.is_equivalent_to(actual)
 
 
 @pytest.mark.parametrize(
-    "nfa_1, expected",
+    "nfa, expected",
     map(
-        lambda res: ((nfa(res[0], res[1], res[2])), res[3]),
+        lambda res: (
+            (nfa_by_transactions(res[0], res[1], res[2])),
+            {
+                (i, j)
+                for i, tmp in enumerate(res[3])
+                for j, data in enumerate(tmp)
+                if data
+            },
+        ),
         load_test_res("test_transitive_closure"),
     ),
 )
 def test_transitive_closure(
-    nfa_1: NondeterministicFiniteAutomaton, expected: list[list[bool]]
+    nfa: NondeterministicFiniteAutomaton, expected: list[list[bool]]
 ):
-    bm = build_bm_by_nfa(nfa_1)
-    actual = transitive_closure(bm).toarray().tolist()
+    bm = bm_by_nfa(nfa)
+    actual = set(zip(*transitive_closure(bm)))
 
     assert actual == expected

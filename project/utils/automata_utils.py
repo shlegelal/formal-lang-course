@@ -16,7 +16,7 @@ class AutomataUtilsError(Exception):
         self.msg = msg
 
 
-def build_dfa_by_regex(regex: Regex) -> DeterministicFiniteAutomaton:
+def dfa_by_regex(regex: Regex) -> DeterministicFiniteAutomaton:
     """
     Builds DFA by a *regular expression* (https://pyformlang.readthedocs.io/en/latest/usage.html#regular-expression).
 
@@ -26,7 +26,7 @@ def build_dfa_by_regex(regex: Regex) -> DeterministicFiniteAutomaton:
     return regex.to_epsilon_nfa().minimize()
 
 
-def build_nfa_by_graph(
+def nfa_by_graph(
     graph: MultiDiGraph, start_states: set = None, final_states: set = None
 ) -> NondeterministicFiniteAutomaton:
     """

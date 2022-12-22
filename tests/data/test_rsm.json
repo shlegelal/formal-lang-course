@@ -1,11 +1,43 @@
 {
-  "test_rsm": [
+  "test_rsm_from_cfg": [
     {
       "description": "empty CFG",
       "cfg": "",
       "rsm": {
         "start": "S",
-        "boxes": {}
+        "boxes": {
+          "S": "digraph {1 [is_start=True, is_final=False]}"
+        }
+      }
+    },
+    {
+      "description": "empty production",
+      "cfg": "S ->",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {1 [is_start=True, is_final=True]}"
+        }
+      }
+    },
+    {
+      "description": "epsilon",
+      "cfg": "S -> epsilon",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {1 [is_start=True, is_final=True]}"
+        }
+      }
+    },
+    {
+      "description": "multiple epsilons",
+      "cfg": "S -> epsilon $ epsilon",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {1 [is_start=True, is_final=True]}"
+        }
       }
     },
     {
@@ -15,6 +47,26 @@
         "start": "S",
         "boxes": {
           "S": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=a]}"
+        }
+      }
+    },
+    {
+      "description": "epsilon between symbols",
+      "cfg": "S -> a epsilon b",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=False]; 3 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=a]; 2 -> 3 [key=0, label=b]}"
+        }
+      }
+    },
+    {
+      "description": "missing variable",
+      "cfg": "S -> A",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=A]}"
         }
       }
     },
@@ -50,6 +102,71 @@
           "S": "digraph {1 [is_start=True, is_final=True]; 2 [is_start=False, is_final=False]; 3 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=A]; 1 -> 2 [key=1, label=B]; 2 -> 3 [key=0, label=S]}",
           "A": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=False]; 3 [is_start=False, is_final=False]; 4 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=a]; 2 -> 3 [key=0, label=a]; 3 -> 4 [key=0, label=a]}",
           "B": "digraph {1 [is_start=True, is_final=False]; 2 [is_start=False, is_final=False]; 3 [is_start=False, is_final=True]; 1 -> 2 [key=0, label=b]; 2 -> 3 [key=0, label=b]}"
+        }
+      }
+    }
+  ],
+  "test_rsm_from_dot_file": [
+    {
+      "description": "no subgraphs",
+      "dot_text": "digraph S {}",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {0 [is_start=True, is_final=False]}"
+        }
+      }
+    },
+    {
+      "description": "single production",
+      "dot_text": "digraph S {subgraph S {1 -> 2 [label=a]}}",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {1 [is_start=True, is_final=True]; 2 [is_start=True, is_final=True]; 1 -> 2 [label=a]}"
+        }
+      }
+    },
+    {
+      "description": "custom start",
+      "dot_text": "digraph some_custom_start {subgraph some_custom_start {1 -> 2 [label=a]}}",
+      "rsm": {
+        "start": "some_custom_start",
+        "boxes": {
+          "some_custom_start": "digraph {1 [is_start=True, is_final=True]; 2 [is_start=True, is_final=True]; 1 -> 2 [label=a]}"
+        }
+      }
+    },
+    {
+      "description": "multiple productions",
+      "dot_text": "digraph S {subgraph S {1 -> 2 [label=A]; 2 -> 3 [label=S]; 3 -> 4 [label=B]}\nsubgraph A {1 -> 2 [label=A]; 1 -> 2 [label=a]}\nsubgraph B {1 -> 2 [label=b]}}",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {1 [is_start=True, is_final=True]; 2 [is_start=True, is_final=True]; 3 [is_start=True, is_final=True]; 4 [is_start=True, is_final=True]; 1 -> 2 [label=A]; 2 -> 3 [label=S]; 3 -> 4 [label=B]}",
+          "A": "digraph {1 [is_start=True, is_final=True]; 2 [is_start=True, is_final=True]; 1 -> 2 [label=A]; 1 -> 2 [label=a]}",
+          "B": "digraph {1 [is_start=True, is_final=True]; 2 [is_start=True, is_final=True];1 -> 2 [label=b]}}"
+        }
+      }
+    },
+    {
+      "description": "missing variable",
+      "dot_text": "digraph S {subgraph S {1 -> 2 [label=A]}}",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {1 [is_start=True, is_final=True]; 2 [is_start=True, is_final=True]; 1 -> 2 [label=A]}}"
+        }
+      }
+    },
+    {
+      "description": "no start subgraph",
+      "dot_text": "digraph S {subgraph A {1 -> 2 [label=A]}}",
+      "rsm": {
+        "start": "S",
+        "boxes": {
+          "S": "digraph {0 [is_start=True, is_final=False]}",
+          "A": "digraph {1 [is_start=True, is_final=True]; 2 [is_start=True, is_final=True]; 1 -> 2 [label=A]}}"
         }
       }
     }

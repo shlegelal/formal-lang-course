@@ -11,6 +11,8 @@ import pydot
 from pyformlang import finite_automaton as fa
 from pytest import fixture
 
+from project.litegql.grammar.LiteGQLParser import LiteGQLParser
+from project.litegql.parsing import get_parser
 from project.rpq.fa_utils import iter_fa_transitions
 
 
@@ -132,3 +134,12 @@ def reconstruct_if_equal_nodes(
     for s_from, symb, s_to in iter_fa_transitions(nfa2):
         new_nfa2.add_transition(mapping[s_from], symb, mapping[s_to])
     return new_nfa2
+
+
+def fail(*_args, **_kwargs):
+    assert False
+
+
+@fixture(name="ctx")
+def expr_ctx(request) -> LiteGQLParser.ExprContext:
+    return get_parser(request.param).expr()

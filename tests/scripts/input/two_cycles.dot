@@ -1,0 +1,7 @@
+digraph G {
+    100 -> 101 [label=a]
+    101 -> 102 [label=a]
+    102 -> 100 [label=a]
+    102 -> 103 [label=b]
+    103 -> 102 [label=b]
+}

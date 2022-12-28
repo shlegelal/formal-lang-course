@@ -142,7 +142,9 @@ def prepare_boxes(raw_boxes: dict[str, str]) -> dict[str, fa.EpsilonNFA]:
 
 
 def assert_equivalent_boxes(
-    actual: dict[c.Variable, fa.EpsilonNFA], expected: dict[str, fa.EpsilonNFA]
+    actual: dict[c.Variable, fa.EpsilonNFA],
+    expected: dict[str, fa.EpsilonNFA] | dict[c.Variable, fa.EpsilonNFA],
+    wrapped_expected: bool = False,
 ):
     def unwrap_var(v: c.Variable) -> str:
         if isinstance(v.value, str):
@@ -166,7 +168,11 @@ def assert_equivalent_boxes(
     assert len(actual) == len(expected)
     for var in actual:
         actual_box = unwrap_symbols(actual[var])
-        expected_box = expected[unwrap_var(var)]
+        expected_box = (
+            expected[unwrap_var(var)]
+            if not wrapped_expected
+            else unwrap_symbols(expected[var])
+        )
         assert are_equivalent(actual_box, expected_box)
 
 

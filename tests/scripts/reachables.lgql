@@ -1,0 +1,4 @@
+// Get pairs of vertices so that the second one in a pair is reachable from the first one
+
+g = load("input/random.dot");
+print(get_reachables(g))

@@ -1,0 +1,4 @@
+// Create regular expression dynamically
+
+r = "start" . ("mid1" | "mid2")* . "ending";
+print(r)

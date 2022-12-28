@@ -23,6 +23,7 @@ class InterpretVisitor(LiteGQLVisitor):
         self.output = output
         self.log = lambda msg: logging.debug(msg)  # The lambda is required
         self._scopes: list[dict[str, BaseType]] = [{}]
+        self._automaton_start_index = 0  # To make automatons with non-repeating states
 
     def set_var(self, var: str, value: BaseType):
         self.log(f"set_var: scope depth {len(self._scopes)}")
@@ -78,7 +79,9 @@ class InterpretVisitor(LiteGQLVisitor):
     def visitString(self, ctx: LiteGQLParser.StringContext) -> String:
         text = ctx.STR().getText()
         self.log(f"string: {text}")
-        return String(text[1:-1])
+        s = String(text[1:-1], self._automaton_start_index)
+        self._automaton_start_index += len(s.get_vertices().value)
+        return s
 
     def visitSet(self, ctx: LiteGQLParser.SetContext) -> Set:
         vs: set[BaseType] = set()
@@ -93,12 +96,16 @@ class InterpretVisitor(LiteGQLVisitor):
     def visitReg(self, ctx: LiteGQLParser.RegContext) -> Reg[Int]:
         text = ctx.REG().getText()
         self.log(f"reg: {text}")
-        return Reg.from_raw_str(text[2:-1])
+        r = Reg.from_raw_str(text[2:-1], start_index=self._automaton_start_index)
+        self._automaton_start_index += len(r.get_vertices().value)
+        return r
 
     def visitCfg(self, ctx: LiteGQLParser.CfgContext) -> Cfg[Int]:
         text = ctx.CFG().getText()
         self.log(f"cfg: {text}")
-        return Cfg.from_raw_str(text[2:-1])
+        c = Cfg.from_raw_str(text[2:-1], start_index=self._automaton_start_index)
+        self._automaton_start_index += len(c.get_vertices().value)
+        return c
 
     def visitPair(self, ctx: LiteGQLParser.PairContext) -> Pair:
         fst = self.visit(ctx.expr(0))

@@ -430,25 +430,34 @@ def test_visit_get_reachables_incorrect(ctx: LiteGQLParser.GetReachablesContext)
     "ctx, expected",
     [
         # TODO: add the CFG tests below after intersect() is implemented for RSM
-        ('"a" & "a"', String("a").intersect(String("a"))),
-        ('"a" & r"a*"', String("a").intersect(Reg.from_raw_str("a*"))),
-        # ('"a" & c"S -> a"', String("a").intersect(Cfg.from_raw_str("S -> a"))),
+        ('"a" & "a"', String("a").intersect(String("a", start_index=2))),
+        ('"a" & r"a*"', String("a").intersect(Reg.from_raw_str("a*", start_index=2))),
+        # (
+        #     '"a" & c"S -> a"',
+        #     String("a").intersect(Cfg.from_raw_str("S -> a", start_index=2)),
+        # ),
         ('r"a b c" & "a"', Reg.from_raw_str("a b c").intersect(String("a"))),
         (
             'r"a b c" & r"a*"',
-            Reg.from_raw_str("a b c").intersect(Reg.from_raw_str("a*")),
+            Reg.from_raw_str("a b c").intersect(Reg.from_raw_str("a*", start_index=4)),
         ),
         # (
         #     'r"a b c" & c"S -> a"',
-        #     Reg.from_raw_str("a b c").intersect(Cfg.from_raw_str("S -> a")),
+        #     Reg.from_raw_str("a b c").intersect(
+        #         Cfg.from_raw_str("S -> a", start_index=4)
+        #     ),
         # ),
         # (
         #     'c"S -> a S b | $" & "ab"',
-        #     Cfg.from_raw_str("S -> a S b | $").intersect(String("ab")),
+        #     Cfg.from_raw_str("S -> a S b | $").intersect(
+        #         String("ab", start_index=-100)
+        #     ),
         # ),
         # (
         #     'c"S -> a S b | $" & r"a* b*"',
-        #     Cfg.from_raw_str("S -> a S b | $").intersect(Reg.from_raw_str("a* b*")),
+        #     Cfg.from_raw_str("S -> a S b | $").intersect(
+        #         Reg.from_raw_str("a* b*", start_index=-100)
+        #     ),
         # ),
     ],
     indirect=["ctx"],
@@ -483,36 +492,45 @@ def test_visit_intersect_incorrect(ctx: LiteGQLParser.IntersectContext):
 @pytest.mark.parametrize(
     "ctx, expected",
     [
-        ('"a" . "a"', String("a").concat(String("a"))),
-        ('"a" . r"a*"', String("a").concat(Reg.from_raw_str("a*"))),
-        ('"a" . c"S -> a"', String("a").concat(Cfg.from_raw_str("S -> a"))),
-        ('r"a b c" . "a"', Reg.from_raw_str("a b c").concat(String("a"))),
+        ('"a" . "a"', String("a").concat(String("a", start_index=2))),
+        ('"a" . r"a*"', String("a").concat(Reg.from_raw_str("a*", start_index=2))),
+        (
+            '"a" . c"S -> a"',
+            String("a").concat(Cfg.from_raw_str("S -> a", start_index=2)),
+        ),
+        (
+            'r"a b c" . "a"',
+            Reg.from_raw_str("a b c").concat(String("a", start_index=6)),
+        ),
         (
             'r"a b c" . r"a*"',
-            Reg.from_raw_str("a b c").concat(Reg.from_raw_str("a*")),
+            Reg.from_raw_str("a b c").concat(Reg.from_raw_str("a*", start_index=6)),
         ),
         (
             'r"a b c" . c"S -> a"',
-            Reg.from_raw_str("a b c").concat(Cfg.from_raw_str("S -> a")),
+            Reg.from_raw_str("a b c").concat(Cfg.from_raw_str("S -> a", start_index=6)),
         ),
         (
             'c"S -> a S b | $" . "ab"',
-            Cfg.from_raw_str("S -> a S b | $").concat(String("ab")),
+            Cfg.from_raw_str("S -> a S b | $").concat(String("ab", start_index=-100)),
         ),
         (
             'c"S -> a S b | $" . r"a* b*"',
-            Cfg.from_raw_str("S -> a S b | $").concat(Reg.from_raw_str("a* b*")),
+            Cfg.from_raw_str("S -> a S b | $").concat(
+                Reg.from_raw_str("a* b*", start_index=-100)
+            ),
         ),
         (
             'c"S -> a S b | $" . c"S -> a S b S | $"',
             Cfg.from_raw_str("S -> a S b | $").concat(
-                Cfg.from_raw_str("S -> a S b S | $")
+                Cfg.from_raw_str("S -> a S b S | $", start_index=-100)
             ),
         ),
     ],
     indirect=["ctx"],
 )
 def test_visit_concat(ctx: LiteGQLParser.ConcatContext, expected: Reg | Cfg):
+    l = len(Reg.from_raw_str("a b c").get_vertices().value)
     actual = InterpretVisitor(output=fail).visitConcat(ctx)
     assert isinstance(actual, (Reg, Cfg))
     if isinstance(actual, Reg):
@@ -537,30 +555,35 @@ def test_visit_concat_incorrect(ctx: LiteGQLParser.ConcatContext):
 @pytest.mark.parametrize(
     "ctx, expected",
     [
-        ('"a" | "a"', String("a").union(String("a"))),
-        ('"a" | r"a*"', String("a").union(Reg.from_raw_str("a*"))),
-        ('"a" | c"S -> a"', String("a").union(Cfg.from_raw_str("S -> a"))),
-        ('r"a b c" | "a"', Reg.from_raw_str("a b c").union(String("a"))),
+        ('"a" | "a"', String("a").union(String("a", start_index=2))),
+        ('"a" | r"a*"', String("a").union(Reg.from_raw_str("a*", start_index=2))),
+        (
+            '"a" | c"S -> a"',
+            String("a").union(Cfg.from_raw_str("S -> a", start_index=2)),
+        ),
+        ('r"a b c" | "a"', Reg.from_raw_str("a b c").union(String("a", start_index=6))),
         (
             'r"a b c" | r"a*"',
-            Reg.from_raw_str("a b c").union(Reg.from_raw_str("a*")),
+            Reg.from_raw_str("a b c").union(Reg.from_raw_str("a*", start_index=6)),
         ),
         (
             'r"a b c" | c"S -> a"',
-            Reg.from_raw_str("a b c").union(Cfg.from_raw_str("S -> a")),
+            Reg.from_raw_str("a b c").union(Cfg.from_raw_str("S -> a", start_index=6)),
         ),
         (
             'c"S -> a S b | $" | "ab"',
-            Cfg.from_raw_str("S -> a S b | $").union(String("ab")),
+            Cfg.from_raw_str("S -> a S b | $").union(String("ab", start_index=-100)),
         ),
         (
             'c"S -> a S b | $" | r"a* b*"',
-            Cfg.from_raw_str("S -> a S b | $").union(Reg.from_raw_str("a* b*")),
+            Cfg.from_raw_str("S -> a S b | $").union(
+                Reg.from_raw_str("a* b*", start_index=-100)
+            ),
         ),
         (
             'c"S -> a S b | $" | c"S -> a S b S | $"',
             Cfg.from_raw_str("S -> a S b | $").union(
-                Cfg.from_raw_str("S -> a S b S | $")
+                Cfg.from_raw_str("S -> a S b S | $", start_index=-100)
             ),
         ),
     ],

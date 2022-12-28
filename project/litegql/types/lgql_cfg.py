@@ -62,8 +62,8 @@ class Cfg(AutomatonLike[VertexT], Generic[VertexT]):
         self._meta = Cfg.Meta(elem_meta)
 
     @classmethod
-    def from_raw_str(cls, raw_str: str) -> "Cfg[Int]":
-        rsm = Rsm.from_cfg(c.CFG.from_text(raw_str))
+    def from_raw_str(cls, raw_str: str, start_index: int = 0) -> "Cfg[Int]":
+        rsm = Rsm.from_cfg(c.CFG.from_text(raw_str), start_index)
         for var in rsm.boxes:
             rsm.boxes[var] = map_fa_states(rsm.boxes[var], Int)
         return cls(rsm, Int.Meta())

@@ -68,9 +68,10 @@ class Reg(AutomatonLike[VertexT], Generic[VertexT]):
         )
 
     @classmethod
-    def from_raw_str(cls, raw_str: str) -> "Reg[Int]":
+    def from_raw_str(cls, raw_str: str, start_index: int = 0) -> "Reg[Int]":
         raw_nfa = re.Regex(raw_str).to_epsilon_nfa().remove_epsilon_transitions()
-        return cls(map_fa_states(raw_nfa, Int), Int.Meta())
+        index_map = {s: Int(i) for i, s in enumerate(raw_nfa.states, start=start_index)}
+        return cls(map_fa_states(raw_nfa, lambda s: index_map[s]), Int.Meta())
 
     @classmethod
     def from_dataset(cls, graph_name: str) -> "Reg[Int]":

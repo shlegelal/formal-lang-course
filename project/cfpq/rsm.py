@@ -22,9 +22,9 @@ class Rsm:
         self.boxes = boxes
 
     @classmethod
-    def from_cfg(cls, cfg: c.CFG) -> "Rsm":
+    def from_cfg(cls, cfg: c.CFG, start_index: int = 0) -> "Rsm":
         """Preserves Terminals and Variables in the labels of the resulting boxes."""
-        last_state = fa.State(0)  # Ensure no overlapping for correct union
+        last_state = fa.State(start_index)  # Ensure no overlapping for correct union
         boxes: dict[c.Variable, fa.NondeterministicFiniteAutomaton] = {
             # Ensure a correct start box always exist
             cfg.start_symbol: fa.NondeterministicFiniteAutomaton(

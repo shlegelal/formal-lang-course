@@ -12,12 +12,12 @@ class String(Reg[Int]):
         def __repr__(self) -> str:
             return String.__name__
 
-    def __init__(self, v: str):
+    def __init__(self, v: str, start_index: int = 0):
         if not isinstance(v, str):
             raise TypeError("Expected str")
         # Not using a DFA not to get behavioral differences with Reg
         nfa = fa.NondeterministicFiniteAutomaton()
-        start, final = Int(0), Int(1)
+        start, final = Int(start_index), Int(start_index + 1)
         # Explicitly converting str to Symbol in case of "epsilon"/"$"
         nfa.add_transition(start, fa.Symbol(v), final)
         nfa.add_start_state(start)
@@ -31,8 +31,8 @@ class String(Reg[Int]):
         return cls(s)
 
     @classmethod
-    def from_raw_str(cls, raw_str: str) -> "String":
-        return cls(raw_str)
+    def from_raw_str(cls, raw_str: str, start_index: int = 0) -> "String":
+        return cls(raw_str, start_index)
 
     @classmethod
     def from_dataset(cls, graph_name: str) -> Reg[Int]:

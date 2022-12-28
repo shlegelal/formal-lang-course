@@ -23,7 +23,7 @@ class AutomatonLike(BaseType, Generic[VertexT], abc.ABC):
 
     @classmethod
     @abc.abstractmethod
-    def from_raw_str(cls, raw_str: str) -> "AutomatonLike[Int]":
+    def from_raw_str(cls, raw_str: str, start_index: int = 0) -> "AutomatonLike[Int]":
         ...
 
     @abc.abstractmethod

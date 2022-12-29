@@ -401,11 +401,10 @@ def test_visit_get_labels_incorrect(ctx: LiteGQLParser.GetLabelsContext):
     [
         ('get_reachables("some str")', String("some str").get_reachables()),
         ('get_reachables(r"a b c")', Reg.from_raw_str("a b c").get_reachables()),
-        # TODO: add this test after get_reachables() is implemented for CFGs
-        # (
-        #         'get_reachables(c"S -> a S b | epsilon")',
-        #         Cfg.from_raw_str("S -> a S b | epsilon").get_labels(),
-        # ),
+        (
+            'get_reachables(c"S -> a S b | epsilon")',
+            Cfg.from_raw_str("S -> a S b | epsilon").get_reachables(),
+        ),
     ],
     indirect=["ctx"],
 )

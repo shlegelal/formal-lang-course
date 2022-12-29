@@ -12,6 +12,7 @@ from project.litegql.types.lgql_bool import Bool
 from project.litegql.types.lgql_cfg import Cfg
 from project.litegql.types.lgql_edge import Edge
 from project.litegql.types.lgql_int import Int
+from project.litegql.types.lgql_pair import Pair
 from project.litegql.types.lgql_set import Set
 from project.litegql.types.lgql_string import String
 from project.rpq.fa_utils import iter_fa_transitions
@@ -137,6 +138,21 @@ def test_cfg_get_edges(cfg: Cfg[Int], expected: set[Edge]):
     assert cfg.get_edges().value == expected
 
 
+@pytest.mark.parametrize(
+    "cfg, expected",
+    load_test_data(
+        "test_cfg_from_raw_str",
+        lambda d: (
+            Cfg.from_raw_str(d["cfg_str"]),
+            {Pair(Int(fst), Int(snd)) for fst, snd in d["expected_reachables"]},
+        ),
+    ),
+    ids=load_test_ids("test_cfg_from_raw_str"),
+)
+def test_reg_get_reachables(cfg: Cfg, expected: set[Pair[Int, Int]]):
+    assert cfg.get_reachables().value == expected
+
+
 def prepare_boxes(raw_boxes: dict[str, str]) -> dict[str, fa.EpsilonNFA]:
     return {var: re.Regex(regex).to_epsilon_nfa() for var, regex in raw_boxes.items()}
 
@@ -251,4 +267,4 @@ def test_cfg_union(
     assert_equivalent_boxes(actual._rsm.boxes, expected_boxes)
 
 
-# TODO: test get_reachables and intersect
+# TODO: test intersect

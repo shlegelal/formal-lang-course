@@ -14,6 +14,7 @@ from project.rpq.fa_utils import ConcreteFA
 from project.rpq.fa_utils import iter_fa_transitions
 from project.rpq.fa_utils import star_fa
 from project.rpq.fa_utils import union_fas
+from project.utils.bool_decomposition import BoolDecomposition
 
 
 class Rsm:
@@ -25,13 +26,9 @@ class Rsm:
     def from_cfg(cls, cfg: c.CFG, start_index: int = 0) -> "Rsm":
         """Preserves Terminals and Variables in the labels of the resulting boxes."""
         last_state = fa.State(start_index)  # Ensure no overlapping for correct union
-        boxes: dict[c.Variable, fa.NondeterministicFiniteAutomaton] = {
-            # Ensure a correct start box always exist
-            cfg.start_symbol: fa.NondeterministicFiniteAutomaton(
-                start_state={last_state}
-            )
-        }
-        for p in cfg.productions:
+        boxes: dict[c.Variable, fa.NondeterministicFiniteAutomaton] = {}
+        # Sort to get determined results
+        for p in sorted(cfg.productions, key=str):
             nfa = fa.NondeterministicFiniteAutomaton()
             nfa.add_start_state(last_state)
             for obj in p.body:
@@ -47,6 +44,10 @@ class Rsm:
                 boxes[p.head] = union_fas(boxes[p.head], nfa)
             else:
                 boxes[p.head] = nfa
+        if cfg.start_symbol not in boxes:
+            boxes[cfg.start_symbol] = fa.NondeterministicFiniteAutomaton(
+                start_state={last_state}
+            )
         return cls(start=cfg.start_symbol or c.Variable("S"), boxes=boxes)
 
     @classmethod
@@ -141,6 +142,52 @@ class Rsm:
             for box in self.boxes.values()
             for s_from, symb, s_to in iter_fa_transitions(box)
         }
+
+    def get_reachables(self) -> set[tuple[fa.State, fa.State]]:
+        # First remove all variable transitions as they may actually be non-terminable
+        # (e.g. have no finishes or always lead to infinite recursion) and then
+        # gradually add them back until no new transitions appear
+
+        decomp = BoolDecomposition.from_rsm(self)
+        nonterminatable_adjs = {}
+        res = set()
+
+        # Initialize non-terminable transitions explicitly handling start-final nodes in
+        # case they will not appear in transitive closures
+        for var in set(self.boxes).union(decomp.adjs):
+            if not isinstance(var, c.Variable):
+                continue
+            start_finals = (
+                self.boxes[var].start_states.intersection(self.boxes[var].final_states)
+                if var in self.boxes
+                else set()
+            )
+            if len(start_finals) == 0 and var in decomp.adjs:
+                nonterminatable_adjs[var] = decomp.adjs.pop(var)
+            if var == self.start:
+                res |= {(s, s) for s in start_finals}
+
+        # Iteratively compute transitive closures and add new variable transitions
+        while True:
+            old_len = len(nonterminatable_adjs)
+
+            transitive_closure_indices = zip(*decomp.transitive_closure_any_symbol())
+            for n_from_i, n_to_i in transitive_closure_indices:
+                n_from = decomp.states[n_from_i]
+                n_to = decomp.states[n_to_i]
+                if n_from.is_start and n_to.is_final:
+                    var1, s1 = n_from.data
+                    var2, s2 = n_to.data
+                    assert var1 == var2
+                    if var1 in nonterminatable_adjs:
+                        decomp.adjs[var1] = nonterminatable_adjs.pop(var1)
+                    if var1 == self.start:
+                        res.add((fa.State(s1), fa.State(s2)))
+
+            if len(nonterminatable_adjs) == old_len:
+                break
+
+        return res
 
     def intersect(self, nfa: fa.EpsilonNFA, swapped: bool = False) -> "Rsm":
         # TODO: apply tensor CFPQ to NFA, then intersect and interpret the result

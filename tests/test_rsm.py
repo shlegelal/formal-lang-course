@@ -140,3 +140,43 @@ def test_minimized_are_equivalent_to_original(original: Rsm):
     assert len(minimized.boxes) == len(original.boxes)
     for var in original.boxes:
         assert are_equivalent(minimized.boxes[var], original.boxes[var])
+
+
+@pytest.mark.parametrize(
+    "rsm, expected",
+    load_test_data(
+        "test_rsm_get_reachables_from_cfg",
+        lambda d: (
+            Rsm.from_cfg(c.CFG.from_text(d["cfg"])),
+            {(fa.State(v1), fa.State(v2)) for v1, v2 in d["expected"]},
+        ),
+    ),
+    ids=load_test_ids("test_rsm_get_reachables_from_cfg"),
+)
+def test_rsm_get_reachables_from_cfg(
+    rsm: Rsm, expected: set[tuple[fa.State, fa.State]]
+):
+    actual = rsm.get_reachables()
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "content_file_path, expected",
+    load_test_data(
+        "test_rsm_get_reachables_from_file",
+        lambda d: (
+            d["dot_text"],
+            {(fa.State(v1), fa.State(v2)) for v1, v2 in d["expected"]},
+        ),
+    ),
+    indirect=["content_file_path"],
+    ids=load_test_ids("test_rsm_get_reachables_from_file"),
+)
+def test_rsm_get_reachables_from_file(
+    content_file_path: Path, expected: set[tuple[fa.State, fa.State]]
+):
+    rsm = Rsm.from_dot_file(content_file_path)
+
+    actual = rsm.get_reachables()
+
+    assert actual == expected

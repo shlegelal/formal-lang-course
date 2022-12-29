@@ -151,14 +151,19 @@ class Reg(AutomatonLike[VertexT], Generic[VertexT]):
         return Set({String(s.value) for s in self._nfa.symbols}, String.Meta())
 
     def get_reachables(self) -> Set[Pair[VertexT, VertexT]]:
+        reachables = set(
+            # Have to explicitly add start-finals in case they will not appear in the
+            # transitive closure
+            Pair(s.value, s.value)
+            for s in self._nfa.start_states.intersection(self._nfa.final_states)
+        )
         decomp = BoolDecomposition.from_nfa(self._nfa)
-        reachables = set()
         for n_from_i, n_to_i in zip(*decomp.transitive_closure_any_symbol()):
             n_from = decomp.states[n_from_i]
             n_to = decomp.states[n_to_i]
             if n_from.is_start and n_to.is_final:
                 reachables.add(Pair(n_from.data, n_to.data))
-        return Set(reachables)
+        return Set(reachables, self.meta.elem_meta)
 
     # Cannot use implementations of the operations below from pyformlang as they throw
     # away vertex data types

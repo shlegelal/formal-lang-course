@@ -124,12 +124,10 @@ class Cfg(AutomatonLike[VertexT], Generic[VertexT]):
         return Set(labels, String.Meta())
 
     def get_reachables(self) -> Set[Pair[VertexT, VertexT]]:
-        # TODO: compute box-wise transitive closures, at first with no variable
-        #  transitions, then include the transitions with variables boxes of which were
-        #  defined as "finishable" at the first iteration, then include the new
-        #  transitions... continue until no new "finishable" boxes appear. Return only
-        #  the reachables from starts of the start box to its finishes.
-        raise NotImplementedError()
+        return Set(
+            {Pair(s1.value, s2.value) for (s1, s2) in self._rsm.get_reachables()},
+            Pair.Meta(self.meta.elem_meta, self.meta.elem_meta),
+        )
 
     def intersect(self, other: Reg[OtherVertexT]) -> "Cfg[Pair[VertexT, OtherVertexT]]":
         if not isinstance(other, Reg):

@@ -33,49 +33,74 @@
       "description": "empty",
       "cfg_str": "",
       "expected_vertices": [0],
-      "expected_labels": []
+      "expected_labels": [],
+      "expected_reachables": []
     },
     {
       "description": "epsilon",
       "cfg_str": "S -> $",
       "expected_vertices": [0],
-      "expected_labels": []
+      "expected_labels": [],
+      "expected_reachables": [
+        [0, 0]
+      ]
     },
     {
       "description": "single production",
       "cfg_str": "S -> a b",
       "expected_vertices": [0, 1, 2],
-      "expected_labels": ["a", "b"]
+      "expected_labels": ["a", "b"],
+      "expected_reachables": [
+        [0, 2]
+      ]
     },
     {
       "description": "production with variable",
       "cfg_str": "S -> a S b | a b",
       "expected_vertices": [0, 1, 2, 3, 4, 5, 6],
-      "expected_labels": ["a", "b"]
+      "expected_labels": ["a", "b"],
+      "expected_reachables": [
+        [0, 3],
+        [4, 6]
+      ]
     },
     {
       "description": "multiple variables",
       "cfg_str": "S -> A S B | A B\nA -> a\nB -> b",
       "expected_vertices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-      "expected_labels": ["a", "b"]
+      "expected_labels": ["a", "b"],
+      "expected_reachables": [
+        [4, 6],
+        [7, 10]
+      ]
     },
     {
       "description": "epsilon alternative",
       "cfg_str": "S -> a S b | epsilon",
       "expected_vertices": [0, 1, 2, 3, 4],
-      "expected_labels": ["a", "b"]
+      "expected_labels": ["a", "b"],
+      "expected_reachables": [
+        [0, 0],
+        [1, 4]
+      ]
     },
     {
       "description": "transitive production",
       "cfg_str": "S -> A\nA -> a",
       "expected_vertices": [0, 1, 2, 3],
-      "expected_labels": ["a"]
+      "expected_labels": ["a"],
+      "expected_reachables": [
+        [2, 3]
+      ]
     },
     {
       "description": "long labels",
       "cfg_str": "S -> some A more B C labels\nA -> l_\nB -> $\nC -> some",
       "expected_vertices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-      "expected_labels": ["some", "more", "labels", "l_"]
+      "expected_labels": ["some", "more", "labels", "l_"],
+      "expected_reachables": [
+        [5, 11]
+      ]
     }
   ],
   "test_cfg_get_edges": [

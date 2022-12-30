@@ -4,10 +4,10 @@ import pyformlang.finite_automaton as fa
 from scipy.sparse import csr_array
 from scipy.sparse import eye
 
-from project.utils.node_type import NodeType
-from project.cfpq.rsm import Rsm
 from project.cfpq.ecfg import Ecfg
+from project.cfpq.rsm import Rsm
 from project.utils.bool_decomposition import BoolDecomposition
+from project.utils.node_type import NodeType
 
 
 def constrained_transitive_closure_by_tensor(
@@ -19,14 +19,20 @@ def constrained_transitive_closure_by_tensor(
     )
     graph_decomp = BoolDecomposition.from_nfa(fa.EpsilonNFA.from_networkx(graph))
 
-    # Add self loops for nullable variables
+    # Add self loops for nullable variables: epsilon-transitions are not allowed and
+    # hence it is enough to check for boxes that have start-final nodes -- variables
+    # that are nullable transitively from the variables of such boxes will be added
+    # later by the algorithm
+    assert all(not isinstance(t, c.Epsilon) for t in rsm_decomp.adjs)
     diag = csr_array(eye(len(graph_decomp.states), dtype=bool))
-    for v in cfg.get_nullable_symbols():
-        assert isinstance(v, c.Variable)  # Just in case
-        if v.value in graph_decomp:
-            graph_decomp.adjs[v.value] += diag
+    for s in rsm_decomp.states:
+        if not (s.is_start and s.is_final):
+            continue
+        v = s.data[0]  # Not using value() to discriminate variables from terminals
+        if v in graph_decomp.adjs:
+            graph_decomp.adjs[v] += diag
         else:
-            graph_decomp.adjs[v.value] = diag.copy()
+            graph_decomp.adjs[v] = diag.copy()
 
     # Compute intersection closures while new edges appear
     transitive_closure_size = 0

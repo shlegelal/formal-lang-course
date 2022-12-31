@@ -8,6 +8,7 @@ from pyformlang import finite_automaton as fa
 from project.cfpq.ecfg import Ecfg
 from project.cfpq.rsm import Rsm
 from project.rpq.fa_utils import iter_fa_transitions
+from tests.test_types_cfg import assert_equivalent_boxes
 from tests.testing_utils import are_equivalent
 from tests.testing_utils import content_file_path  # noqa
 from tests.testing_utils import dot_str_to_nfa
@@ -180,3 +181,30 @@ def test_rsm_get_reachables_from_file(
     actual = rsm.get_reachables()
 
     assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "content_file_path, nfa, expected_boxes",
+    load_test_data(
+        "test_rsm_intersect",
+        lambda d: (
+            d["rsm"],
+            dot_str_to_nfa(d["nfa"]),
+            {var: dot_str_to_nfa(nfa) for var, nfa in d["expected_boxes"].items()},
+        ),
+    ),
+    indirect=["content_file_path"],
+    ids=load_test_ids("test_rsm_intersect"),
+)
+@pytest.mark.parametrize("swapped", [False, True], ids=["default", "swapped"])
+def test_rsm_intersect(
+    content_file_path: Path,
+    nfa: fa.NondeterministicFiniteAutomaton,
+    swapped: bool,
+    expected_boxes: dict[str, fa.EpsilonNFA],
+):
+    rsm = Rsm.from_dot_file(content_file_path)
+
+    actual = rsm.intersect(nfa, swapped)
+
+    assert_equivalent_boxes(actual.boxes, expected_boxes, wrapped_states=True)

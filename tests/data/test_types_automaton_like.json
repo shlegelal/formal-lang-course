@@ -3,6 +3,9 @@
     {
       "reg": "",
       "cfg": "",
+      "expected_boxes_intersect": {
+        "S": ""
+      },
       "expected_boxes_concat_reg_cfg": {
         "S": "",
         "S_1": "",
@@ -27,6 +30,9 @@
     {
       "reg": "a b c",
       "cfg": "",
+      "expected_boxes_intersect": {
+        "S": ""
+      },
       "expected_boxes_concat_reg_cfg": {
         "S": "",
         "S_1": "a b c",
@@ -51,6 +57,9 @@
     {
       "reg": "",
       "cfg": "S -> a b c",
+      "expected_boxes_intersect": {
+        "S": ""
+      },
       "expected_boxes_concat_reg_cfg": {
         "S": "",
         "S_1": "",
@@ -75,6 +84,9 @@
     {
       "reg": "a b c",
       "cfg": "S -> a b c",
+      "expected_boxes_intersect": {
+        "S": "a b c"
+      },
       "expected_boxes_concat_reg_cfg": {
         "S": "a b c a b c",
         "S_1": "a b c",
@@ -99,6 +111,13 @@
     {
       "reg": "a*",
       "cfg": "S -> A S B | epsilon\nA -> a\nB -> b",
+      "expected_boxes_intersect": {
+        "S": "epsilon",
+        "S_1": "epsilon",
+        "S_2": "epsilon",
+        "A": "a",
+        "B": ""
+      },
       "expected_boxes_concat_reg_cfg": {
         "S": "a* (A_2 S_2 B_2 | epsilon)",
         "S_1": "a*",

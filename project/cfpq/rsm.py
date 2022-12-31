@@ -1,12 +1,15 @@
 from collections.abc import Set as AbstractSet
 from copy import deepcopy
+from itertools import product
 from pathlib import Path
+from typing import Any
 from typing import Callable
 
 import networkx as nx
 import pydot
 import pyformlang.cfg as c
 import pyformlang.finite_automaton as fa
+from scipy import sparse
 
 from project.cfpq.ecfg import Ecfg
 from project.rpq.fa_utils import concat_fas
@@ -68,11 +71,12 @@ class Rsm:
             var = c.Variable(subg.get_name())
 
             subg = nx.drawing.nx_pydot.from_pydot(subg)
-            nfa = fa.NondeterministicFiniteAutomaton(
-                states=set(subg.nodes),
-                start_state=set(subg.nodes),
-                final_states=set(subg.nodes),
-            )
+            nfa = fa.NondeterministicFiniteAutomaton(states=set(subg.nodes))
+            for n, data in subg.nodes.data():
+                if data.get("is_start", "True") != "False":
+                    nfa.add_start_state(n)
+                if data.get("is_final", "True") != "False":
+                    nfa.add_final_state(n)
             for pred, succ, symb in subg.edges.data("label", default=""):
                 lab = c.Variable(symb) if symb.isupper() else c.Terminal(symb)
                 nfa.add_transition(pred, lab, succ)
@@ -189,10 +193,134 @@ class Rsm:
 
         return res
 
-    def intersect(self, nfa: fa.EpsilonNFA, swapped: bool = False) -> "Rsm":
-        # TODO: apply tensor CFPQ to NFA, then intersect and interpret the result
-        #  somehow
-        raise NotImplementedError()
+    # Should not be used with RSMs created from ECFG as their transitions are not boxed
+    # with Variables and Terminals
+    def intersect(
+        self,
+        nfa: fa.EpsilonNFA,
+        swapped: bool = False,
+        pair: Callable[[Any, Any], Any] = lambda u, v: (u, v),
+    ) -> "Rsm":
+        from project.cfpq.tensor import constrained_transitive_closure_by_tensor_decomp
+
+        # Intersect using tensor CFPQ -- this will create a "raw" intersection RSM. Sort
+        # states to always get the same RSM as a result.
+        self_decomp = BoolDecomposition.from_rsm(self, sort_states=True)
+        nfa_decomp = BoolDecomposition.from_nfa(
+            nfa.remove_epsilon_transitions(), sort_states=True
+        )
+        # NFA decompositions use bare values, while RSMs are boxed, so need to box NFAs
+        for symb in list(nfa_decomp.adjs):  # list() to create a copy
+            nfa_decomp.adjs[c.Terminal(symb)] = nfa_decomp.adjs.pop(symb)
+        # nfa_decomp gets changed in-place here
+        constrained_transitive_closure_by_tensor_decomp(nfa_decomp, self_decomp)
+        intersection = (
+            self_decomp.intersect(nfa_decomp)
+            if not swapped
+            else nfa_decomp.intersect(self_decomp)
+        )
+
+        def unpack(
+            si: BoolDecomposition.StateInfo,
+        ) -> tuple[c.Variable, BoolDecomposition.StateInfo]:
+            if not swapped:
+                (var, d1), d2 = si.data
+            else:
+                d1, (var, d2) = si.data
+            return var, BoolDecomposition.StateInfo((d1, d2), si.is_start, si.is_final)
+
+        # Remap variable transitions
+
+        all_vars = set(self.boxes.keys())
+
+        def new_var(body: c.Variable) -> c.Variable:
+            var = c.Variable((body.value, 1))
+            while var in all_vars:
+                var = c.Variable((body.value, var.value[1] + 1))
+            all_vars.add(var)
+            return var
+
+        nfa_sf = {
+            (var, s, f): var
+            for var in self.boxes
+            for s in nfa.start_states
+            for f in nfa.final_states
+        }
+        for symb, adj in [  # Not using items() directly to create a copy
+            (s, a) for s, a in intersection.adjs.items() if isinstance(s, c.Variable)
+        ]:
+            intersection.adjs[symb] = adj.todok()  # Will change modify by indices
+            for s_from_i, s_to_i in zip(*adj.nonzero()):
+                box_var, s_from = unpack(intersection.states[s_from_i])
+                box_var_, s_to = unpack(intersection.states[s_to_i])
+                assert box_var == box_var_  # There are no edges between boxes
+
+                if symb != box_var:
+                    continue
+
+                # Not using setdefault() to avoid unnecessary new_var() calls
+                nfa_sf_key = (
+                    (box_var, s_from.data[1], s_to.data[1])
+                    if not swapped
+                    else (box_var, s_from.data[0], s_to.data[0])
+                )
+                if nfa_sf_key not in nfa_sf:
+                    nfa_sf[nfa_sf_key] = new_var(box_var)
+                new_symb = nfa_sf[nfa_sf_key]
+
+                # First remove then add in case of adding an existing edge
+                intersection.adjs[symb][s_from_i, s_to_i] = False
+                intersection.adjs.setdefault(
+                    new_symb, sparse.dok_array(adj.shape, dtype=bool)
+                )[s_from_i, s_to_i] = True
+
+        # Construct intersection boxes
+        boxes: dict[c.Variable, fa.NondeterministicFiniteAutomaton] = {}
+
+        for s in intersection.states:
+            box_var, s = unpack(s)
+            box = boxes.setdefault(box_var, fa.NondeterministicFiniteAutomaton())
+            p = pair(*s.data)
+            if s.is_start:
+                box.add_start_state(p)
+            if s.is_final:
+                box.add_final_state(p)
+
+        box_to_sf = {
+            var: set(
+                (st.value, fn.value)
+                for st, fn in product(box.start_states, box.final_states)
+            )
+            for var, box in self.boxes.items()
+        }
+        box_to_vars: dict[c.Variable, set[c.Variable]] = {}
+        for (box, _, _), var in nfa_sf.items():
+            box_to_vars.setdefault(box, set()).add(var)
+
+        for symb, adj in intersection.adjs.items():
+            for s_from_i, s_to_i in zip(*adj.nonzero()):
+                main_box_var, s_from = unpack(intersection.states[s_from_i])
+                main_box_var_, s_to = unpack(intersection.states[s_to_i])
+                assert main_box_var == main_box_var_  # There are no edges between boxes
+
+                for box_var in box_to_vars[main_box_var]:
+                    box = boxes.setdefault(
+                        box_var, fa.NondeterministicFiniteAutomaton()
+                    )
+                    box.add_transition(pair(*s_from.data), symb, pair(*s_to.data))
+
+                    if box_var != symb:
+                        continue
+
+                    for st, fn in box_to_sf[main_box_var]:
+                        if not swapped:
+                            box.add_start_state(pair(st, s_from.data[1]))
+                            box.add_final_state(pair(fn, s_to.data[1]))
+                        else:
+                            box.add_start_state(pair(s_from.data[0], st))
+                            box.add_final_state(pair(s_to.data[0], fn))
+
+        return Rsm(self.start, boxes)
 
     @staticmethod
     def _suffixed_boxes(

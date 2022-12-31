@@ -428,36 +428,35 @@ def test_visit_get_reachables_incorrect(ctx: LiteGQLParser.GetReachablesContext)
 @pytest.mark.parametrize(
     "ctx, expected",
     [
-        # TODO: add the CFG tests below after intersect() is implemented for RSM
         ('"a" & "a"', String("a").intersect(String("a", start_index=2))),
         ('"a" & r"a*"', String("a").intersect(Reg.from_raw_str("a*", start_index=2))),
-        # (
-        #     '"a" & c"S -> a"',
-        #     String("a").intersect(Cfg.from_raw_str("S -> a", start_index=2)),
-        # ),
+        (
+            '"a" & c"S -> a"',
+            String("a").intersect(Cfg.from_raw_str("S -> a", start_index=2)),
+        ),
         ('r"a b c" & "a"', Reg.from_raw_str("a b c").intersect(String("a"))),
         (
             'r"a b c" & r"a*"',
             Reg.from_raw_str("a b c").intersect(Reg.from_raw_str("a*", start_index=4)),
         ),
-        # (
-        #     'r"a b c" & c"S -> a"',
-        #     Reg.from_raw_str("a b c").intersect(
-        #         Cfg.from_raw_str("S -> a", start_index=4)
-        #     ),
-        # ),
-        # (
-        #     'c"S -> a S b | $" & "ab"',
-        #     Cfg.from_raw_str("S -> a S b | $").intersect(
-        #         String("ab", start_index=-100)
-        #     ),
-        # ),
-        # (
-        #     'c"S -> a S b | $" & r"a* b*"',
-        #     Cfg.from_raw_str("S -> a S b | $").intersect(
-        #         Reg.from_raw_str("a* b*", start_index=-100)
-        #     ),
-        # ),
+        (
+            'r"a b c" & c"S -> a"',
+            Reg.from_raw_str("a b c").intersect(
+                Cfg.from_raw_str("S -> a", start_index=4)
+            ),
+        ),
+        (
+            'c"S -> a S b | $" & "ab"',
+            Cfg.from_raw_str("S -> a S b | $").intersect(
+                String("ab", start_index=-100)
+            ),
+        ),
+        (
+            'c"S -> a S b | $" & r"a* b*"',
+            Cfg.from_raw_str("S -> a S b | $").intersect(
+                Reg.from_raw_str("a* b*", start_index=-100)
+            ),
+        ),
     ],
     indirect=["ctx"],
 )
@@ -529,7 +528,6 @@ def test_visit_intersect_incorrect(ctx: LiteGQLParser.IntersectContext):
     indirect=["ctx"],
 )
 def test_visit_concat(ctx: LiteGQLParser.ConcatContext, expected: Reg | Cfg):
-    l = len(Reg.from_raw_str("a b c").get_vertices().value)
     actual = InterpretVisitor(output=fail).visitConcat(ctx)
     assert isinstance(actual, (Reg, Cfg))
     if isinstance(actual, Reg):

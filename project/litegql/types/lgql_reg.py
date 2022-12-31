@@ -171,12 +171,14 @@ class Reg(AutomatonLike[VertexT], Generic[VertexT]):
     def intersect(
         self, other: AutomatonLike[OtherVertexT]
     ) -> AutomatonLike[Pair[VertexT, OtherVertexT]]:
+        from project.litegql.types.lgql_cfg import Cfg
+
         if isinstance(other, Reg):
             nfa = intersect_fas(self._nfa, other._nfa, Pair)
             return Reg(nfa, Pair.Meta(self.meta.elem_meta, other.meta.elem_meta))
         elif isinstance(other, Cfg):
             return Cfg(
-                other._rsm.intersect(self._nfa, swapped=True),
+                other._rsm.intersect(self._nfa, swapped=True, pair=Pair),
                 Pair.Meta(self.meta.elem_meta, other.meta.elem_meta),
             )
 

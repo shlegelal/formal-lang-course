@@ -161,6 +161,7 @@ def assert_equivalent_boxes(
     actual: dict[c.Variable, fa.EpsilonNFA],
     expected: dict[str, fa.EpsilonNFA] | dict[c.Variable, fa.EpsilonNFA],
     wrapped_expected: bool = False,
+    wrapped_states: bool = False,
 ):
     def unwrap_var(v: c.Variable) -> str:
         if isinstance(v.value, str):
@@ -168,9 +169,18 @@ def assert_equivalent_boxes(
         value, suffix = v.value
         return f"{value}_{suffix}"
 
-    def unwrap_symbols(nfa: fa.EpsilonNFA) -> fa.EpsilonNFA:
+    def unwrap_state(s: fa.State) -> str:
+        s1, s2 = s.value
+        return f"{s1}_{s2}"
+
+    def unwrap_box(nfa: fa.EpsilonNFA) -> fa.EpsilonNFA:
         unwrapped_nfa = fa.EpsilonNFA(
-            start_state=nfa.start_states, final_states=nfa.final_states
+            start_state={
+                s if not wrapped_states else unwrap_state(s) for s in nfa.start_states
+            },
+            final_states={
+                s if not wrapped_states else unwrap_state(s) for s in nfa.final_states
+            },
         )
         for s_from, symb, s_to in iter_fa_transitions(nfa):
             new_symb = (
@@ -178,16 +188,18 @@ def assert_equivalent_boxes(
                 if isinstance(symb.value, c.Variable)
                 else symb.value.value
             )
-            unwrapped_nfa.add_transition(s_from, new_symb, s_to)
+            new_from = s_from if not wrapped_states else unwrap_state(s_from)
+            new_to = s_to if not wrapped_states else unwrap_state(s_to)
+            unwrapped_nfa.add_transition(new_from, new_symb, new_to)
         return unwrapped_nfa
 
     assert len(actual) == len(expected)
     for var in actual:
-        actual_box = unwrap_symbols(actual[var])
+        actual_box = unwrap_box(actual[var])
         expected_box = (
             expected[unwrap_var(var)]
             if not wrapped_expected
-            else unwrap_symbols(expected[var])
+            else unwrap_box(expected[var])
         )
         assert are_equivalent(actual_box, expected_box)
 
@@ -265,6 +277,3 @@ def test_cfg_union(
 
     assert cfg1.get_edges() == old_edges  # No in-place mutation should occur
     assert_equivalent_boxes(actual._rsm.boxes, expected_boxes)
-
-
-# TODO: test intersect

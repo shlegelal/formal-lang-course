@@ -103,7 +103,9 @@ def are_equivalent(
     return (
         len(min1.start_states) == 0
         and len(min2.start_states) == 0
-        or fa1.is_equivalent_to(fa2)
+        or min1.is_equivalent_to(min2)
+        # Sometimes this works when the above does not
+        or min1.get_difference(min2).is_empty()
     )
 
 

@@ -68,6 +68,14 @@ class Pair(VertexType, Generic[FstVertexT, SndVertexT]):
             else NotImplemented
         )
 
+    def __lt__(self, other) -> bool | type(NotImplemented):
+        return (
+            self._fst < other._fst
+            or (self._fst == other._fst and self._snd < other._snd)
+            if isinstance(other, Pair)
+            else NotImplemented
+        )
+
     def __hash__(self) -> int:
         return hash((self._fst, self._snd))
 

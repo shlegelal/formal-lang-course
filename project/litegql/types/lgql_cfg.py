@@ -134,7 +134,7 @@ class Cfg(AutomatonLike[VertexT], Generic[VertexT]):
             raise TypeError("Can intersect context-free with regular only")
 
         return Cfg(
-            self._rsm.intersect(other._nfa),
+            self._rsm.intersect(other._nfa, pair=Pair),
             Pair.Meta(self.meta.elem_meta, other.meta.elem_meta),
         )
 

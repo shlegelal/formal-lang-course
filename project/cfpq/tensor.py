@@ -10,15 +10,9 @@ from project.utils.bool_decomposition import BoolDecomposition
 from project.utils.node_type import NodeType
 
 
-def constrained_transitive_closure_by_tensor(
-    graph: nx.Graph, cfg: c.CFG
-) -> set[tuple[NodeType, c.Variable, NodeType]]:
-    # Initialize decompositions
-    rsm_decomp = BoolDecomposition.from_rsm(
-        Rsm.from_ecfg(Ecfg.from_cfg(cfg)).minimize()
-    )
-    graph_decomp = BoolDecomposition.from_nfa(fa.EpsilonNFA.from_networkx(graph))
-
+def constrained_transitive_closure_by_tensor_decomp(
+    graph_decomp: BoolDecomposition, rsm_decomp: BoolDecomposition
+) -> BoolDecomposition:
     # Add self loops for nullable variables: epsilon-transitions are not allowed and
     # hence it is enough to check for boxes that have start-final nodes -- variables
     # that are nullable transitively from the variables of such boxes will be added
@@ -73,7 +67,19 @@ def constrained_transitive_closure_by_tensor(
                 else:
                     graph_decomp.adjs[v] = ij_graph_adj.copy()
 
-    # Construct the result
+    return graph_decomp
+
+
+def constrained_transitive_closure_by_tensor(
+    graph: nx.Graph, cfg: c.CFG
+) -> set[tuple[NodeType, c.Variable, NodeType]]:
+    graph_decomp = constrained_transitive_closure_by_tensor_decomp(
+        BoolDecomposition.from_nfa(
+            fa.NondeterministicFiniteAutomaton.from_networkx(graph)
+        ),
+        BoolDecomposition.from_rsm(Rsm.from_ecfg(Ecfg.from_cfg(cfg)).minimize()),
+    )
+
     result = set()
     for v, adj in graph_decomp.adjs.items():
         # Filter out the initial edges

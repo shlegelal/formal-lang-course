@@ -24,6 +24,9 @@ class Int(VertexType):
     def __eq__(self, other) -> bool | type(NotImplemented):
         return self._v == other._v if isinstance(other, Int) else NotImplemented
 
+    def __lt__(self, other) -> bool | type(NotImplemented):
+        return self._v < other._v if isinstance(other, Int) else NotImplemented
+
     def __hash__(self) -> int:
         return hash(self._v)
 

@@ -124,6 +124,48 @@ def _ensure_no_overlapping(al1: AutomatonLike[Int], al2: AutomatonLike[Int]):
     "al1, al2, expected_boxes",
     load_test_data(
         "TestAutomatonLikeCombinations",
+        lambda d: (
+            (
+                Reg.from_raw_str(d["reg"]),
+                Cfg.from_raw_str(d["cfg"]),
+                prepare_boxes(d["expected_boxes_intersect"]),
+            ),
+            (
+                Cfg.from_raw_str(d["cfg"]),
+                Reg.from_raw_str(d["reg"]),
+                prepare_boxes(d["expected_boxes_intersect"]),
+            ),
+        ),
+        is_aggregated=True,
+    ),
+    ids=load_test_data(
+        "TestAutomatonLikeCombinations",
+        lambda d: [
+            f"(reg-cfg) {d['reg']}, {d['cfg']}",
+            f"(cfg-reg) {d['cfg']}, {d['reg']}",
+        ],
+        is_aggregated=True,
+    ),
+)
+def test_rsm_intersect(
+    al1: AutomatonLike[Int],
+    al2: AutomatonLike[Int],
+    expected_boxes: dict[str, EpsilonNFA],
+):
+    old_edges = deepcopy(al1.get_edges())
+    _ensure_no_overlapping(al1, al2)
+
+    actual = al1.intersect(al2)
+
+    assert al1.get_edges() == old_edges  # No in-place mutation should occur
+    assert isinstance(actual, Cfg)
+    assert_equivalent_boxes(actual._rsm.boxes, expected_boxes)
+
+
+@pytest.mark.parametrize(
+    "al1, al2, expected_boxes",
+    load_test_data(
+        "TestAutomatonLikeCombinations",
         lambda d: [
             (
                 Reg.from_raw_str(d["reg"]),

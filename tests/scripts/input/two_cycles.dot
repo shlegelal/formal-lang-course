@@ -1,7 +1,7 @@
 digraph G {
-    100 -> 101 [label=a]
-    101 -> 102 [label=a]
-    102 -> 100 [label=a]
-    102 -> 103 [label=b]
-    103 -> 102 [label=b]
+    0 -> 1 [label=a]
+    1 -> 2 [label=a]
+    2 -> 0 [label=a]
+    2 -> 3 [label=b]
+    3 -> 2 [label=b]
 }

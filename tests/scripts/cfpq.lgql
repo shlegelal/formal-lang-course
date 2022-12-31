@@ -1,7 +1,7 @@
-// Regular path query
+// Context-free path query
 
-g = set_starts(load("input/two_cycles.dot"), {2});
-query = r"a | b";
+g = set_starts(load("input/two_cycles.dot"), {102});
+query = c"S -> a S b | a b";
 
 reachables = map(
     { ((st, _), (fn, _)) -> (st, fn) },

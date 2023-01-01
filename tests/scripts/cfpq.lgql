@@ -1,6 +1,6 @@
 // Context-free path query
 
-g = set_starts(load("input/two_cycles.dot"), {102});
+g = set_starts(load("input/two_cycles.dot"), {2});
 query = c"S -> a S b | a b";
 
 reachables = map(
@@ -8,4 +8,4 @@ reachables = map(
     get_reachables(g & query)
 );
 
-print(reachables)
+print(reachables)  // prints {(2, 3), (2, 2)}

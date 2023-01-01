@@ -8,4 +8,4 @@ reachables = map(
     get_reachables(g & query)
 );
 
-print(reachables)
+print(reachables)  // prints {(2, 3), (2, 0)}

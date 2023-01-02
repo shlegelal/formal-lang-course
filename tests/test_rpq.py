@@ -2,10 +2,9 @@ from networkx import MultiDiGraph
 from pyformlang.regular_expression import Regex
 import pytest
 
-from load_test_res import load_test_res
-from project.utils.graph_utils import generate_labeled_two_cycles_graph
-from project.utils.regular_utils import tensor_rpq, bfs_rpq
-from test_automata_utils import build_graph_by_srt
+from test_utils import load_test_res, build_graph_by_srt
+from project.utils.graph import generate_labeled_two_cycles_graph
+from project.algorithms.rpq import tensor_rpq, bfs_rpq
 
 
 @pytest.mark.parametrize(

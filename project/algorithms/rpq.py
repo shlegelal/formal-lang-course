@@ -2,8 +2,8 @@ from networkx import MultiDiGraph
 from pyformlang.regular_expression import Regex
 from scipy.sparse import csr_array, lil_array, vstack
 
-from project.utils.automata_utils import dfa_by_regex, nfa_by_graph
-from project.utils.binary_matrix_utils import (
+from project.utils.automata import dfa_by_regex, nfa_by_graph
+from project.utils.binary_matrix import (
     bm_by_nfa,
     intersect,
     transitive_closure,

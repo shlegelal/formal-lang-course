@@ -1,26 +1,11 @@
 from copy import deepcopy
-
 import pytest
 from pyformlang import cfg as c
 from pyformlang.regular_expression import Regex
-from pyformlang import finite_automaton as fa
 
-from load_test_res import load_test_res
-from project.grammar.ecfg import ecfg_by_cfg
-from project.grammar.rsm import rsm_by_ecfg, minimize_rsm, RSM, bm_by_rsm
-from test_automata_utils import build_graph_by_srt
-
-
-def dot_str_to_nfa(dot: str):
-    graph = build_graph_by_srt(dot)
-
-    for _, data in graph.nodes.data():
-        if data["is_start"] in ("True", "False"):
-            data["is_start"] = data["is_start"] == "True"
-        if data["is_final"] in ("True", "False"):
-            data["is_final"] = data["is_final"] == "True"
-
-    return fa.EpsilonNFA.from_networkx(graph)
+from project.utils.ecfg import ecfg_by_cfg
+from project.utils.rsm import rsm_by_ecfg, minimize_rsm, RSM, bm_by_rsm
+from test_utils import load_test_res, dot_str_to_nfa
 
 
 @pytest.mark.parametrize(

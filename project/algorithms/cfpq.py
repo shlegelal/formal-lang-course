@@ -3,11 +3,11 @@ import pyformlang.cfg as c
 from networkx import MultiDiGraph
 from scipy.sparse import dok_array, csr_array, eye
 
-from project.grammar.cfg_utils import cfg_to_wcnf
-from project.grammar.ecfg import ecfg_by_cfg
-from project.grammar.rsm import bm_by_rsm, rsm_by_ecfg, minimize_rsm
-from project.utils.automata_utils import nfa_by_graph
-from project.utils.binary_matrix_utils import bm_by_nfa, intersect, transitive_closure
+from project.utils.cfg import cfg_to_wcnf
+from project.utils.ecfg import ecfg_by_cfg
+from project.utils.rsm import bm_by_rsm, rsm_by_ecfg, minimize_rsm
+from project.utils.automata import nfa_by_graph
+from project.utils.binary_matrix import bm_by_nfa, intersect, transitive_closure
 
 
 def helling_cfpq(

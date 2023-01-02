@@ -1,8 +1,7 @@
 from collections import namedtuple
 from itertools import product
-
 from pyformlang.finite_automaton import NondeterministicFiniteAutomaton, State
-from scipy.sparse import kron, lil_array, csr_matrix, dok_array, csr_array, bmat
+from scipy.sparse import kron, dok_array, csr_array, bmat
 
 BinaryMatrix = namedtuple("BinaryMatrix", "states matrix")
 """

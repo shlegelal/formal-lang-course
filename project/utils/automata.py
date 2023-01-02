@@ -1,8 +1,8 @@
 from pyformlang.finite_automaton import DeterministicFiniteAutomaton
 from pyformlang.regular_expression import Regex
 
-from project.utils.binary_matrix_utils import *
-from project.utils.graph_utils import *
+from project.utils.binary_matrix import *
+from project.utils.graph import *
 
 
 class AutomataUtilsError(Exception):

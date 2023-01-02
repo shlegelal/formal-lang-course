@@ -1,10 +1,8 @@
 from collections import namedtuple
-
-from pyformlang.finite_automaton import State
 from scipy.sparse import dok_array
 
-from project.grammar.ecfg import ECFG
-from project.utils.binary_matrix_utils import BinaryMatrix, StateInfo
+from project.utils.ecfg import ECFG
+from project.utils.binary_matrix import BinaryMatrix, StateInfo
 
 RSM = namedtuple("RSM", "start boxes")
 

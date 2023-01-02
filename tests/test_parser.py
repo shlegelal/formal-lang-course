@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 
-from load_test_res import load_test_res
+from test_utils import load_test_res
 from project.parser import check, save_to_dot, parse
 
 

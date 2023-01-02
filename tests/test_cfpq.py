@@ -2,8 +2,7 @@ import pytest
 import pyformlang.cfg as c
 from networkx import MultiDiGraph
 
-from load_test_res import load_test_res
-from project.grammar.cfpq import (
+from project.algorithms.cfpq import (
     helling_constrained_transitive_closure,
     helling_cfpq,
     matrix_constrained_transitive_closure,
@@ -11,8 +10,7 @@ from project.grammar.cfpq import (
     tensor_cfpq,
     tensor_constrained_transitive_closure,
 )
-from project.utils.graph_utils import generate_labeled_two_cycles_graph
-from test_automata_utils import build_graph_by_srt
+from test_utils import build_graph_by_srt, load_test_res
 
 
 @pytest.mark.parametrize(

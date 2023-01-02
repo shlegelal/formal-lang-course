@@ -2,8 +2,8 @@ from pathlib import Path
 import pytest
 from pyformlang import cfg as c
 
-from project.grammar import cfg_utils
-from load_test_res import load_test_res
+from project.utils import cfg
+from test_utils import load_test_res
 
 
 def _assert_equal_cfgs(cfg0: c.CFG, cfg1: c.CFG):
@@ -41,9 +41,9 @@ def cfg_file_path(request, tmp_path: Path) -> Path:
 )
 def test_read_cfg(cfg_file_path: Path, start: str, expected: c.CFG):
     actual = (
-        cfg_utils.read_cfg(cfg_file_path, start)
+        cfg.read_cfg(cfg_file_path, start)
         if start is not None
-        else cfg_utils.read_cfg(cfg_file_path)
+        else cfg.read_cfg(cfg_file_path)
     )
 
     _assert_equal_cfgs(actual, expected)
@@ -67,9 +67,9 @@ def test_read_cfg(cfg_file_path: Path, start: str, expected: c.CFG):
 )
 def test_cfg_to_wcnf(raw_cfg: str, start: str, expected: c.CFG):
     actual = (
-        cfg_utils.cfg_to_wcnf(raw_cfg, start)
+        cfg.cfg_to_wcnf(raw_cfg, start)
         if start is not None
-        else cfg_utils.cfg_to_wcnf(raw_cfg)
+        else cfg.cfg_to_wcnf(raw_cfg)
     )
 
     _assert_equal_cfgs(actual, expected)

@@ -1,8 +1,8 @@
 import pytest
 from pyformlang import cfg as c
 
-from project.grammar.cyk import cyk
-from load_test_res import load_test_res
+from project.algorithms.cyk import cyk
+from test_utils import load_test_res
 
 
 @pytest.mark.parametrize(

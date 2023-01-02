@@ -1,5 +1,4 @@
 from collections import namedtuple
-
 from pyformlang.cfg import Variable
 from pyformlang.cfg import CFG
 from pyformlang.regular_expression import Regex

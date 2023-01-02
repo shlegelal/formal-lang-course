@@ -1,35 +1,7 @@
-import pydot
 import pytest
 
-from load_test_res import load_test_res
-from networkx import is_isomorphic, isomorphism
-from pyformlang.finite_automaton import FiniteAutomaton
-
-from project.utils.automata_utils import *
-
-
-def build_graph_by_srt(s: str) -> MultiDiGraph:
-    return drawing.nx_pydot.from_pydot(pydot.graph_from_dot_data(s)[0])
-
-
-def is_isomorphic_fa_and_graph(fa: FiniteAutomaton, graph: MultiDiGraph) -> bool:
-    fa_graph = fa.to_networkx()
-    # Remove nodes extra added by pyformlang
-    for node in list(fa_graph):
-        if isinstance(node, str) and node.endswith("_starting"):
-            fa_graph.remove_node(node)
-    # Convert string to bool from dot file
-    for _, data in fa_graph.nodes.data():
-        if data["is_start"] in ("True", "False"):
-            data["is_start"] = data["is_start"] == "True"
-        if data["is_final"] in ("True", "False"):
-            data["is_final"] = data["is_final"] == "True"
-
-    return is_isomorphic(
-        fa_graph,
-        graph,
-        edge_match=isomorphism.categorical_edge_match("label", None),
-    )
+from test_utils import load_test_res, build_graph_by_srt, is_isomorphic_fa_and_graph
+from project.utils.automata import *
 
 
 # @pytest.mark.parametrize(

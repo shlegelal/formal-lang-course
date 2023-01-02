@@ -1,31 +1,13 @@
 import pytest
 from pyformlang.finite_automaton import NondeterministicFiniteAutomaton, State
-from scipy.sparse import dok_matrix
 
-from project.utils.binary_matrix_utils import (
+from project.utils.binary_matrix import (
     bm_by_nfa,
     nfa_by_bm,
     intersect,
     transitive_closure,
 )
-from load_test_res import load_test_res
-
-
-def nfa_by_transactions(
-    transitions_list: list[tuple], start_states: set = None, final_states: set = None
-) -> NondeterministicFiniteAutomaton:
-    res = NondeterministicFiniteAutomaton()
-
-    if not len(transitions_list):
-        return res
-
-    res.add_transitions(transitions_list)
-    for state in start_states:
-        res.add_start_state(State(state))
-    for state in final_states:
-        res.add_final_state(State(state))
-
-    return res
+from test_utils import load_test_res, nfa_by_transactions
 
 
 def test_build_empty():

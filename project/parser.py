@@ -5,7 +5,7 @@ from project.GQLang.GQLangLexer import GQLangLexer
 from project.GQLang.GQLangParser import GQLangParser
 from project.GQLang.GQLangListener import GQLangListener
 
-__all__ = ["parse", "check"]
+__all__ = ["parse", "check", "save_to_dot"]
 
 
 def parse(text: str) -> GQLangParser:

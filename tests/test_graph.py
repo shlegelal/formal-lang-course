@@ -4,7 +4,7 @@ from networkx import (
     algorithms,
     is_isomorphic,
 )
-from project.utils.graph_utils import *
+from project.utils.graph import *
 
 
 def test_generate_labeled_two_cycles_graph():

@@ -50,5 +50,6 @@ jobs:
 
       # Run tests from /tests directory
       - name: Run testes
+        working-directory:
         run: |
           python ./scripts/run_tests.py

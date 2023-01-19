@@ -1,9 +1,10 @@
 import json
 import pathlib
 import inspect
-import pydot
-from networkx import drawing, MultiDiGraph, is_isomorphic, isomorphism
+from networkx import MultiDiGraph, is_isomorphic, isomorphism
 from pyformlang import finite_automaton as fa
+
+from project.utils.graph import get_graph_by_dot
 
 
 def load_test_res(test_name: str) -> list[tuple[dict, dict]]:
@@ -21,10 +22,6 @@ def load_test_res(test_name: str) -> list[tuple[dict, dict]]:
         )
     )
     return res
-
-
-def build_graph_by_srt(s: str) -> MultiDiGraph:
-    return drawing.nx_pydot.from_pydot(pydot.graph_from_dot_data(s)[0])
 
 
 def _string_to_bool_from_dot(graph):
@@ -54,7 +51,7 @@ def is_isomorphic_fa_and_graph(f: fa.FiniteAutomaton, graph: MultiDiGraph) -> bo
 
 
 def dot_str_to_nfa(dot: str):
-    graph = build_graph_by_srt(dot)
+    graph = get_graph_by_dot(dot)
 
     graph = _string_to_bool_from_dot(graph)
 

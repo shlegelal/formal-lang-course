@@ -144,7 +144,3 @@ _minted-presentation/
 *.fdb_latexmk
 *.fls
 *.gz
-
-# gqlang Parser Generated Files
-project/GQLang/
-!project/GQLang/GQLang.g4

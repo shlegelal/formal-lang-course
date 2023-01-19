@@ -45,8 +45,8 @@ jobs:
           python -m pip list
 
       - name: Generate parser
-        working-directory: project/GQLang
-        run: antlr4 GQLang.g4 -Dlanguage=Python3
+        working-directory: project/interpretator/grammar/
+        run: antlr4 GQLang.g4 -visitor -Dlanguage=Python3
 
       # Run tests from /tests directory
       - name: Run testes

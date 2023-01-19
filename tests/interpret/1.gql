@@ -1,0 +1,6 @@
+g = r"a b*"
+r = r"a* b"
+
+res = map({((u, _), (v, _)) -> (u, v)}, (g & r).reachable)
+
+print(res)

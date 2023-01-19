@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 
 from test_utils import load_test_res
-from project.parser import check, save_to_dot, parse
+from project.interpretator.parser import check, save_to_dot, parse
 
 
 @pytest.mark.parametrize(

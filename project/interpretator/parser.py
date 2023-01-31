@@ -1,9 +1,9 @@
 import antlr4
 import pydot
 
-from project.GQLang.GQLangLexer import GQLangLexer
-from project.GQLang.GQLangParser import GQLangParser
-from project.GQLang.GQLangListener import GQLangListener
+from project.interpretator.grammar.GQLangLexer import GQLangLexer
+from project.interpretator.grammar.GQLangParser import GQLangParser
+from project.interpretator.grammar.GQLangListener import GQLangListener
 
 __all__ = ["parse", "check", "save_to_dot"]
 

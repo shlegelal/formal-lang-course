@@ -2,8 +2,8 @@ from networkx import MultiDiGraph
 from pyformlang.regular_expression import Regex
 import pytest
 
-from test_utils import load_test_res, build_graph_by_srt
-from project.utils.graph import generate_labeled_two_cycles_graph
+from test_utils import load_test_res
+from project.utils.graph import generate_labeled_two_cycles_graph, get_graph_by_dot
 from project.algorithms.rpq import tensor_rpq, bfs_rpq
 
 
@@ -45,7 +45,7 @@ def test_tensor_rpq_empty_graph(query: str):
     "graph, query, starts, finals, expected",
     map(
         lambda res: (
-            build_graph_by_srt(res[0]),
+            get_graph_by_dot(res[0]),
             res[1],
             set(res[2]) if len(res[2]) else None,
             set(res[3]) if len(res[3]) else None,
@@ -69,7 +69,7 @@ def test_tensor_rpq_labeled_two_cycles_graph(
     "graph, query, starts, finals, res",
     map(
         lambda res: (
-            build_graph_by_srt(res[0]),
+            get_graph_by_dot(res[0]),
             res[1],
             set(res[2]) if len(res[2]) else None,
             set(res[3]) if len(res[3]) else None,

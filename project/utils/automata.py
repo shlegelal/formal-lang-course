@@ -64,3 +64,13 @@ def nfa_by_graph(
         nfa.add_final_state(State(state))
 
     return nfa
+
+
+def intersect_nfa(
+    nfa1: NondeterministicFiniteAutomaton, nfa2: NondeterministicFiniteAutomaton
+) -> NondeterministicFiniteAutomaton:
+    bm1 = bm_by_nfa(nfa1)
+    bm2 = bm_by_nfa(nfa2)
+    intersection = intersect(bm1, bm2)
+
+    return nfa_by_bm(intersection)

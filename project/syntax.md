@@ -91,8 +91,6 @@ bool ->
     | 'true' | 'false'
     | expr WS 'in' WS expr                       // Contains
     | 'not' WS bool
-    | bool WS '&&' WS bool
-    | bool WS '||' WS bool
     | '(' bool ')'
 
 set ->
@@ -101,7 +99,7 @@ set ->
     | '{' (expr (',' WS expr)* )? '}'            // Set
     | graph '.' 'starts'
     | graph '.' 'finals'
-    | graph '.' 'reachables'
+    | graph '.' 'reachable'
     | graph '.' 'nodes'
     | graph '.' 'edges'
     | graph '.' 'labels'
@@ -134,7 +132,7 @@ WS -> [ \t]+
 ```
 g = load_graph("skos").set_starts({0 .. 10})
 
-res = map({(_, f) -> f}, g.reachables)
+res = map({(_, f) -> f}, g.reachable)
 ```
 
 Получение пар вершин, между которыми существует путь, удовлетворяющий КС-ограничению
@@ -142,7 +140,7 @@ res = map({(_, f) -> f}, g.reachables)
 g = c"S -> a S b | a b"
 r = r"a b"
 
-res = map({((u, _), (v, _)) -> (u, v)}, (g & r).reachables)
+res = map({((u, _), (v, _)) -> (u, v)}, (g & r).reachable)
 
 print(res)
 ```

@@ -10,14 +10,15 @@ from project.algorithms.cfpq import (
     tensor_cfpq,
     tensor_constrained_transitive_closure,
 )
-from test_utils import build_graph_by_srt, load_test_res
+from project.utils.graph import get_graph_by_dot
+from test_utils import load_test_res
 
 
 @pytest.mark.parametrize(
     "graph, cfg, expected",
     map(
         lambda r: (
-            build_graph_by_srt(r[0]),
+            get_graph_by_dot(r[0]),
             c.CFG.from_text(r[1]),
             {
                 (triple["start"], c.Variable(triple["variable"]), triple["end"])
@@ -45,7 +46,7 @@ def test_constrained_transitive(graph, cfg, expected, ctc):
     "graph, query, start_states, final_states, start, expected",
     map(
         lambda r: (
-            build_graph_by_srt(r[0]),
+            get_graph_by_dot(r[0]),
             c.CFG.from_text(r[1]),
             r[2],
             r[3],

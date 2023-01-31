@@ -1,5 +1,6 @@
 from collections import namedtuple
 import cfpq_data
+import pydot
 from networkx import drawing, MultiDiGraph
 from pathlib import Path
 
@@ -21,6 +22,10 @@ def get_graph(name: str) -> MultiDiGraph:
     graph = cfpq_data.graph_from_csv(graph_path)
 
     return graph
+
+
+def get_graph_by_dot(s: str) -> MultiDiGraph:
+    return drawing.nx_pydot.from_pydot(pydot.graph_from_dot_data(s)[0])
 
 
 def get_graph_info(graph: MultiDiGraph) -> GraphInfo:
